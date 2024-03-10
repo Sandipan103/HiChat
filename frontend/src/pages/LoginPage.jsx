@@ -19,6 +19,10 @@ import {server, AuthContext} from '../context/UserContext';
 const LoginPage = () => {
   const navigate = useNavigate();
   const {isAuthenticated,setIsAuthenticated} = useContext(AuthContext);
+  
+  if (isAuthenticated) {
+    navigate('./profile');
+  }
 
   const [userDetail, setUserDetail] = useState({
     email: "",
@@ -70,7 +74,10 @@ const LoginPage = () => {
     }
   };
 
-  if (isAuthenticated) return <Navigate to={"/profile"} />;
+  if (isAuthenticated) {
+    navigate('./profile');
+  }
+  
   return (
     <Grid container justifyContent="center" alignItems="center">
       <Grid item xs={12} sm={8} md={6} lg={4}>
