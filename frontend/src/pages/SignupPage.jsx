@@ -16,6 +16,9 @@ import { Link, useNavigate} from "react-router-dom";
 import {server} from '../context/UserContext';
 
 const SignupPage = () => {
+
+  const navigate = useNavigate();
+  
   const [signupData, setSignupData] = useState({
     firstName: "",
     lastName: "",
@@ -91,6 +94,7 @@ const SignupPage = () => {
       );
       console.log(response.data);
       toast.success(``)
+      navigate('/login');
     } catch (error) {
       toast.error(`invalid Otp ⛔ `);
       console.error("Error verifying OTP:", error);
