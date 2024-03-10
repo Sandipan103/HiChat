@@ -14,7 +14,12 @@ import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import toast from "react-hot-toast";
 
+import {server, AuthContext} from '../context/UserContext';
+
 const LoginPage = () => {
+  const navigate = useNavigate();
+  const {isAuthenticated,setIsAuthenticated} = useContext(AuthContext);
+
   const [userDetail, setUserDetail] = useState({
     email: "",
     password: "",
@@ -38,28 +43,34 @@ const LoginPage = () => {
     event.preventDefault();
     try {
       setLoading(true);
-      const response = await axios.post(`http://localhost:4000/api/v1/login`,
+      const response = await axios.post(`${server}/login`,
         { email: userDetail.email, password: userDetail.password },
         { withCredentials: true }
       );
-      // setIsAuthenticated(true);
-      // console.log(isAuthenticated);
+      setIsAuthenticated(true);
+      
       // console.log("token : ", response.data.token);
       // console.log("user : ", response.data.user);
       Cookies.set("tokenf", response.data.token, {
         expires: 1,
       });
-      // console.log(isAuthenticated);
-      // navigate(`/profile`);
+      console.log(`isAuthenticated : `, isAuthenticated);
+      navigate(`/profile`);
       toast.success(`logged in`)
     } catch (error) {
+      if(error.response.data.message) {
+        toast.error(error.response.data.message);
+      }
+      else  {
+        toast.error(`Login Faild`);
+      }
       console.error("lgoin error", error);
     } finally {
       setLoading(false);
     }
   };
 
-  // if (isAuthenticated) return <Navigate to={"/profile"} />;
+  if (isAuthenticated) return <Navigate to={"/profile"} />;
   return (
     <Grid container justifyContent="center" alignItems="center">
       <Grid item xs={12} sm={8} md={6} lg={4}>

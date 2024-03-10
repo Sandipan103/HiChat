@@ -13,6 +13,8 @@ import Paper from "@mui/material/Paper";
 import toast from "react-hot-toast";
 import { Link, useNavigate} from "react-router-dom";
 
+import {server} from '../context/UserContext';
+
 const SignupPage = () => {
   const [signupData, setSignupData] = useState({
     firstName: "",
@@ -56,7 +58,7 @@ const SignupPage = () => {
     try {
       setLoading(true);
       const response = await axios.post(
-        `http://localhost:4000/api/v1/sendOtp`,
+        `${server}/sendOtp`,
         { email: signupData.email },
         { withCredentials: true }
       );
@@ -64,7 +66,14 @@ const SignupPage = () => {
       console.log(response.data);
       setProgress(true);
     } catch (error) {
-      toast.error(`Otp can't be send 📪`);
+      
+      if(error.response.data.message) {
+        toast.error(error.response.data.message);
+      }
+      else  {
+        toast.error(`Otp can't be send 📪`);
+      }
+      // console.log("error : " , error.response.data.message);
       console.error("Error sending OTP:", error);
     } finally {
       setLoading(false);
@@ -76,7 +85,7 @@ const SignupPage = () => {
     try {
       setLoading(true);
       const response = await axios.post(
-        `http://localhost:4000/api/v1/signup`,
+        `${server}/signup`,
         { ...signupData, otp },
         { withCredentials: true }
       );
