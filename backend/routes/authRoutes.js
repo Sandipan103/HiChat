@@ -7,7 +7,6 @@ const router = express.Router();
 // importing required controler
 // auth controller
 const {sendOtp, signup, login, logout, } = require('../controller/Auth')
-const {createdMessage, fetchMessages, myContacts} =  require("../controller/MessageController");
 
 
 // other controller
@@ -22,9 +21,7 @@ router.get('/logout' , logout);
 
 // other routing
 // User Messages
-router.get("/contacts/:userId",myContacts);
-router.post("/messaging",createdMessage);
-router.get("/chats/:userId/:requestId",fetchMessages);
+
 
 
 

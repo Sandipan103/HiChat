@@ -82,7 +82,12 @@ app.use(express.json());
 // routing
 const authRoutes = require("./routes/authRoutes")
 const profileRoutes = require("./routes/profileRoutes")
+const chatRoutes = require("./routes/chatRoutes")
+
+
 app.use("/api/v1", authRoutes)
 app.use("/api/v1", profileRoutes)
+app.use("/api/v1", chatRoutes)
+
 
 
