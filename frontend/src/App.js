@@ -4,6 +4,8 @@ import HomePage from "./pages/HomePage";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
 import ProfilePage from "./pages/ProfilePage";
+import Chat from "./pages/Chat";
+
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/UserContext";
 
@@ -17,6 +19,8 @@ function App() {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/profile" element={<ProfilePage /> } />
+          <Route path="/chat" element={<Chat /> } />
+
         </Routes>
       </Router>
       <Toaster/>
