@@ -37,9 +37,11 @@ exports.myContacts = async (req, res, next) => {
   try {
     const {userId} = req.params;
     const user = await User.findById(userId);
-    return res.json({contacts : user.contacts, msg : "helo"});
+    return res.json({contacts : user.contacts});
   } catch (error) {
     return res.json(error);
   }
 };
+
+
 

@@ -23,65 +23,18 @@ const UserList = ({ users, setUsers, selectedUser, setSelectedUser, setRequestId
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
   const { isAuthenticated } = useContext(AuthContext);
-
-  const fetchUserDetail = async () => {
-    const token = Cookies.get("tokenf");
-    if(!token)  {
-      navigate('/login');
-    }
-    console.log( 'isAuthenticated' , isAuthenticated);
-    if (token) {
-      try {
-        // setLoading(true);
-        const decodedToken = jwtDecode(token);
-        const { id: userId } = decodedToken;
-
-        const response = await axios.get(
-          `${server}/contacts/${userId}`
-        );
-
-        const user = response.data.user;
-        console.log("userData : ", user);
-        // setUserData(user);
-
-      } catch (error) {
-        toast.error("profile data not fetched");
-        console.error("Error decoding token:", error);
-        navigate('/login');
-      } finally {
-        // setLoading(false);
-      }
-    }
-  };
-
-  useEffect(() => {
-    fetchUserDetail();
-  }, [navigate]);
-
-  // useEffect(() => {
-  //   const fetchUsers = async () => {
-  //     try {
-  //      const response = await axios.get(`${server}/contacts/${currentUser}`);
-  //       // const response = await axios.get(`${server}/contacts/65ed69f40a1180e2ae943e58`);
-  //       setUsers(response.data.contacts);
-  //       console.log(response)
-  //       // setSelectedUser(users[0]); 
-        
-  //     } catch (error) {
-  //       console.error('Error fetching users:', error);
-  //     }
-  //   };
-  //   if (currentUser) {
-  //     fetchUsers();
-  //   }
-  //   console.log(users);
-  // }, [currentUser, setUsers]);
-
+  
   return (
     <>
     <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
     {users.map((users, index) => (
-        <ListItem key={index} alignItems="flex-start">
+       <>
+         <ListItem key={index} alignItems="flex-start" className={
+              selectedUser && selectedUser._id === users._id
+                ? "user selected"
+                : "user"
+            }
+            onClick={() => {handleUserClick(users); setRequestId(users._id);}}>
           <ListItemAvatar>
             <Avatar alt={users.name ? users.name : "Contact"} />
           </ListItemAvatar>
@@ -102,8 +55,10 @@ const UserList = ({ users, setUsers, selectedUser, setSelectedUser, setRequestId
             }
           />
         </ListItem>
+         <Divider variant="inset" component="li" />
+       </>
       ))}
-      <Divider variant="inset" component="li" />
+     
     </List>
     
         
