@@ -1,3 +1,4 @@
+
 // required dependency
 const express = require("express");
 const app = express();
@@ -79,7 +80,9 @@ app.use(cookieParser());
 app.use(express.json());
 
 // routing
-const testingRoutes = require("./routes/testingRoutes");
-app.use("/api/v1", testingRoutes);
+const authRoutes = require("./routes/authRoutes")
+const profileRoutes = require("./routes/profileRoutes")
+app.use("/api/v1", authRoutes)
+app.use("/api/v1", profileRoutes)
 
 
