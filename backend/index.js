@@ -83,11 +83,13 @@ app.use(express.json());
 const authRoutes = require("./routes/authRoutes")
 const profileRoutes = require("./routes/profileRoutes")
 const chatRoutes = require("./routes/chatRoutes")
+const groupRoutes = require("./routes/groupRoutes")
 
 
 app.use("/api/v1", authRoutes)
 app.use("/api/v1", profileRoutes)
 app.use("/api/v1", chatRoutes)
+app.use("/api/v1", groupRoutes)
 
 
 

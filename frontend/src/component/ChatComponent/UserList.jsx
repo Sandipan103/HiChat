@@ -25,7 +25,7 @@ const UserList = ({ users, setUsers, selectedUser, setSelectedUser, setRequestId
   const { isAuthenticated } = useContext(AuthContext);
   
   return (
-    <>
+    <div>
     <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
     {users.map((users, index) => (
        <>
@@ -60,32 +60,7 @@ const UserList = ({ users, setUsers, selectedUser, setSelectedUser, setRequestId
       ))}
      
     </List>
-    
-        
-    {/* <div className="chat-users">
-      <ul className="userList">
-        {users.map((user) => (
-          <li
-            key={user._id}
-            className={
-              selectedUser && selectedUser._id === user._id
-                ? "user selected"
-                : "user"
-            }
-            onClick={() => {handleUserClick(user); setRequestId(user._id);}}
-          >
-            <img
-              className="user-image"
-              alt={user.firstName}
-              src="/images/user-profile-photo.svg"
-            />
-            <span>{user.firstName}</span>
-            {notiId === user._id ?  <span className='msg-noti'>{noti}</span> : ""}
-          </li>
-        ))}
-      </ul>
-    </div> */}
-    </>
+    </div>
   );
 };
 

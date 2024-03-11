@@ -9,6 +9,8 @@ import Chat from "./pages/Chat";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/UserContext";
 import Navbar from "./component/Navbar";
+import NewContact from "./component/NewContact";
+import NewGroup from "./component/NewGroup";
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/profile" element={<ProfilePage /> } />
           <Route path="/chat" element={<Chat /> } />
+          <Route path="/addContact" element={<NewContact /> } />
+          <Route path="/createGroup" element={<NewGroup /> } />
 
         </Routes>
       </Router>

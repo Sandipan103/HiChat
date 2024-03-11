@@ -1,13 +1,16 @@
 // Chat.js
 import React, { useContext, useState, useEffect, useRef } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
 
 import axios from "axios";
 import UserList from "../component/ChatComponent/UserList";
-import MessageBox from "../component/ChatComponent/MessageBox";
+import {SpeedDial, SpeedDialAction } from "@mui/material";
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import GroupIcon from '@mui/icons-material/Group';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import "../styles/chat.css";
 import { ChatBox } from "../component/ChatComponent/ChatBox";
 import {server, AuthContext} from '../context/UserContext';
@@ -24,6 +27,7 @@ const Chat = () => {
   const navigate = useNavigate();
   const [noti, setNoti] = useState(1);
   const [notiId, setNotiId] = useState('');
+  const [speedDialOpen, setSpeedDialOpen] = useState(false);
 
 
   const fetchUserDetail = async () => {
@@ -58,27 +62,7 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    // const userAuth = async () => {
-    //   try {
-    //     const response = await axios.post(
-    //       `${server}`,
-    //       {},
-    //       { withCredentials: true }
-    //     );
-    //     const { status, user } = response.data;
-    //     if (status) {
-    //       setMyId(user._id);
-    //     } else {
-    //       navigate("/login");
-    //     }
-    //   } catch (error) {
-    //     console.error("Error authenticating user:", error.message);
-    //   }
-    // };
-    // userAuth();
-
     fetchUserDetail();
- 
   }, [navigate]);
 
   const handleUserClick = async (user) => {
@@ -93,7 +77,7 @@ const Chat = () => {
       );
       
       setMessages(response.data);
-     console.log(messages)
+      console.log(messages)
       inputRef.current.focus();
     } catch (error) {
       console.error("Error fetching messages:", error);
@@ -105,9 +89,39 @@ const Chat = () => {
     
     <div className="main-container">
       <div className="chat-box">
-        <div className="chat-header">
+
+        {/* <div className="chat-header">
           <h5 className="header-message">Chat</h5>
+        </div> */}
+
+        <div>
+          search
         </div>
+
+        <div>
+
+        <SpeedDial
+          ariaLabel="SpeedDial tooltip example"
+          sx={{ position: 'absolute', bottom: 16, left: 100 }}
+          icon={<AddCircleIcon />}
+          open={speedDialOpen}
+          onClick={() => setSpeedDialOpen(!speedDialOpen)}
+        >
+          <SpeedDialAction
+            icon={<GroupIcon />}
+            tooltipTitle='create group'
+            tooltipOpen
+            onClick={()=>{navigate('/createGroup')}}
+          />
+          <SpeedDialAction
+            icon={<PersonAddIcon />}
+            tooltipTitle='new contact'
+            tooltipOpen
+            onClick={()=>{navigate('/addContact')}}
+          />
+        </SpeedDial>
+        </div>
+
         <div className="chat-body">
           <UserList
             noti={noti}
@@ -119,8 +133,6 @@ const Chat = () => {
             handleUserClick={handleUserClick}
           />
           <div className="message-body">
-            {/* {selectedUser && <MessageBox messages={messages} myId={myId} />} */}
-
             {selectedUser && (
               <ChatBox
               setNotiId={setNotiId}
