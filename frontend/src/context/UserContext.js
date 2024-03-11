@@ -1,10 +1,26 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
+import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
 
 const AuthContext = createContext();
 
+const checkToken = () => {
+  const token = Cookies.get("tokenf");
+  if(token) {
+    return true;
+  }
+  else  {
+    return false;
+  }
+}
+
 const AuthProvider = ({ children }) => {
   
-  const [isAuthenticated, setIsAuthenticated] = useState();
+  const [isAuthenticated, setIsAuthenticated] = useState(checkToken);
+
+  useEffect(() => {
+    checkToken();
+  }, [isAuthenticated]);
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, server }}>

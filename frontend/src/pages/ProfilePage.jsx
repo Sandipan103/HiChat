@@ -97,9 +97,9 @@ const ProfilePage = () => {
     }
   };
 
-  // if (!isAuthenticated) {
-  //   navigate("/login");
-  // }
+  if (!isAuthenticated) {
+    navigate("/login");
+  }
 
   return (
     <div style={{ padding: "20px" }}>

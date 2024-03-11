@@ -8,12 +8,13 @@ import Chat from "./pages/Chat";
 
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/UserContext";
+import Navbar from "./component/Navbar";
 
 function App() {
   return (
     <AuthProvider>
-    <div>
       <Router>
+        <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/signup" element={<SignupPage />} />
@@ -24,7 +25,6 @@ function App() {
         </Routes>
       </Router>
       <Toaster/>
-    </div>
     </AuthProvider>
   );
 }

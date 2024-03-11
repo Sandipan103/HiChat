@@ -198,3 +198,21 @@ exports.logout = async (req, res) => {
     });
   }
 };
+
+
+// logout
+exports.logout = async (req, res) => {
+  try {
+    // Clearing the token cookie to log out the user
+    res.clearCookie('token').status(200).json({
+      success: true,
+      message: 'User logged out successfully',
+    });
+  } catch (error) {
+    console.log('logout error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Something went wrong while logging out',
+    });
+  }
+};

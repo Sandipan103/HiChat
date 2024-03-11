@@ -19,10 +19,6 @@ import {server, AuthContext} from '../context/UserContext';
 const LoginPage = () => {
   const navigate = useNavigate();
   const {isAuthenticated,setIsAuthenticated} = useContext(AuthContext);
-  
-  if (isAuthenticated) {
-    navigate('./profile');
-  }
 
   const [userDetail, setUserDetail] = useState({
     email: "",
@@ -53,8 +49,6 @@ const LoginPage = () => {
       );
       setIsAuthenticated(true);
       
-      // console.log("token : ", response.data.token);
-      // console.log("user : ", response.data.user);
       Cookies.set("tokenf", response.data.token, {
         expires: 1,
       });
@@ -75,7 +69,7 @@ const LoginPage = () => {
   };
 
   if (isAuthenticated) {
-    navigate('./profile');
+    navigate('/profile');
   }
   
   return (
