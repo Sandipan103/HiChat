@@ -52,7 +52,7 @@ const LoginPage = () => {
       Cookies.set("tokenf", response.data.token, {
         expires: 1,
       });
-      console.log(`isAuthenticated : `, isAuthenticated);
+      // console.log(`isAuthenticated : `, isAuthenticated);
       navigate(`/profile`);
       toast.success(`logged in`)
     } catch (error) {

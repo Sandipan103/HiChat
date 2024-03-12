@@ -3,15 +3,16 @@ const mongoose = require("mongoose");
 const chatModel = mongoose.Schema(
   {
     chatName: { type: String, trim: true },
+    groupName : {type : String, trim : true},
     isGroupChat: { type: Boolean, default: false },
     users: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     latestMessage: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Message",
+      ref: "Msg",
     },
     groupAdmin: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    timestamp:{ type: Date, default: Date.now, }
   },
-  { timestamps: true }
 );
 
 const Chat = mongoose.model("Chat", chatModel);

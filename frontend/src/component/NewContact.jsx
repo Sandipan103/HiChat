@@ -49,7 +49,8 @@ const NewContact = () => {
     fetchUserDetail();
   }, []);
 
-  const handleSubmit = async()=> {
+  const handleSubmit = async(event) => {
+    event.preventDefault();
     if(!friend.name || !friend.contactNo)   {
         toast.error('all fields are required');
         return;

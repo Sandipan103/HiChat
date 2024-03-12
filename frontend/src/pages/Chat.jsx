@@ -35,7 +35,7 @@ const Chat = () => {
     if(!token)  {
       navigate('/login');
     }
-    console.log( 'isAuthenticated' , isAuthenticated);
+    // console.log( 'isAuthenticated' , isAuthenticated);
     if (token) {
       try {
         // setLoading(true);
@@ -66,10 +66,10 @@ const Chat = () => {
   }, [navigate]);
 
   const handleUserClick = async (user) => {
-    console.log(user._id);
+    // console.log(user._id);
     setSelectedUser(user);
     setRequestId(user._id);
-    console.log({"id" : requestId});
+    // console.log({"id" : requestId});
 
     try {
       const response = await axios.get(
@@ -77,7 +77,7 @@ const Chat = () => {
       );
       
       setMessages(response.data);
-      console.log(messages)
+      // console.log(messages)
       inputRef.current.focus();
     } catch (error) {
       console.error("Error fetching messages:", error);
@@ -99,27 +99,26 @@ const Chat = () => {
         </div>
 
         <div>
-
-        <SpeedDial
-          ariaLabel="SpeedDial tooltip example"
-          sx={{ position: 'absolute', bottom: 16, left: 100 }}
-          icon={<AddCircleIcon />}
-          open={speedDialOpen}
-          onClick={() => setSpeedDialOpen(!speedDialOpen)}
-        >
-          <SpeedDialAction
-            icon={<GroupIcon />}
-            tooltipTitle='create group'
-            tooltipOpen
-            onClick={()=>{navigate('/createGroup')}}
-          />
-          <SpeedDialAction
-            icon={<PersonAddIcon />}
-            tooltipTitle='new contact'
-            tooltipOpen
-            onClick={()=>{navigate('/addContact')}}
-          />
-        </SpeedDial>
+          <SpeedDial
+            ariaLabel="SpeedDial tooltip example"
+            sx={{ position: 'absolute', bottom: 16, left: 100 }}
+            icon={<AddCircleIcon />}
+            open={speedDialOpen}
+            onClick={() => setSpeedDialOpen(!speedDialOpen)}
+          >
+            <SpeedDialAction
+              icon={<GroupIcon />}
+              tooltipTitle='create group'
+              tooltipOpen
+              onClick={()=>{navigate('/createGroup')}}
+            />
+            <SpeedDialAction
+              icon={<PersonAddIcon />}
+              tooltipTitle='new contact'
+              tooltipOpen
+              onClick={()=>{navigate('/addContact')}}
+            />
+          </SpeedDial>
         </div>
 
         <div className="chat-body">

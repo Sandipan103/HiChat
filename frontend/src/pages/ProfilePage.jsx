@@ -21,7 +21,7 @@ const ProfilePage = () => {
     if(!token)  {
       navigate('/login');
     }
-    console.log( 'isAuthenticated' , isAuthenticated);
+    // console.log( 'isAuthenticated' , isAuthenticated);
     if (token) {
       try {
         setLoading(true);
@@ -33,7 +33,7 @@ const ProfilePage = () => {
         );
 
         const user = response.data.user;
-        console.log("userData : ", user);
+        // console.log("userData : ", user);
         setUserData(user);
 
         const defaultGender = user.gender || "";

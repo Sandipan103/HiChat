@@ -24,17 +24,7 @@ const actions = [
   { icon: <ShareIcon />, name: "Share" },
 ];
 
-export const ChatBox = ({
-  inputRef,
-  setSelectedUser,
-  myId,
-  requestId,
-  setMessages,
-  setNoti,
-  noti,
-  setNotiId,
-  messages, 
-}) => {
+const GroupChatBox = ({ messages, myId, selectedGroup, }) => {
   const [messageInput, setMessageInput] = useState("");
   const [socket, setSocket] = useState("");
   const [open, setOpen] = React.useState(false);
@@ -46,92 +36,47 @@ export const ChatBox = ({
     messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
   };
 
-  useEffect(() => {
-    const socketIO = io("http://localhost:4000", {
-      query: { userId: myId },
-    });
-    setSocket(socketIO);
+//   useEffect(() => {
+//     if (messages.length>0) {
+//       scrollToBottom();
+//     }
+//   }, [messages]);
 
-    socketIO.on("connect", () => {
-      console.log("Connected to server");
-    });
-
-    socketIO.on("disconnect", () => {
-      console.log("Disconnected from server");
-    });
-
-    socketIO.on("private-message", ({ from, message }) => {
-      if (requestId === from) {
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { recipient: from, content: message, timestamp: Date.now() },
-        ]);
-        // console.log(`Received message from ${from}: ${message}`);
-      } else {
-        console.log("notification");
-        setNoti((prevNoti) => prevNoti + 1);
-        setNotiId(from);
-      }
-    });
-  }, [myId, requestId, setMessages, setNoti, setNotiId, setSelectedUser]);
-
-  useEffect(() => {
-    if (messages.length>0) {
-      scrollToBottom();
-    }
-  }, [messages]);
   const handleMessageInputChange = (e) => {
     setMessageInput(e.target.value);
   };
 
   const handleSendMessage = async () => {
-    console.log("Message sent: ", messageInput);
-    setMessages((prevMessages) => [
-      ...(prevMessages),
-      {
-        sender: myId,
-        recipient: requestId,
-        content: messageInput,
-        timestamp: Date.now(),
-      },
-    ]);
-
-    socket.emit("private-message", {
-      to: requestId,
-      message: messageInput,
-      myId,
-    });
-
-    inputRef.current.focus();
-
     try {
-      const response = await axios.post(`${server}/messaging`, {
-        myId,
-        requestId,
-        messageInput,
-      });
-      console.log(response);
-      setMessageInput("");
-      // console.log(response.data);
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
-  };
+        const response = await axios.post(`${server}/sendGroupMessage`, {
+          myId,
+          chatId : selectedGroup._id,
+          messageInput,
+        });
+        console.log(response);
+        setMessageInput("");
+        // console.log(response.data);
+      } catch (error) {
+        console.error("Error sending message:", error);
+      }
+  }
 
   return (
     <>
       <div className="message-area">
         <div className="message-header"></div>
-        {messages && messages.length > 0 ? (
+          <ul className="messageArea">
+          {messages && messages.length > 0 ? (
           <ul className="messageArea">
             {messages.map((message, index) => (
               <li
                 key={index}
                 className={
-                  message.sender === myId ? "own-message" : "other-message"
+                    message.sender === myId ? "own-message" : "other-message"
                 }
               >
                 <div className="message">
+                  <p>{message.sender}</p>
                   <p>{message.content}</p>
                 </div>
                 <div className="timestamp">
@@ -153,7 +98,9 @@ export const ChatBox = ({
         ) : (
           <p className="messageArea">No chat available</p>
         )}
-      </div>
+            <div ref={messagesEndRef} />
+          </ul>
+        </div>
 
       <div className="message-input">
         <SpeedDial
@@ -174,7 +121,7 @@ export const ChatBox = ({
           ))}
         </SpeedDial>
         <Input
-          ref={inputRef}
+        //   ref={inputRef}
           type="text"
           placeholder="Type Something"
           value={messageInput}
@@ -192,3 +139,6 @@ export const ChatBox = ({
     </>
   );
 };
+
+
+export default GroupChatBox;
