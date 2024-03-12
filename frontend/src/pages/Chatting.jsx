@@ -27,7 +27,6 @@ const Chatting = () => {
     if(!token)  {
       navigate('/login');
     }
-    // console.log( 'isAuthenticated' , isAuthenticated);
     if (token) {
       try {
         setLoading(true);
@@ -37,12 +36,33 @@ const Chatting = () => {
         const response = await axios.get(
           `${server}/findAllGroups/${userId}`
         );
+        const myContacts = await axios.get(
+          `${server}/contacts/${userId}`
+        );
         setMyId(userId);
 
         const userGroups = response.data.groups;
-        setGroups(userGroups);
-        // console.log(response);
-        // setUserData(user);
+        const contacts = myContacts.data.contacts;
+
+        // console.log(userGroups);
+        // console.log(myContacts.data.contacts);
+        
+        const modifiedGroups = userGroups.map(group => {
+          if (!group.isGroupChat) {
+            const otherUserId = group.users.find(id => id !== userId);
+            const contact = contacts.find(contact => contact.contactId === otherUserId);
+            if (contact) {
+              return { ...group, groupName: contact.name };
+            } else {
+              return { ...group, groupName: otherUserId };
+            }
+          }
+          return group;
+        });
+
+        // console.log(modifiedGroups)
+  
+        setGroups(modifiedGroups);
 
       } catch (error) {
         toast.error("group data not fetched");
@@ -85,6 +105,7 @@ const Chatting = () => {
               <GroupChatBox
                 myId={myId}
                 messages={messages}
+                setMessages={setMessages}
                 selectedGroup={selectedGroup}
               />
             )}

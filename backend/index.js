@@ -41,21 +41,62 @@ dbConnect()
 
     const userConnections = new Map();
 
-    io.on('connection', (socket) => {
+    // io.on('connection', (socket) => {
       
-      const userId = socket.handshake.query.userId; // Extract user ID from query parameters
-      userConnections.set(userId, socket);
+    //   const userId = socket.handshake.query.userId; // Extract user ID from query parameters
+    //   userConnections.set(userId, socket);
     
-      socket.on('private-message', ({ to, message }) => {
-        const toSocket = userConnections.get(to);
-        if (toSocket) {
-          toSocket.emit('private-message', { from: userId, message });
+    //   socket.on('private-message', ({ to, message }) => {
+    //     const toSocket = userConnections.get(to);
+    //     if (toSocket) {
+    //       toSocket.emit('private-message', { from: userId, message });
           
-        }
-      });
+    //     }
+    //   });
     
-      socket.on('disconnect', () => {
-        userConnections.delete(userId);
+    //   socket.on('disconnect', () => {
+    //     userConnections.delete(userId);
+    //   });
+    // });
+
+    io.on('connection', (socket) => {
+      console.log("Connected to socket.io");
+
+      socket.on("setup", (userId) => {
+        socket.join(userId);
+        socket.emit("connected");
+      });
+
+      socket.on("join chat", (room) => {
+        socket.join(room);
+        console.log("User Joined Room: " + room);
+      });
+
+      // socket.on("new message", ({newMessageRecieved}) => {
+      //   let chat = newMessageRecieved.chat;
+      //   console.log('new message emit ::: ', newMessageRecieved);
+      //   if (!chat.users) return console.log("chat.users not defined");
+    
+      //   chat.users.forEach((user) => {
+      //     if (user == newMessageRecieved.sender) return;
+    
+      //     socket.in(user).emit("message recieved", newMessageRecieved);
+      //   });
+      // });
+
+      socket.on("new message", ({newMessage, chatUsers}) => {
+        if (chatUsers.length === 0) return console.log("chat.users not defined");
+    
+        chatUsers.forEach((user) => {
+          if (user == newMessage.sender) return;
+    
+          socket.in(user).emit("message recieved", newMessage);
+        });
+      });
+
+      socket.off("setup", () => {
+        console.log("USER DISCONNECTED");
+        socket.leave(userData._id);
       });
     });
 
