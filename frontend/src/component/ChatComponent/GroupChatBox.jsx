@@ -72,6 +72,8 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedGroup, setGroups, g
           return group;
         });
 
+        
+
         const index = updatedGroups.findIndex(group => group._id === newMessage.chat._id);
         if (index !== -1) {
           const groupWithNewMessage = updatedGroups.splice(index, 1)[0];

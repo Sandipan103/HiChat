@@ -22,7 +22,7 @@ const Chatting = () => {
   const inputRef = useRef(null);
   const navigate = useNavigate();
 
-  const fetchUserDetail = async (group) => {
+  const fetchUserDetail = async () => {
     const token = Cookies.get("tokenf");
     if(!token)  {
       navigate('/login');
@@ -44,24 +44,33 @@ const Chatting = () => {
         const userGroups = response.data.groups;
         const contacts = myContacts.data.contacts;
 
-        // console.log(userGroups);
+        console.log(userGroups); 
         // console.log(myContacts.data.contacts);
         
         const modifiedGroups = userGroups.map(group => {
+
+          let unreadMsgCount = 0;
+          
           if (!group.isGroupChat) {
             const otherUserId = group.users.find(id => id !== userId);
             const contact = contacts.find(contact => contact.contactId === otherUserId);
             if (contact) {
-              return { ...group, groupName: contact.name, unreadMsgCount : 0 };
+              group.groupName = contact.name
             } else {
-              return { ...group, groupName: otherUserId, unreadMsgCount : 0 };
+              group.groupName = contact.otherUserId
             }
           }
-          return  { ...group, unreadMsgCount : 0 };
+
+          group.allChatMessages.forEach(message => {
+            if (!message.readBy.includes(userId)) {
+                unreadMsgCount++;
+            }
+          });
+          group.unreadMsgCount = unreadMsgCount;
+          return group;
         });
 
-        console.log(modifiedGroups)
-  
+        // console.log(modifiedGroups) 
         setGroups(modifiedGroups);
 
       } catch (error) {
@@ -83,12 +92,17 @@ const Chatting = () => {
         // console.log('group : ', group);
         setSelectedGroup(group);
         const response = await axios.get(`${server}/fetchAllMessages/${group._id}` );
+        const responseReadMsg = await axios.post(`${server}/readAllMessages`, {
+          myId,
+          chatId : group._id,
+        });
+        await fetchUserDetail();
+        group.unreadMsgCount = 0;
         setMessages(response.data.messages);
         setGroups(prevGroups => {
           const updatedGroups = prevGroups.filter(grp => grp._id !== group._id);
           return [group, ...updatedGroups];
         });
-        // console.log(response.data.messages)
     } catch (error) {
         console.log('group not detected');
         console.log(error);
