@@ -24,7 +24,7 @@ const actions = [
 
 let socket;
 
-const GroupChatBox = ({ messages, setMessages, myId, selectedGroup, }) => {
+const GroupChatBox = ({ messages, setMessages, myId, selectedGroup, setGroups, groups}) => {
   const [messageInput, setMessageInput] = useState("");
   // const [socket, setSocket] = useState("");
   const [socketConnected, setSocketConnected] = useState(false);
@@ -62,7 +62,23 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedGroup, }) => {
         !selectedGroup || // if chat is not selected or doesn't match current chat
         selectedGroup._id !== newMessage.chat._id
       ) {
-        console.log('new message recived')
+        // console.log('new message recived : ', newMessage)
+        // console.log('selectedGroup : ', selectedGroup)
+        const updatedGroups = groups.map(group => {
+          if (group._id === newMessage.chat._id) {
+            const cnt = (group.unreadMsgCount || 0) + 1;
+            return { ...group, unreadMsgCount : cnt};
+          }
+          return group;
+        });
+
+        const index = updatedGroups.findIndex(group => group._id === newMessage.chat._id);
+        if (index !== -1) {
+          const groupWithNewMessage = updatedGroups.splice(index, 1)[0];
+          updatedGroups.unshift(groupWithNewMessage);
+        }
+        
+        setGroups(updatedGroups);
       } else {
         setMessages([...messages, newMessage]);
       }
@@ -80,8 +96,8 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedGroup, }) => {
           chatId : selectedGroup._id,
           messageInput,
         });
-        console.log(response.data.newMessage);
-        console.log(response.data.chatUsers);
+        // console.log(response.data.newMessage);
+        // console.log(response.data.chatUsers);
         // console.log(messages);
         setMessageInput("");
         socket.emit("new message", {
