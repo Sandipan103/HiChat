@@ -19,7 +19,7 @@ const BASH_URL = process.env.BASH_URL;
 
 
 
-const GroupList = ({ groups,  handleGroupClick, }) => {
+const GroupList = ({ groups,  handleGroupClick, setGroups}) => {
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
   const { isAuthenticated } = useContext(AuthContext);
@@ -35,7 +35,9 @@ const GroupList = ({ groups,  handleGroupClick, }) => {
             <Avatar alt={group.groupName ? group.groupName : "no name"} />
           </ListItemAvatar>
           <ListItemText
-            primary={group.groupName ? group.groupName : "no name"}
+            primary={<>{group.groupName ? group.groupName : "no name"} {group.unreadMsgCount && (
+              <span>  {group.unreadMsgCount}</span>
+            )}</>}
             secondary={
               <React.Fragment>
                 <Typography

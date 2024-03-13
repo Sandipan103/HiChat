@@ -15,8 +15,6 @@ import SendIcon from "@mui/icons-material/Send";
 import Input from "@mui/material/Input";
 const ariaLabel = { "aria-label": "description" };
 
-const BASH_URL = `http://localhost:4000`;
-
 const actions = [
   { icon: <FileCopyIcon />, name: "Copy" },
   { icon: <SaveIcon />, name: "Save" },
@@ -24,23 +22,68 @@ const actions = [
   { icon: <ShareIcon />, name: "Share" },
 ];
 
-const GroupChatBox = ({ messages, myId, selectedGroup, }) => {
+let socket;
+
+const GroupChatBox = ({ messages, setMessages, myId, selectedGroup, setGroups, groups}) => {
   const [messageInput, setMessageInput] = useState("");
-  const [socket, setSocket] = useState("");
+  // const [socket, setSocket] = useState("");
+  const [socketConnected, setSocketConnected] = useState(false);
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(!open);
   const handleClose = () => setOpen(false);
 
   const messagesEndRef = useRef(null);
+
   const scrollToBottom = () => {
-    messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
-//   useEffect(() => {
-//     if (messages.length>0) {
-//       scrollToBottom();
-//     }
-//   }, [messages]);
+  useEffect(() => {
+    if (messages.length > 0) {
+      scrollToBottom();
+    }
+  }, [messages]);
+
+  useEffect(() => {
+    socket = io("http://localhost:4000");
+    // setSocket(socketIO);
+    socket.emit("setup", myId);
+    socket.on("connected", () => setSocketConnected(true));
+
+    socket.emit("join chat", selectedGroup._id);
+
+  }, []);
+
+  useEffect(() => {
+    socket.on("message recieved", (newMessage) => {
+      if (
+        !selectedGroup || // if chat is not selected or doesn't match current chat
+        selectedGroup._id !== newMessage.chat._id
+      ) {
+        // console.log('new message recived : ', newMessage)
+        // console.log('selectedGroup : ', selectedGroup)
+        const updatedGroups = groups.map(group => {
+          if (group._id === newMessage.chat._id) {
+            const cnt = (group.unreadMsgCount || 0) + 1;
+            return { ...group, unreadMsgCount : cnt};
+          }
+          return group;
+        });
+
+        const index = updatedGroups.findIndex(group => group._id === newMessage.chat._id);
+        if (index !== -1) {
+          const groupWithNewMessage = updatedGroups.splice(index, 1)[0];
+          updatedGroups.unshift(groupWithNewMessage);
+        }
+        
+        setGroups(updatedGroups);
+      } else {
+        setMessages([...messages, newMessage]);
+      }
+    });
+  });
 
   const handleMessageInputChange = (e) => {
     setMessageInput(e.target.value);
@@ -53,9 +96,16 @@ const GroupChatBox = ({ messages, myId, selectedGroup, }) => {
           chatId : selectedGroup._id,
           messageInput,
         });
-        console.log(response);
+        // console.log(response.data.newMessage);
+        // console.log(response.data.chatUsers);
+        // console.log(messages);
         setMessageInput("");
-        // console.log(response.data);
+        socket.emit("new message", {
+          newMessage: response.data.newMessage,
+          chatUsers: response.data.chatUsers,
+        });
+        // socket.emit("new message", response.data.newMessage);
+        setMessages([...messages, response.data.newMessage]);
       } catch (error) {
         console.error("Error sending message:", error);
       }
@@ -93,12 +143,12 @@ const GroupChatBox = ({ messages, myId, selectedGroup, }) => {
                 </div>
               </li>
             ))}
-            <div ref={messagesEndRef} />
+            <div ref={messagesEndRef}>  </div>
           </ul>
         ) : (
           <p className="messageArea">No chat available</p>
         )}
-            <div ref={messagesEndRef} />
+            {/* <div ref={messagesEndRef} /> */}
           </ul>
         </div>
 

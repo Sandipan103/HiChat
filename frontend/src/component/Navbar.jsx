@@ -197,7 +197,8 @@ const ResponsiveAppBar = () => {
                 </MenuItem>
                 <MenuItem
                   onClick={() => {
-                    navigate("/chat");
+                    // navigate("/chat");
+                    navigate("/chatting");
                     handleCloseUserMenu();
                   }}
                 >
