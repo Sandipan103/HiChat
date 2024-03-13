@@ -30,7 +30,7 @@ function App() {
           <Route path="/addContact" element={<NewContact /> } />
           <Route path="/createGroup" element={<NewGroup /> } />
           <Route path="/lobby" element={<VideoCall /> } />
-          <Route path="/room/:roomId" element={<RoomPage /> } />
+          {/* <Route path="/room/:roomId" element={<RoomPage /> } /> */}
         </Routes>
       </Router>
       <Toaster/>
