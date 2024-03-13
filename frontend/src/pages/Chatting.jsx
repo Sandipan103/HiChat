@@ -52,15 +52,15 @@ const Chatting = () => {
             const otherUserId = group.users.find(id => id !== userId);
             const contact = contacts.find(contact => contact.contactId === otherUserId);
             if (contact) {
-              return { ...group, groupName: contact.name };
+              return { ...group, groupName: contact.name, unreadMsgCount : 0 };
             } else {
-              return { ...group, groupName: otherUserId };
+              return { ...group, groupName: otherUserId, unreadMsgCount : 0 };
             }
           }
-          return group;
+          return  { ...group, unreadMsgCount : 0 };
         });
 
-        // console.log(modifiedGroups)
+        console.log(modifiedGroups)
   
         setGroups(modifiedGroups);
 
@@ -84,6 +84,10 @@ const Chatting = () => {
         setSelectedGroup(group);
         const response = await axios.get(`${server}/fetchAllMessages/${group._id}` );
         setMessages(response.data.messages);
+        setGroups(prevGroups => {
+          const updatedGroups = prevGroups.filter(grp => grp._id !== group._id);
+          return [group, ...updatedGroups];
+        });
         // console.log(response.data.messages)
     } catch (error) {
         console.log('group not detected');
@@ -98,6 +102,7 @@ const Chatting = () => {
       <div className="chat-body">
         <GroupList
             groups={groups}
+            setGroups = {setGroups}
             handleGroupClick = {handleGroupClick}
         />
         <div className="message-body">
@@ -107,6 +112,8 @@ const Chatting = () => {
                 messages={messages}
                 setMessages={setMessages}
                 selectedGroup={selectedGroup}
+                groups={groups}
+                setGroups = {setGroups}
               />
             )}
           </div>
