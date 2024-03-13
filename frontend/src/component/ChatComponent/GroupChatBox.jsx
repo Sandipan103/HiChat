@@ -143,12 +143,12 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedGroup, setGroups, g
                 </div>
               </li>
             ))}
-            <div ref={messagesEndRef} />
+            <div ref={messagesEndRef}>  </div>
           </ul>
         ) : (
           <p className="messageArea">No chat available</p>
         )}
-            <div ref={messagesEndRef} />
+            {/* <div ref={messagesEndRef} /> */}
           </ul>
         </div>
 
