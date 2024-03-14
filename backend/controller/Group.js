@@ -241,12 +241,26 @@ exports.fetchAllMessages = async(req, res) => {
     // console.log(chatId);
     
     // Find all messages where the chat id matches
-    const messages = await Msg.find({ chat: chatId });
-    // console.log(messages);
+    const messages = await Msg.find({ chat: chatId }).populate('sender', 'firstName lastName');
+
+    // Transform messages to include senderName
+    const transformedMessages = messages.map(message => ({
+      _id: message._id,
+      senderId: message.sender ? message.sender._id : null,
+      senderName: message.sender ? `${message.sender.firstName} ${message.sender.lastName}` : 'Unknown',
+      content: message.content,
+      chat: message.chat,
+      timestamp: message.timestamp,
+      readBy: message.readBy
+    }));
+
+    console.log("transformedMessages : ", transformedMessages)
+
     res.json({
       success: true,
-      messages,
+      messages: transformedMessages,
     });
+
   } catch (error) {
     console.log("Message fetching error:", error);
     return res.status(500).json({
