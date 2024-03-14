@@ -26,6 +26,8 @@ let socket;
 
 const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, chats}) => {
   const [messageInput, setMessageInput] = useState("");
+  const [file, setFile] = useState(null);
+
   // const [socket, setSocket] = useState("");
   const [socketConnected, setSocketConnected] = useState(false);
   const [open, setOpen] = React.useState(false);
@@ -80,11 +82,26 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, cha
           const chatWithNewMessage = updatedChats.splice(index, 1)[0];
           updatedChats.unshift(chatWithNewMessage);
         }
-        
         setChats(updatedChats);
       } else {
         setMessages([...messages, newMessage]);
       }
+    });
+
+    socket.on("file recieved", (imageData) => {
+      if(imageData){
+      const imgElement = document.createElement("img");
+      imgElement.src = imageData;
+
+      // const newMsg = { type: 'img', content: imgElement };
+      setMessages([...messages, imgElement]);
+
+      // if (messageHeaderRef.current) {
+      //   messageHeaderRef.current.appendChild(imgElement);
+      // }
+      console.log(imgElement);
+    }
+
     });
   });
 
@@ -94,10 +111,6 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, cha
 
   const handleSendMessage = async () => {
     try {
-      // socket.emit("new message", {
-      //   newMessage: response.data.newMessage,
-      //   chatUsers: djhasjdhjaskh,
-      // });
         const response = await axios.post(`${server}/sendChatMessage`, {
           myId,
           chatId : selectedChat._id,
@@ -117,6 +130,50 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, cha
         console.error("Error sending message:", error);
       }
   }
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
+
+  const handleFileUpload = () => {
+
+
+    try {
+      if (file) {
+        const reader = new FileReader();
+
+        reader.onload = async (e) => {
+          const fileData = e.target.result;
+          const filename = file.name;
+
+          const chatId = selectedChat._id;
+
+          const data = new FormData();
+          data.append("file", file);
+          data.append("myId", myId);
+          data.append("chatId", chatId);
+          data.append("messageInput", filename);
+
+
+          const response = await axios.post(`${server}/sendFiles`, data);
+
+            socket.emit("file", {
+              chatUsers: response.data.chatUsers,
+              filename: filename,
+              fileData: fileData,
+            });
+            setFile(null);
+        };
+        reader.readAsDataURL(file);
+      
+    }
+
+    } catch (error) {
+      console.error("Error file sending: ", error);
+    }
+  
+   
+  };
 
   return (
     <>
@@ -194,6 +251,11 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, cha
         >
           Send
         </Button>
+
+        <div>
+          <input type="file" onChange={handleFileChange} />
+          <button onClick={handleFileUpload}>Upload File</button>
+        </div>
       </div>
     </>
   );

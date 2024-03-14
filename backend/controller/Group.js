@@ -3,6 +3,8 @@ const User = require("../models/UserModel");
 const Chat = require("../models/chatModel");
 const Msg = require("../models/MsgModel");
 
+
+
 // dependency required
 
 
@@ -336,6 +338,52 @@ exports.readAllMessages = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: `Error in reading messages: ${error.message}`,
+    });
+  }
+}
+
+
+exports.sendFiles = async (req, res) => {
+  try {
+    const fileName = req.file.originalname;
+
+    const { myId, chatId, messageInput } = req.body;
+    if (!myId) {
+      return res.status(401).json({
+        success: false,
+        message: `user not found`,
+      });
+    }
+    if (!chatId) {
+      return res.status(401).json({
+        success: false,
+        message: `chat Id not found`,
+      });
+    }
+    let newMessage = await Msg.create({
+      sender: myId,
+      content: fileName,
+      chat: chatId,
+      readBy: [myId],
+    });
+
+    // const chat = await Chat.findById(newMessage.chat);
+    const chat = await Chat.findByIdAndUpdate(newMessage.chat, { $push: { allChatMessages: newMessage._id } });
+    const chatUsers = chat.users;
+    const newMessageWithChat = await Msg.findById(newMessage._id).populate("chat");
+
+    return res.status(200).json({
+      success: true,
+      message: 'Message sent successfully',
+      newMessage: newMessageWithChat,
+      chatUsers : chatUsers, 
+    });
+
+  } catch (error) {
+    console.log("Message sending error:", error);
+    return res.status(500).json({
+      success: false,
+      message: `Error sending messages: ${error.message}`,
     });
   }
 }
