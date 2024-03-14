@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
 import { ZIM } from "zego-zim-web";
 import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
+import { jwtDecode } from 'jwt-decode';
+import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
 
 function randomID(len) {
   let result = "";
@@ -15,16 +18,48 @@ function randomID(len) {
   return result;
 }
 
+
+
 export default function VideoCall() {
+
   const [userInfo, setUserInfo] = useState({
     userName: "",
     userId: "",
   });
   const [calleeId, setCalleeId] = useState("");
   const zeroCloudInstance = useRef(null);
+  const navigate = useNavigate(); // Moved inside the component
+  const [loading, setLoading] = useState(false); // Moved inside the component
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    const fetchUserDetail = async () => {
+      const token = Cookies.get("tokenf");
+      if (!token) {
+        navigate('/login');
+        return; // Avoid further execution when there's no token
+      }
+  
+      try {
+        setLoading(true);
+        const decodedToken = jwtDecode(token);
+        const { id: userId } = decodedToken;
+        console.log("my id ", userId);
+        setUserData(userId);
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchUserDetail();
+  }, [navigate]); // Dependency array now includes navigate
+
 
   async function init() {
-    const userId = randomID(5);
+    const userId = userData;    
+  
     const userName = "user_" + userId;
     setUserInfo({
       userName,
@@ -72,8 +107,11 @@ export default function VideoCall() {
   }
 
   useEffect(() => {
-    init();
-  }, []);
+    // Ensure userData is not null or undefined before initializing
+    if (userData) {
+      init();
+    }
+  }, [userData]); // Add userData as a dependency
 
   return (
     <div>
