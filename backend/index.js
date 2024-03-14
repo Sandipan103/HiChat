@@ -94,6 +94,15 @@ dbConnect()
         });
       });
 
+      socket.on('file', ( {chatUsers, filename, fileData}) => {
+        if (chatUsers.length === 0) return console.log("chat.users not defined");
+    
+        chatUsers.forEach((user) => {
+          // if (user == newMessage.sender) return;
+          // console.log(filename);
+          socket.in(user).emit("file recieved", fileData);
+        });
+
       socket.off("setup", () => {
         console.log("USER DISCONNECTED");
         socket.leave(userData._id);
