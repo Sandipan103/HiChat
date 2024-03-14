@@ -53,6 +53,7 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, cha
     socket.on("connected", () => setSocketConnected(true));
 
     socket.emit("join chat", selectedChat._id);
+
   }, []);
 
   useEffect(() => {
@@ -130,11 +131,11 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, cha
               <li
                 key={index}
                 className={
-                    message.senderId === myId ? "own-message" : "other-message"
+                    message.sender === myId ? "own-message" : "other-message"
                 }
               >
                 <div className="message">
-                  <p>{message.senderName}</p>
+                  <p>{message.sender}</p>
                   <p>{message.content}</p>
                 </div>
                 <div className="timestamp">
