@@ -24,7 +24,7 @@ const actions = [
 
 let socket;
 
-const GroupChatBox = ({ messages, setMessages, myId, selectedGroup, setGroups, groups}) => {
+const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, chats}) => {
   const [messageInput, setMessageInput] = useState("");
   // const [socket, setSocket] = useState("");
   const [socketConnected, setSocketConnected] = useState(false);
@@ -52,35 +52,36 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedGroup, setGroups, g
     socket.emit("setup", myId);
     socket.on("connected", () => setSocketConnected(true));
 
-    socket.emit("join chat", selectedGroup._id);
+    socket.emit("join chat", selectedChat._id);
 
   }, []);
 
   useEffect(() => {
     socket.on("message recieved", (newMessage) => {
+      console.log(newMessage);
       if (
-        !selectedGroup || // if chat is not selected or doesn't match current chat
-        selectedGroup._id !== newMessage.chat._id
+        !selectedChat || // if chat is not selected or doesn't match current chat
+        selectedChat._id !== newMessage.chat._id
       ) {
         // console.log('new message recived : ', newMessage)
-        // console.log('selectedGroup : ', selectedGroup)
-        const updatedGroups = groups.map(group => {
-          if (group._id === newMessage.chat._id) {
-            const cnt = (group.unreadMsgCount || 0) + 1;
-            return { ...group, unreadMsgCount : cnt};
+        // console.log('selectedChat : ', selectedChat)
+        const updatedChats = chats.map(chat => {
+          if (chat._id === newMessage.chat._id) {
+            const cnt = (chat.unreadMsgCount || 0) + 1;
+            return { ...chat, unreadMsgCount : cnt};
           }
-          return group;
+          return chat;
         });
 
         
 
-        const index = updatedGroups.findIndex(group => group._id === newMessage.chat._id);
+        const index = updatedChats.findIndex(chat => chat._id === newMessage.chat._id);
         if (index !== -1) {
-          const groupWithNewMessage = updatedGroups.splice(index, 1)[0];
-          updatedGroups.unshift(groupWithNewMessage);
+          const chatWithNewMessage = updatedChats.splice(index, 1)[0];
+          updatedChats.unshift(chatWithNewMessage);
         }
         
-        setGroups(updatedGroups);
+        setChats(updatedChats);
       } else {
         setMessages([...messages, newMessage]);
       }
@@ -93,9 +94,13 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedGroup, setGroups, g
 
   const handleSendMessage = async () => {
     try {
-        const response = await axios.post(`${server}/sendGroupMessage`, {
+      // socket.emit("new message", {
+      //   newMessage: response.data.newMessage,
+      //   chatUsers: djhasjdhjaskh,
+      // });
+        const response = await axios.post(`${server}/sendChatMessage`, {
           myId,
-          chatId : selectedGroup._id,
+          chatId : selectedChat._id,
           messageInput,
         });
         // console.log(response.data.newMessage);
@@ -116,7 +121,9 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedGroup, setGroups, g
   return (
     <>
       <div className="message-area">
-        <div className="message-header"></div>
+        <div className="message-header">
+          {selectedChat.groupName}
+        </div>
           <ul className="messageArea">
           {messages && messages.length > 0 ? (
           <ul className="messageArea">

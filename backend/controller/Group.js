@@ -213,17 +213,16 @@ exports.createGroup = async(req, res) => {
 }
 
 // fetch all groups of the user
-exports.findAllGroups = async(req, res) => {
+exports.findAllChats = async(req, res) => {
   try {
     const userId = req.params.userId;
     
     // Find all groups where the user is a member
-    // const groups = await Chat.find({ users: userId });
-    const groups = await Chat.find({ users: userId }).populate('allChatMessages');
+    const chats = await Chat.find({ users: userId }).populate('allChatMessages');
 
     res.json({ 
       success: true, 
-      groups 
+      chats 
     });
     
   } catch (error) {
@@ -258,7 +257,7 @@ exports.fetchAllMessages = async(req, res) => {
 }
 
 
-exports.sendGroupMessage = async (req, res) => {
+exports.sendChatMessage = async (req, res) => {
   try {
     const { myId, chatId, messageInput } = req.body;
     if (!myId) {

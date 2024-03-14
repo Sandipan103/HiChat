@@ -19,7 +19,7 @@ const BASH_URL = process.env.BASH_URL;
 
 
 
-const GroupList = ({ groups,  handleGroupClick, setGroups}) => {
+const GroupList = ({  chats,  handleChatClick,  setChats}) => {
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
   const { isAuthenticated } = useContext(AuthContext);
@@ -27,16 +27,16 @@ const GroupList = ({ groups,  handleGroupClick, setGroups}) => {
   return (
     <div>
     <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-    {groups.map((group, index) => (
+    {chats.map((chat, index) => (
        <>
          <ListItem key={index} alignItems="flex-start" className={"user"}
-            onClick={() => {handleGroupClick(group); }}>
+            onClick={() => {handleChatClick(chat); }}>
           <ListItemAvatar>
-            <Avatar alt={group.groupName ? group.groupName : "no name"} />
+            <Avatar alt={chat.groupName ? chat.groupName : "no name"} />
           </ListItemAvatar>
           <ListItemText
-            primary={<>{group.groupName ? group.groupName : "no name"} {group.unreadMsgCount && (
-              <span>  {group.unreadMsgCount}</span>
+            primary={<>{chat.groupName ? chat.groupName : "no name"} {chat.unreadMsgCount && (
+              <span>  {chat.unreadMsgCount}</span>
             )}</>}
             secondary={
               <React.Fragment>
@@ -46,7 +46,7 @@ const GroupList = ({ groups,  handleGroupClick, setGroups}) => {
                   variant="body2"
                   color="text.primary"
                 >
-                  {group.groupName ? group.groupName : "no name"}
+                  {chat.groupName ? chat.groupName : "no name"}
                 </Typography>
                 {" it is a group chat "}
               </React.Fragment>

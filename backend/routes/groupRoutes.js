@@ -2,15 +2,15 @@ const express = require("express");
 const router = express.Router();
 
 
-const { addContact, getAllFriends, createGroup, findAllGroups, fetchAllMessages, sendGroupMessage, readAllMessages} = require('../controller/Group');
+const { addContact, getAllFriends, createGroup, findAllChats, fetchAllMessages, sendChatMessage, readAllMessages} = require('../controller/Group');
 
 
 router.get("/getAllFriends/:userId", getAllFriends);
 router.post("/addContact", addContact);
 router.post("/createGroup", createGroup);
-router.get("/findAllGroups/:userId", findAllGroups);
+router.get("/findAllChats/:userId", findAllChats);
 router.get("/fetchAllMessages/:chatId", fetchAllMessages);
-router.post("/sendGroupMessage", sendGroupMessage);
+router.post("/sendChatMessage", sendChatMessage);
 router.post("/readAllMessages", readAllMessages);
 // router.get('/getUserProfileById/:userId', getUserProfileById);
 
