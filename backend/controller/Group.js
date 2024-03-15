@@ -282,12 +282,11 @@ exports.sendChatMessage = async (req, res) => {
     // const chat = await Chat.findById(newMessage.chat);
     const chat = await Chat.findByIdAndUpdate(newMessage.chat, { $push: { allChatMessages: newMessage._id } });
     const chatUsers = chat.users;
-    const newMessageWithChat = await Msg.findById(newMessage._id).populate("chat");
 
     return res.status(200).json({
       success: true,
       message: 'Message sent successfully',
-      newMessage: newMessageWithChat,
+      newMessage: newMessage,
       chatUsers : chatUsers, 
     });
 

@@ -61,12 +61,12 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, cha
       console.log(newMessage);
       if (
         !selectedChat || // if chat is not selected or doesn't match current chat
-        selectedChat._id !== newMessage.chat._id
+        selectedChat._id !== newMessage.chat
       ) {
         // console.log('new message recived : ', newMessage)
         // console.log('selectedChat : ', selectedChat)
         const updatedChats = chats.map(chat => {
-          if (chat._id === newMessage.chat._id) {
+          if (chat._id === newMessage.chat) {
             const cnt = (chat.unreadMsgCount || 0) + 1;
             return { ...chat, unreadMsgCount : cnt};
           }
@@ -75,7 +75,7 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, cha
 
         
 
-        const index = updatedChats.findIndex(chat => chat._id === newMessage.chat._id);
+        const index = updatedChats.findIndex(chat => chat._id === newMessage.chat);
         if (index !== -1) {
           const chatWithNewMessage = updatedChats.splice(index, 1)[0];
           updatedChats.unshift(chatWithNewMessage);
@@ -94,10 +94,6 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, cha
 
   const handleSendMessage = async () => {
     try {
-      // socket.emit("new message", {
-      //   newMessage: response.data.newMessage,
-      //   chatUsers: djhasjdhjaskh,
-      // });
         const response = await axios.post(`${server}/sendChatMessage`, {
           myId,
           chatId : selectedChat._id,
@@ -111,7 +107,6 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, cha
           newMessage: response.data.newMessage,
           chatUsers: response.data.chatUsers,
         });
-        // socket.emit("new message", response.data.newMessage);
         setMessages([...messages, response.data.newMessage]);
       } catch (error) {
         console.error("Error sending message:", error);
