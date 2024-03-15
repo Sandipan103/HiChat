@@ -11,6 +11,7 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "@zegocloud/zego-uikit-prebuilt": "^2.0.0",
     "axios": "^1.6.7",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
@@ -21,7 +22,8 @@
     "react-router-dom": "^6.22.0",
     "react-scripts": "5.0.1",
     "socket.io-client": "^4.7.4",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "zego-zim-web": "^2.14.0"
   },
   "scripts": {
     "start": "react-scripts start",

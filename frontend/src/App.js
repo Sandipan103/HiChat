@@ -12,6 +12,8 @@ import Navbar from "./component/Navbar";
 import NewContact from "./component/NewContact";
 import NewGroup from "./component/NewGroup";
 import Chatting from "./pages/Chatting";
+import VideoCall from "./pages/Home";
+import RoomPage from "./pages/Room";
 
 function App() {
   return (
@@ -27,7 +29,8 @@ function App() {
           <Route path="/chatting" element={<Chatting /> } />
           <Route path="/addContact" element={<NewContact /> } />
           <Route path="/createGroup" element={<NewGroup /> } />
-
+          <Route path="/lobby" element={<VideoCall /> } />
+          {/* <Route path="/room/:roomId" element={<RoomPage /> } /> */}
         </Routes>
       </Router>
       <Toaster/>
