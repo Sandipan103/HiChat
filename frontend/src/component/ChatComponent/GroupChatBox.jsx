@@ -265,11 +265,9 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, cha
       // Step 1: Find all chat members
       const chatMembersResponse = await axios.get(`${server}/findChatMemberDetails/${selectedChat._id}`);
       const chatMembers = chatMembersResponse.data.users;
-      console.log(chatMembersResponse);
       // Step 2: Find all contacts
       const allContactsResponse = await axios.get(`${server}/getAllFriends/${myId}`);
       const allContacts = allContactsResponse.data.contacts;
-      console.log(allContacts);
       // step-3 : show the chatMember top of the searchbar and other contact below the search bar, and other contact below the search bar
       const selectedContacts = [];
       const unselectedContacts = [];
@@ -286,9 +284,6 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, cha
       setAllContacts(allContacts); 
       setSelectedContact(selectedContacts);
       setNotSelectedContact(unselectedContacts);
-      console.log(selectedContacts)
-      console.log(unselectedContacts)
-      console.log(allContacts)
       
       // step-4 : when click on the submit button it will send the selected user list to the backend, and update the group
     } catch (error) {
@@ -318,9 +313,8 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, cha
           {selectedChat.groupName}
           {selectedChat.isGroupChat &&  <Button onClick={handleGroupShowing}> seeGroup </Button>}
           {selectedChat.isGroupChat && selectedChat.groupAdmin === myId &&  <Button onClick={modifyGroup}> modifyGroup </Button>}
-
-          {/* here you have to show the required things */}
-          {showModifiedGroup && (<div>
+          {showModifiedGroup && 
+          (<div>
             <h2>Selected Members:</h2>
             <div style={{ display: 'flex', flexWrap: 'wrap' }}>
             {selectedContact.map(contact => {
@@ -368,33 +362,33 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, cha
           <ul className="messageArea">
           {messages && messages.length > 0 ? (
             <ul className="messageArea">
-           {messages.map((message, index) => (
-  <li
-    key={index}
-    className={message.sender === myId ? "own-message" : "other-message"}
-  >
-    <div className="message">
-      <p>{message.sender}</p>
-      <p>{message.content}</p>
-      {/* Add Delete Button for messages sent by the user */}
-      {message.sender === myId && (
-        <button onClick={() => handleDeleteMessage(message._id)} className="delete-message-btn">Delete</button>
-      )}
-    </div>
-    <div className="timestamp">
-      <p className="message-timestamp">
-        {new Date(message.timestamp).toLocaleString("en-US", {
-          year: "numeric",
-          month: "numeric",
-          day: "numeric",
-          hour: "numeric",
-          minute: "numeric",
-          hour12: true,
-        })}
-      </p>
-    </div>
-  </li>
-))}
+          {messages.map((message, index) => (
+            <li
+              key={index}
+              className={message.sender === myId ? "own-message" : "other-message"}
+            >
+              <div className="message">
+                <p>{message.sender}</p>
+                <p>{message.content}</p>
+                {/* Add Delete Button for messages sent by the user */}
+                {message.sender === myId && (
+                  <button onClick={() => handleDeleteMessage(message._id)} className="delete-message-btn">Delete</button>
+                )}
+              </div>
+              <div className="timestamp">
+                <p className="message-timestamp">
+                  {new Date(message.timestamp).toLocaleString("en-US", {
+                    year: "numeric",
+                    month: "numeric",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "numeric",
+                    hour12: true,
+                  })}
+                </p>
+              </div>
+            </li>
+          ))}
               <div ref={messagesEndRef}></div>
             </ul>
           ) : (
