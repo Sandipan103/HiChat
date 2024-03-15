@@ -11,6 +11,7 @@ router.post("/createGroup", createGroup);
 router.get("/findAllGroups/:userId", findAllGroups);
 router.get("/fetchAllMessages/:chatId", fetchAllMessages);
 router.post("/sendGroupMessage", sendGroupMessage);
+
 // router.get('/getUserProfileById/:userId', getUserProfileById);
 
 module.exports = router; 

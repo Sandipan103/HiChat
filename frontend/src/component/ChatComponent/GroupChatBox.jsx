@@ -30,6 +30,9 @@ const actions = [
   { icon: <ShareIcon />, name: "Share" },
 ];
 
+
+
+
 let socket;
 
 const GroupChatBox = ({ messages, setMessages, myId, selectedGroup, setGroups, groups}) => {
@@ -40,6 +43,25 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedGroup, setGroups, g
   const handleClose = () => setOpen(false);
 
   const messagesEndRef = useRef(null);
+
+  const handleDeleteMessage = async (messageId) => {
+    try {
+      
+      // await axios.post(`${server}/deletemessage/${messageId}`,{userId});
+      const response = await axios.post(`${server}/deletemessage`,
+        { messageId: messageId, userId: myId },
+        { withCredentials: true }
+      );
+     
+      const updatedMessages = messages.filter((message) => message._id !== messageId);
+      setMessages(updatedMessages);
+
+      socket.emit("message deleted", messageId);
+    } catch (error) {
+      console.error("Failed to delete message:", error);
+    }
+  };
+  
 
 
 
@@ -190,29 +212,33 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedGroup, setGroups, g
         <ul className="messageArea">
           {messages && messages.length > 0 ? (
             <ul className="messageArea">
-              {messages.map((message, index) => (
-                <li
-                  key={index}
-                  className={message.sender === myId ? "own-message" : "other-message"}
-                >
-                  <div className="message">
-                    <p>{message.sender}</p>
-                    <p>{message.content}</p>
-                  </div>
-                  <div className="timestamp">
-                    <p className="message-timestamp">
-                      {new Date(message.timestamp).toLocaleString("en-US", {
-                        year: "numeric",
-                        month: "numeric",
-                        day: "numeric",
-                        hour: "numeric",
-                        minute: "numeric",
-                        hour12: true,
-                      })}
-                    </p>
-                  </div>
-                </li>
-              ))}
+           {messages.map((message, index) => (
+  <li
+    key={index}
+    className={message.sender === myId ? "own-message" : "other-message"}
+  >
+    <div className="message">
+      <p>{message.sender}</p>
+      <p>{message.content}</p>
+      {/* Add Delete Button for messages sent by the user */}
+      {message.sender === myId && (
+        <button onClick={() => handleDeleteMessage(message._id)} className="delete-message-btn">Delete</button>
+      )}
+    </div>
+    <div className="timestamp">
+      <p className="message-timestamp">
+        {new Date(message.timestamp).toLocaleString("en-US", {
+          year: "numeric",
+          month: "numeric",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+          hour12: true,
+        })}
+      </p>
+    </div>
+  </li>
+))}
               <div ref={messagesEndRef}></div>
             </ul>
           ) : (

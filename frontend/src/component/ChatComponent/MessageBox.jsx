@@ -1,3 +1,4 @@
+User
 import React, { useState, useEffect, useRef } from 'react';
 
 const MessageBox = ({ messages, myId }) => {
