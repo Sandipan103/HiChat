@@ -218,11 +218,19 @@ exports.findAllChats = async(req, res) => {
     const userId = req.params.userId;
     
     // Find all groups where the user is a member
-    const chats = await Chat.find({ users: userId }).populate('allChatMessages');
+    const chats = await Chat.find({ users: userId }).populate('allChatMessages').populate('latestMessage');
+
+    const modifiedChats = chats.map(chat => {
+      const latestMessageContent = chat.latestMessage ? chat.latestMessage.content : null;
+      return {
+        ...chat.toObject(),
+        latestMessage: latestMessageContent
+      };
+    });
 
     res.json({ 
       success: true, 
-      chats 
+      chats : modifiedChats,
     });
     
   } catch (error) {
@@ -280,6 +288,7 @@ exports.sendChatMessage = async (req, res) => {
     });
 
     // const chat = await Chat.findById(newMessage.chat);
+    await Chat.findByIdAndUpdate(chatId, { latestMessage: newMessage._id });
     const chat = await Chat.findByIdAndUpdate(newMessage.chat, { $push: { allChatMessages: newMessage._id } });
     const chatUsers = chat.users;
 

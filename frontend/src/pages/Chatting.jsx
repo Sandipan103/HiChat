@@ -71,6 +71,7 @@ const Chatting = () => {
         });
 
         // console.log(modifiedGroups) 
+        console.log(modifiedChats) 
         setChats(modifiedChats);
 
       } catch (error) {

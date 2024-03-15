@@ -68,7 +68,7 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, cha
         const updatedChats = chats.map(chat => {
           if (chat._id === newMessage.chat) {
             const cnt = (chat.unreadMsgCount || 0) + 1;
-            return { ...chat, unreadMsgCount : cnt};
+            return { ...chat, unreadMsgCount : cnt, latestMessage : newMessage.content};
           }
           return chat;
         });
@@ -83,6 +83,12 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, cha
         
         setChats(updatedChats);
       } else {
+        setChats(prevChats => prevChats.map(chat => {
+          if (chat._id === selectedChat._id) {
+            return { ...chat, latestMessage: newMessage.content };
+          }
+          return chat;
+        }));
         setMessages([...messages, newMessage]);
       }
     });
@@ -102,11 +108,21 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, cha
         // console.log(response.data.newMessage);
         // console.log(response.data.chatUsers);
         // console.log(messages);
-        setMessageInput("");
+        
         socket.emit("new message", {
           newMessage: response.data.newMessage,
           chatUsers: response.data.chatUsers,
         });
+
+        const updatedChats = chats.map(chat => {
+          if (chat._id === selectedChat._id) {
+            return { ...chat, latestMessage: messageInput };
+          }
+          return chat;
+        });
+    
+        setChats(updatedChats);
+        setMessageInput("");
         setMessages([...messages, response.data.newMessage]);
       } catch (error) {
         console.error("Error sending message:", error);
