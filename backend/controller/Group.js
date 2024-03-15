@@ -213,16 +213,24 @@ exports.createGroup = async(req, res) => {
 }
 
 // fetch all groups of the user
-exports.findAllGroups = async(req, res) => {
+exports.findAllChats = async(req, res) => {
   try {
     const userId = req.params.userId;
     
     // Find all groups where the user is a member
-    const groups = await Chat.find({ users: userId });
+    const chats = await Chat.find({ users: userId }).populate('allChatMessages').populate('latestMessage');
+
+    const modifiedChats = chats.map(chat => {
+      const latestMessageContent = chat.latestMessage ? chat.latestMessage.content : null;
+      return {
+        ...chat.toObject(),
+        latestMessage: latestMessageContent
+      };
+    });
 
     res.json({ 
       success: true, 
-      groups 
+      chats : modifiedChats,
     });
     
   } catch (error) {
@@ -257,7 +265,7 @@ exports.fetchAllMessages = async(req, res) => {
 }
 
 
-exports.sendGroupMessage = async (req, res) => {
+exports.sendChatMessage = async (req, res) => {
   try {
     const { myId, chatId, messageInput } = req.body;
     if (!myId) {
@@ -276,16 +284,18 @@ exports.sendGroupMessage = async (req, res) => {
       sender: myId,
       content: messageInput,
       chat: chatId,
+      readBy: [myId],
     });
 
-    const chat = await Chat.findById(newMessage.chat);
+    // const chat = await Chat.findById(newMessage.chat);
+    await Chat.findByIdAndUpdate(chatId, { latestMessage: newMessage._id });
+    const chat = await Chat.findByIdAndUpdate(newMessage.chat, { $push: { allChatMessages: newMessage._id } });
     const chatUsers = chat.users;
-    const newMessageWithChat = await Msg.findById(newMessage._id).populate("chat");
 
     return res.status(200).json({
       success: true,
       message: 'Message sent successfully',
-      newMessage: newMessageWithChat,
+      newMessage: newMessage,
       chatUsers : chatUsers, 
     });
 
@@ -294,6 +304,46 @@ exports.sendGroupMessage = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: `Error sending messages: ${error.message}`,
+    });
+  }
+}
+
+
+exports.readAllMessages = async (req, res) => {
+  try {
+    const { myId, chatId } = req.body;
+    if (!myId) {
+      return res.status(401).json({
+        success: false,
+        message: `user not found`,
+      });
+    }
+    if (!chatId) {
+      return res.status(401).json({
+        success: false,
+        message: `chat Id not found`,
+      });
+    }
+    
+    const chat = await Chat.findById(chatId).populate('allChatMessages');
+    // here for each Msg in chat.allChatMessages is myId is not present in readBy array of Msg then add the myId in readBY array
+    for (const message of chat.allChatMessages) {
+      // If myId is not present in readBy array, add it
+      if (!message.readBy.includes(myId)) {
+        const repp = await Msg.findByIdAndUpdate(message._id, { $push: { readBy: myId } });
+      }
+    }
+    
+    return res.status(200).json({
+      success: true,
+      message: 'All messages marked as read',
+    });
+
+  } catch (error) {
+    console.log("all message reading error:", error);
+    return res.status(500).json({
+      success: false,
+      message: `Error in reading messages: ${error.message}`,
     });
   }
 }

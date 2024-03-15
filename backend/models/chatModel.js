@@ -10,6 +10,10 @@ const chatModel = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Msg",
     },
+    allChatMessages : [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Msg",
+    }],
     groupAdmin: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     timestamp:{ type: Date, default: Date.now, }
   },

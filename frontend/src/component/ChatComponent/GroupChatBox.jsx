@@ -35,7 +35,7 @@ const actions = [
 
 let socket;
 
-const GroupChatBox = ({ messages, setMessages, myId, selectedGroup, setGroups, groups}) => {
+const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, chats}) => {
   const [messageInput, setMessageInput] = useState("");
   const [socketConnected, setSocketConnected] = useState(false);
   const [open, setOpen] = React.useState(false);
@@ -151,35 +151,48 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedGroup, setGroups, g
     socket = io("http://localhost:4000");
     socket.emit("setup", myId);
     socket.on("connected", () => setSocketConnected(true));
-    socket.emit("join chat", selectedGroup._id);
-    const oth=selectedGroup.users.find(id=>id!=myId);
+    socket.emit("join chat", selectedChat._id);
+    const oth=selectedChat.users.find(id=>id!=myId);
     setCalleeId(oth);
-  }, [selectedGroup]);
+  }, [selectedChat]);
 
   useEffect(() => {
-    socket.on("message received", (newMessage) => {
+    socket.on("message recieved", (newMessage) => {
+      console.log(newMessage);
       if (
-        !selectedGroup || // if chat is not selected or doesn't match current chat
-        selectedGroup._id !== newMessage.chat._id
+        !selectedChat || // if chat is not selected or doesn't match current chat
+        selectedChat._id !== newMessage.chat
       ) {
-        const updatedGroups = groups.map(group => {
-          if (group._id === newMessage.chat._id) {
-            const cnt = (group.unreadMsgCount || 0) + 1;
-            return { ...group, unreadMsgCount : cnt};
+        // console.log('new message recived : ', newMessage)
+        // console.log('selectedChat : ', selectedChat)
+        const updatedChats = chats.map(chat => {
+          if (chat._id === newMessage.chat) {
+            const cnt = (chat.unreadMsgCount || 0) + 1;
+            return { ...chat, unreadMsgCount : cnt, latestMessage : newMessage.content};
           }
-          return group;
+          return chat;
         });
-        const index = updatedGroups.findIndex(group => group._id === newMessage.chat._id);
+
+        
+
+        const index = updatedChats.findIndex(chat => chat._id === newMessage.chat);
         if (index !== -1) {
-          const groupWithNewMessage = updatedGroups.splice(index, 1)[0];
-          updatedGroups.unshift(groupWithNewMessage);
+          const chatWithNewMessage = updatedChats.splice(index, 1)[0];
+          updatedChats.unshift(chatWithNewMessage);
         }
-        setGroups(updatedGroups);
+        
+        setChats(updatedChats);
       } else {
+        setChats(prevChats => prevChats.map(chat => {
+          if (chat._id === selectedChat._id) {
+            return { ...chat, latestMessage: newMessage.content };
+          }
+          return chat;
+        }));
         setMessages([...messages, newMessage]);
       }
     });
-  }, [messages, selectedGroup, groups, setGroups]);
+  }, [messages, selectedChat, chats, setChats]);
 
   const handleMessageInputChange = (e) => {
     setMessageInput(e.target.value);
@@ -187,29 +200,42 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedGroup, setGroups, g
 
   const handleSendMessage = async () => {
     try {
-      const response = await axios.post(`${server}/sendGroupMessage`, {
-        myId,
-        chatId : selectedGroup._id,
-        messageInput,
-      });
-      setMessageInput("");
-      socket.emit("new message", {
-        newMessage: response.data.newMessage,
-        chatUsers: response.data.chatUsers,
-      });
-      setMessages([...messages, response.data.newMessage]);
-    } catch (error) {
-      console.error("Error sending message:", error);
-    }
-  };
+        const response = await axios.post(`${server}/sendChatMessage`, {
+          myId,
+          chatId : selectedChat._id,
+          messageInput,
+        });
+        // console.log(response.data.newMessage);
+        // console.log(response.data.chatUsers);
+        // console.log(messages);
+        
+        socket.emit("new message", {
+          newMessage: response.data.newMessage,
+          chatUsers: response.data.chatUsers,
+        });
 
+        const updatedChats = chats.map(chat => {
+          if (chat._id === selectedChat._id) {
+            return { ...chat, latestMessage: messageInput };
+          }
+          return chat;
+        });
+    
+        setChats(updatedChats);
+        setMessageInput("");
+        setMessages([...messages, response.data.newMessage]);
+      } catch (error) {
+        console.error("Error sending message:", error);
+      }
+  }
 
   return (
     <>
       <div className="message-area">
         <div className="message-header">
+          {selectedChat.groupName}
         </div>
-        <ul className="messageArea">
+          <ul className="messageArea">
           {messages && messages.length > 0 ? (
             <ul className="messageArea">
            {messages.map((message, index) => (

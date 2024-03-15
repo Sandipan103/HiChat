@@ -15,14 +15,14 @@ import {server, AuthContext} from '../context/UserContext';
 const Chatting = () => {
   const { isAuthenticated } = useContext(AuthContext);
   const [myId, setMyId] = useState("");
-  const [groups, setGroups] = useState([])
-  const [selectedGroup, setSelectedGroup] = useState()
+  const [chats, setChats] = useState([])
+  const [selectedChat, setSelectedChat] = useState()
   const [messages, setMessages] = useState([""]);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef(null);
   const navigate = useNavigate();
 
-  const fetchUserDetail = async (group) => {
+  const fetchUserDetail = async () => {
     const token = Cookies.get("tokenf");
     if(!token)  {
       navigate('/login');
@@ -34,39 +34,49 @@ const Chatting = () => {
         const { id: userId } = decodedToken;
 
         const response = await axios.get(
-          `${server}/findAllGroups/${userId}`
+          `${server}/findAllChats/${userId}`
         );
         const myContacts = await axios.get(
           `${server}/contacts/${userId}`
         );
         setMyId(userId);
 
-        const userGroups = response.data.groups;
+        const userChats = response.data.chats;
         const contacts = myContacts.data.contacts;
 
-        // console.log(userGroups);
+        // console.log(userChats); 
         // console.log(myContacts.data.contacts);
         
-        const modifiedGroups = userGroups.map(group => {
-          if (!group.isGroupChat) {
-            const otherUserId = group.users.find(id => id !== userId);
+        const modifiedChats = userChats.map(chat => {
+
+          let unreadMsgCount = 0;
+          
+          if (!chat.isGroupChat) {
+            const otherUserId = chat.users.find(id => id !== userId);
             const contact = contacts.find(contact => contact.contactId === otherUserId);
             if (contact) {
-              return { ...group, groupName: contact.name, unreadMsgCount : 0 };
+              chat.groupName = contact.name
             } else {
-              return { ...group, groupName: otherUserId, unreadMsgCount : 0 };
+              chat.groupName = contact.otherUserId
             }
           }
-          return  { ...group, unreadMsgCount : 0 };
+
+          chat.allChatMessages.forEach(message => {
+            if (!message.readBy.includes(userId)) {
+                unreadMsgCount++;
+            }
+          });
+          chat.unreadMsgCount = unreadMsgCount;
+          return chat;
         });
 
-        console.log(modifiedGroups)
-  
-        setGroups(modifiedGroups);
+        // console.log(modifiedGroups) 
+        console.log(modifiedChats) 
+        setChats(modifiedChats);
 
       } catch (error) {
-        toast.error("group data not fetched");
-        console.error("Error finding group : ", error);
+        toast.error("chat data not fetched");
+        console.error("Error finding chat : ", error);
         navigate('/login');
       } finally {
         setLoading(false);
@@ -78,19 +88,30 @@ const Chatting = () => {
     fetchUserDetail();
   }, [navigate]);
 
-  const handleGroupClick = async(group) => {
+  const handleChatClick = async(chat) => {
     try {
         // console.log('group : ', group);
-        setSelectedGroup(group);
-        const response = await axios.get(`${server}/fetchAllMessages/${group._id}` );
-        setMessages(response.data.messages);
-        setGroups(prevGroups => {
-          const updatedGroups = prevGroups.filter(grp => grp._id !== group._id);
-          return [group, ...updatedGroups];
+        if(selectedChat)  {
+          await axios.post(`${server}/readAllMessages`, {
+            myId,
+            chatId : selectedChat._id,
+          });
+        }
+        setSelectedChat(chat);
+        const response = await axios.get(`${server}/fetchAllMessages/${chat._id}` );
+        const responseReadMsg = await axios.post(`${server}/readAllMessages`, {
+          myId,
+          chatId : chat._id,
         });
-        // console.log(response.data.messages)
+        await fetchUserDetail();
+        chat.unreadMsgCount = 0;
+        setMessages(response.data.messages);
+        setChats(prevChats => {
+          const updatedChats = prevChats.filter(grp => grp._id !== chat._id);
+          return [chat, ...updatedChats];
+        });
     } catch (error) {
-        console.log('group not detected');
+        console.log('chat not detected');
         console.log(error);
     }
   }
@@ -101,19 +122,19 @@ const Chatting = () => {
       <div className="chat-box">
       <div className="chat-body">
         <GroupList
-            groups={groups}
-            setGroups = {setGroups}
-            handleGroupClick = {handleGroupClick}
+            chats={chats}
+            setChats = {setChats}
+            handleChatClick = {handleChatClick}
         />
         <div className="message-body">
-            {selectedGroup && (
+            {selectedChat && (
               <GroupChatBox
                 myId={myId}
                 messages={messages}
                 setMessages={setMessages}
-                selectedGroup={selectedGroup}
-                groups={groups}
-                setGroups = {setGroups}
+                selectedChat={selectedChat}
+                chats={chats}
+                setChats = {setChats}
               />
             )}
           </div>
