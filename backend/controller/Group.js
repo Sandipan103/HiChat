@@ -345,9 +345,21 @@ exports.readAllMessages = async (req, res) => {
 
 exports.sendFiles = async (req, res) => {
   try {
-    const fileName = req.file.originalname;
+    const fileName = req.file.filename;
+    
+    const { myId, chatId, messageInput, type, } = req.body;
 
-    const { myId, chatId, messageInput } = req.body;
+    const updateFields = {};
+    if (type === "image") {
+        updateFields.imageUrl = fileName;
+    } else if (type === "video") {
+        updateFields.videoUrl = fileName;
+    } else if (type === "audio") {
+        updateFields.audioUrl = fileName;
+    } else if (type === "document") {
+        updateFields.documentUrl = fileName;
+    }
+
     if (!myId) {
       return res.status(401).json({
         success: false,
@@ -362,15 +374,19 @@ exports.sendFiles = async (req, res) => {
     }
     let newMessage = await Msg.create({
       sender: myId,
-      content: fileName,
+      content: messageInput,
       chat: chatId,
+      type: type,
       readBy: [myId],
+      ...updateFields,
     });
+    console.log(newMessage)
 
     // const chat = await Chat.findById(newMessage.chat);
     const chat = await Chat.findByIdAndUpdate(newMessage.chat, { $push: { allChatMessages: newMessage._id } });
     const chatUsers = chat.users;
     const newMessageWithChat = await Msg.findById(newMessage._id).populate("chat");
+    console.log(newMessage)
 
     return res.status(200).json({
       success: true,

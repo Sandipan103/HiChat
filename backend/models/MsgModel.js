@@ -8,11 +8,12 @@ const msgSchema = mongoose.Schema({
   readBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   type: {
     type: String,
-    enum: ["text", "image", "video", "document", "location", "contact"],
-    required: true,
+    enum: ["text", "image", "video", "audio", "document", "location", "contact"],
+    default: "text",
   },
   imageUrl: { type: String },
   videoUrl: { type: String },
+  audioUrl: { type: String },
   documentUrl: { type: String },
 });
 
