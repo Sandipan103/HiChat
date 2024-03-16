@@ -44,7 +44,7 @@ const Chatting = () => {
         const userChats = response.data.chats;
         const contacts = myContacts.data.contacts;
 
-        // console.log(userChats); 
+        // console.log(userChats)
         // console.log(myContacts.data.contacts);
         
         const modifiedChats = userChats.map(chat => {
@@ -57,7 +57,7 @@ const Chatting = () => {
             if (contact) {
               chat.groupName = contact.name
             } else {
-              chat.groupName = "unknown";
+              chat.groupName = "unknown"
             }
           }
 
@@ -71,7 +71,8 @@ const Chatting = () => {
         });
 
         // console.log(modifiedGroups) 
-        console.log(modifiedChats) 
+        modifiedChats.sort((a, b) => new Date(b.latestMessageTime) - new Date(a.latestMessageTime));
+        console.log(modifiedChats)
         setChats(modifiedChats);
 
       } catch (error) {

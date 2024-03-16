@@ -165,7 +165,7 @@ exports.getAllFriends = async(req, res) => {
     }
     res.json({ 
       success: true, 
-      user
+      contacts : user.contacts,
     });
   } catch (error) {
     console.log("finding frined error : ", error);
@@ -222,9 +222,11 @@ exports.findAllChats = async(req, res) => {
 
     const modifiedChats = chats.map(chat => {
       const latestMessageContent = chat.latestMessage ? chat.latestMessage.content : null;
+      const latestMessageTime = chat.latestMessage ? chat.latestMessage.timestamp : null;
       return {
         ...chat.toObject(),
-        latestMessage: latestMessageContent
+        latestMessage: latestMessageContent,
+        latestMessageTime : latestMessageTime,
       };
     });
 
@@ -344,6 +346,53 @@ exports.readAllMessages = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: `Error in reading messages: ${error.message}`,
+    });
+  }
+}
+
+exports.findChatMemberDetails = async(req, res) => {
+  try {
+    const chatId = req.params.chatId;
+
+    const chat = await Chat.findById(chatId)
+      .populate({path: 'users', select: '_id firstName lastName',})
+      .populate({path: 'groupAdmin', select: '_id firstName lastName',});
+
+    res.json({
+      success: true,
+      users : chat.users,
+      groupAdmin : chat.groupAdmin,
+    });
+  } catch (error) {
+    console.log("Message fetching error:", error);
+    return res.status(500).json({
+      success: false,
+      message: `Error fetching messages: ${error.message}`,
+    });
+  }
+}
+
+
+exports.updateChatMember = async(req, res)  => {
+  try {
+    const {chatId, selectedContacts, myId} = req.body;
+    const updatedUsers = [...selectedContacts, myId];
+    const updatedChat = await Chat.findByIdAndUpdate(
+      chatId,
+      { users: updatedUsers },
+      { new: true }
+    );
+
+    res.status(200).json({ 
+      success : true,
+      message: "Chat members updated successfully", 
+      chat: updatedChat 
+    });
+  } catch (error) {
+    console.error("Error updating chat members:", error);
+    return res.status(500).json({ 
+      success : false,
+      message: "Internal server error" 
     });
   }
 }
