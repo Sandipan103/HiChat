@@ -61,7 +61,7 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, cha
         { withCredentials: true }
       );
      
-      const updatedMessages = messages.filter((message) => message._id !== messageId);
+      const updatedMessages = messages;
       setMessages(updatedMessages);
 
       socket.emit("message deleted", messageId);
@@ -136,7 +136,6 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, cha
   }
 
   useEffect(() => {
-    // Ensure userData is not null or undefined before initializing
     if (myId) {
       init();
     }
