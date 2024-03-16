@@ -57,7 +57,7 @@ const Chatting = () => {
             if (contact) {
               chat.groupName = contact.name
             } else {
-              chat.groupName = contact.otherUserId
+              chat.groupName = "unknown";
             }
           }
 

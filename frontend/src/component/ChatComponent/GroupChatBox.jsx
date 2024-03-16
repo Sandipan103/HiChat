@@ -53,7 +53,7 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, cha
         { withCredentials: true }
       );
      
-      const updatedMessages = messages.filter((message) => message._id !== messageId);
+      const updatedMessages = messages;
       setMessages(updatedMessages);
 
       socket.emit("message deleted", messageId);
@@ -128,7 +128,6 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, cha
   }
 
   useEffect(() => {
-    // Ensure userData is not null or undefined before initializing
     if (myId) {
       init();
     }
@@ -246,8 +245,8 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, cha
     <div className="message">
       <p>{message.sender}</p>
       <p>{message.content}</p>
-      {/* Add Delete Button for messages sent by the user */}
-      {message.sender === myId && (
+       {/* Add Delete Button for messages sent by the user */}
+       {message.sender === myId && (
         <button onClick={() => handleDeleteMessage(message._id)} className="delete-message-btn">Delete</button>
       )}
     </div>
