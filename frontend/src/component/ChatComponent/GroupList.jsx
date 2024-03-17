@@ -48,7 +48,7 @@ const GroupList = ({  chats,  handleChatClick,  setChats}) => {
                 >
                   {chat.groupName ? chat.groupName : "no name"}
                 </Typography>
-                {" it is a group chat "}
+                {chat.latestMessage}
               </React.Fragment>
             }
           />

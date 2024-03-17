@@ -149,7 +149,7 @@ const NewGroup = () => {
         const decodedToken = jwtDecode(token);
         setuserId(decodedToken.id);
         const response = await axios.get(`${server}/getAllFriends/${decodedToken.id}`);
-        setFriends(response.data.user.contacts);
+        setFriends(response.data.contacts);
       } catch (error) {
         toast.error("User friends not found");
         console.error("Friend finding error: ", error);

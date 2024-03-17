@@ -44,7 +44,7 @@ const Chatting = () => {
         const userChats = response.data.chats;
         const contacts = myContacts.data.contacts;
 
-        // console.log(userChats); 
+        // console.log(userChats)
         // console.log(myContacts.data.contacts);
         
         const modifiedChats = userChats.map(chat => {
@@ -57,7 +57,7 @@ const Chatting = () => {
             if (contact) {
               chat.groupName = contact.name
             } else {
-              chat.groupName = contact.otherUserId
+              chat.groupName = "unknown"
             }
           }
 
@@ -71,11 +71,13 @@ const Chatting = () => {
         });
 
         // console.log(modifiedGroups) 
+        modifiedChats.sort((a, b) => new Date(b.latestMessageTime) - new Date(a.latestMessageTime));
+        console.log(modifiedChats)
         setChats(modifiedChats);
 
       } catch (error) {
-        toast.error("group data not fetched");
-        console.error("Error finding group : ", error);
+        toast.error("chat data not fetched");
+        console.error("Error finding chat : ", error);
         navigate('/login');
       } finally {
         setLoading(false);
@@ -90,6 +92,12 @@ const Chatting = () => {
   const handleChatClick = async(chat) => {
     try {
         // console.log('group : ', group);
+        if(selectedChat)  {
+          await axios.post(`${server}/readAllMessages`, {
+            myId,
+            chatId : selectedChat._id,
+          });
+        }
         setSelectedChat(chat);
         const response = await axios.get(`${server}/fetchAllMessages/${chat._id}` );
         const responseReadMsg = await axios.post(`${server}/readAllMessages`, {

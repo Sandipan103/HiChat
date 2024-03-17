@@ -3,7 +3,7 @@ const router = express.Router();
 const multer = require("multer");
 const path = require('path');
 
-const { addContact, getAllFriends, createGroup, findAllChats, fetchAllMessages, sendChatMessage, readAllMessages, sendFiles} = require('../controller/Group');
+const { addContact, getAllFriends, createGroup, findAllChats, fetchAllMessages, sendChatMessage, readAllMessages, sendFiles, findChatMemberDetails, updateChatMember} = require('../controller/Group');
 
 
 router.get("/getAllFriends/:userId", getAllFriends);
@@ -57,6 +57,9 @@ const userFile = multer.diskStorage({
 
 // router.post("/sendFiles", sendFiles);
 
+
+router.get("/findChatMemberDetails/:chatId", findChatMemberDetails);
+router.post("/updateChatMember", updateChatMember);
 
 // router.get('/getUserProfileById/:userId', getUserProfileById);
 
