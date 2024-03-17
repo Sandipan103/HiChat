@@ -96,6 +96,7 @@ exports.messageDelete=async (req, res,next) => {
     }
 
     message.content = "message deleted";
+    message.isDeleted=true;
     await message.save();
 
     res.status(200).json({ message: 'Message deleted successfully.' });

@@ -84,9 +84,10 @@
     border: 1px solid #efefef;
     border-radius: 10px;
   }
-  .message-input {
-    display: block;
-  }
+  .message-footer {
+    display: flex;
+    align-items: center;
+}
   
   .message-input input {
     width: 80%;

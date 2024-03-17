@@ -98,6 +98,26 @@ dbConnect()
         });
       });
 
+
+      socket.on('file', ( {chatUsers, filename, fileData}) => {
+        if (chatUsers.length === 0) return console.log("chat.users not defined");
+    
+        chatUsers.forEach((user) => {
+          // if (user == newMessage.sender) return;
+          // console.log(filename);
+          socket.in(user).emit("file recieved", fileData);
+        });
+
+        // const toSocket = userConnections.get(to);
+        // if (toSocket) {
+        //   toSocket.emit('file', { from: userId, filename});
+        // }
+        // console.log('File received:', filename);
+        
+        // Save the file to disk
+        // fs.writeFileSync(`uploads/${data.filename}`, data.fileData);        
+      });
+
       socket.off("setup", () => {
         console.log("USER DISCONNECTED");
         socket.leave(userData._id);
@@ -149,6 +169,3 @@ app.use("/api/v1", authRoutes)
 app.use("/api/v1", profileRoutes)
 app.use("/api/v1", chatRoutes)
 app.use("/api/v1", groupRoutes)
-
-
-
