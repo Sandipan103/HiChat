@@ -8,7 +8,50 @@ import { FileSendPopUp } from "./FileSendPopUp";
 import ZegoCloud from "./ZegoCloud";
 import { ChatTextInput } from "./ChatTextInput";
 
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import { styled } from "@mui/material/styles";
+import { Grid, Avatar, Typography } from "@mui/material";
+import Stack from "@mui/material/Stack";
+import Badge from "@mui/material/Badge";
+
 let socket;
+
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  "& .MuiBadge-badge": {
+    backgroundColor: "#44b700",
+    color: "#44b700",
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    "&::after": {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      borderRadius: "50%",
+      animation: "ripple 1.2s infinite ease-in-out",
+      border: "1px solid currentColor",
+      content: '""',
+    },
+  },
+  "@keyframes ripple": {
+    "0%": {
+      transform: "scale(.8)",
+      opacity: 1,
+    },
+    "100%": {
+      transform: "scale(2.4)",
+      opacity: 0,
+    },
+  },
+}));
+
+const SmallAvatar = styled(Avatar)(({ theme }) => ({
+  width: 22,
+  height: 22,
+  border: `2px solid ${theme.palette.background.paper}`,
+}));
 
 const GroupChatBox = ({
   messages,
@@ -28,32 +71,28 @@ const GroupChatBox = ({
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedType, setSelectedType] = useState(null);
 
-
-
   const messagesEndRef = useRef(null);
 
   const [calleeId, setCalleeId] = useState();
 
-
   const [isTimerEnabled, setIsTimerEnabled] = useState(false);
-  const [timer, setTimer] = useState('');
-
+  const [timer, setTimer] = useState("");
 
   useEffect(() => {
     async function fetchChatData() {
       try {
         const response = await axios.get(`${server}/chats/${selectedChat._id}`);
-        
+
         // console.log(response.data.timer);
-         setTimer(response.data.timer);
-         setIsTimerEnabled(response.data.isTimerEnabled);
+        setTimer(response.data.timer);
+        setIsTimerEnabled(response.data.isTimerEnabled);
       } catch (error) {
-        console.error('Error fetching chat data:', error);
+        console.error("Error fetching chat data:", error);
       }
     }
 
     fetchChatData();
-  }, [selectedChat._id]); 
+  }, [selectedChat._id]);
 
   const handleCloseModal = () => {
     setPopOpen(false);
@@ -137,7 +176,7 @@ const GroupChatBox = ({
     try {
       // await axios.post(${server}/deletemessage/${messageId},{userId});
       const response = await axios.post(
-       `${server}/deletemessage`,
+        `${server}/deletemessage`,
         { messageId: messageId, userId: myId },
         { withCredentials: true }
       );
@@ -188,36 +227,69 @@ const GroupChatBox = ({
   };
 
   const handleCheckboxChange = async (chatId, newValue) => {
-    await axios.post(`${server}/settimer/${chatId}`, { isTimerEnabled: newValue, timer: timer });
-    
-    setChats(chats.map(chat => {
-      if (chat._id === chatId) {
-        return { ...chat, isTimerEnabled: newValue,timer:timer };
-      }
-      return chat;
-    }));
-  };
+    await axios.post(`${server}/settimer/${chatId}`, {
+      isTimerEnabled: newValue,
+      timer: timer,
+    });
 
+    setChats(
+      chats.map((chat) => {
+        if (chat._id === chatId) {
+          return { ...chat, isTimerEnabled: newValue, timer: timer };
+        }
+        return chat;
+      })
+    );
+  };
 
   return (
     <>
       <div className="message-area">
-      <input
-        type="number"
-        value={timer}
-        onChange={(e) => setTimer(e.target.value)}
-        placeholder="Timer in minutes"
-      />
-      <label>
         <input
-          type="checkbox"
-          checked={isTimerEnabled}
-          onChange={e => handleCheckboxChange(selectedChat._id, e.target.checked)}
-        /> Enable Timer
-      </label>
+          type="number"
+          value={timer}
+          onChange={(e) => setTimer(e.target.value)}
+          placeholder="Timer in minutes"
+        />
+        <label>
+          <input
+            type="checkbox"
+            checked={isTimerEnabled}
+            onChange={(e) =>
+              handleCheckboxChange(selectedChat._id, e.target.checked)
+            }
+          />{" "}
+          Enable Timer
+        </label>
         <div className="message-header">
-          {selectedChat.groupName}
-          <ZegoCloud myId={myId} calleeId={calleeId} />
+        <Box sx={{ flexGrow: 1 }}>
+            <Grid
+              container
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Grid>
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  sx={{ alignItems: "center;" }}
+                >
+                  <StyledBadge
+                    overlap="circular"
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                    variant="dot"
+                  >
+                    <Avatar>H</Avatar>
+                  </StyledBadge>
+                  <Typography>{selectedChat.groupName}</Typography>
+                </Stack>
+              </Grid>
+              <Grid>
+                <ZegoCloud myId={myId} calleeId={calleeId} />
+              </Grid>
+            </Grid>
+          </Box>
         </div>
         {!popOpen && (
           <div className="msg-inner-container">
@@ -236,15 +308,43 @@ const GroupChatBox = ({
                       >
                         <div className="message">
                           <p>{message.sender}</p>
-                          <p>{message.content}</p>
-                          {message.sender === myId &&message.isDeleted===false&&(
-                            <button
-                              onClick={() => handleDeleteMessage(message._id)}
-                              className="delete-message-btn"
-                            >
-                              Delete
-                            </button>
+                          {/* Render message content based on message type */}
+                          {message.type === "text" && <p>{message.content}</p>}
+
+                          {message.type === "audio" && (
+                            <audio controls>
+                              <source
+                                src={`${server}/fetchfile/${message.audioUrl}`}
+                                type="audio/mp3"
+                              />
+                              Your browser does not support the audio element.
+                            </audio>
                           )}
+
+                          {message.type === "video" && (
+                            <video controls>
+                              <source src={message.videoUrl} type="video/mp4" />
+                              Your browser does not support the video element.
+                            </video>
+                          )}
+
+                          {message.type === "image" && (
+                            <img
+                              src={`${server}/fetchfile/${message.imageUrl}`}
+                              alt="message"
+                            />
+                          )}
+
+                          {/* Render delete button only if sender is the current user */}
+                          {message.sender === myId &&
+                            message.isDeleted === false && (
+                              <button
+                                onClick={() => handleDeleteMessage(message._id)}
+                                className="delete-message-btn"
+                              >
+                                Delete
+                              </button>
+                            )}
                         </div>
                         <div className="timestamp">
                           <p className="message-timestamp">
