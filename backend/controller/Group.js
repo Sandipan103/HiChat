@@ -3,6 +3,8 @@ const User = require("../models/UserModel");
 const Chat = require("../models/chatModel");
 const Msg = require("../models/MsgModel");
 
+
+
 // dependency required
 
 
@@ -165,7 +167,7 @@ exports.getAllFriends = async(req, res) => {
     }
     res.json({ 
       success: true, 
-      user
+      contacts : user.contacts,
     });
   } catch (error) {
     console.log("finding frined error : ", error);
@@ -218,11 +220,21 @@ exports.findAllChats = async(req, res) => {
     const userId = req.params.userId;
     
     // Find all groups where the user is a member
-    const chats = await Chat.find({ users: userId }).populate('allChatMessages');
+    const chats = await Chat.find({ users: userId }).populate('allChatMessages').populate('latestMessage');
+
+    const modifiedChats = chats.map(chat => {
+      const latestMessageContent = chat.latestMessage ? chat.latestMessage.content : null;
+      const latestMessageTime = chat.latestMessage ? chat.latestMessage.timestamp : null;
+      return {
+        ...chat.toObject(),
+        latestMessage: latestMessageContent,
+        latestMessageTime : latestMessageTime,
+      };
+    });
 
     res.json({ 
       success: true, 
-      chats 
+      chats : modifiedChats,
     });
     
   } catch (error) {
@@ -280,14 +292,14 @@ exports.sendChatMessage = async (req, res) => {
     });
 
     // const chat = await Chat.findById(newMessage.chat);
+    await Chat.findByIdAndUpdate(chatId, { latestMessage: newMessage._id });
     const chat = await Chat.findByIdAndUpdate(newMessage.chat, { $push: { allChatMessages: newMessage._id } });
     const chatUsers = chat.users;
-    const newMessageWithChat = await Msg.findById(newMessage._id).populate("chat");
 
     return res.status(200).json({
       success: true,
       message: 'Message sent successfully',
-      newMessage: newMessageWithChat,
+      newMessage: newMessage,
       chatUsers : chatUsers, 
     });
 
@@ -336,6 +348,115 @@ exports.readAllMessages = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: `Error in reading messages: ${error.message}`,
+    });
+  }
+}
+
+
+exports.sendFiles = async (req, res) => {
+  try {
+    const fileName = req.file.filename;
+    
+    const { myId, chatId, messageInput, type, } = req.body;
+
+    const updateFields = {};
+    if (type === "image") {
+        updateFields.imageUrl = fileName;
+    } else if (type === "video") {
+        updateFields.videoUrl = fileName;
+    } else if (type === "audio") {
+        updateFields.audioUrl = fileName;
+    } else if (type === "document") {
+        updateFields.documentUrl = fileName;
+    }
+
+    if (!myId) {
+      return res.status(401).json({
+        success: false,
+        message: `user not found`,
+      });
+    }
+    if (!chatId) {
+      return res.status(401).json({
+        success: false,
+        message: `chat Id not found`,
+      });
+    }
+    let newMessage = await Msg.create({
+      sender: myId,
+      content: messageInput,
+      chat: chatId,
+      type: type,
+      readBy: [myId],
+      ...updateFields,
+    });
+    console.log(newMessage)
+
+    // const chat = await Chat.findById(newMessage.chat);
+    const chat = await Chat.findByIdAndUpdate(newMessage.chat, { $push: { allChatMessages: newMessage._id } });
+    const chatUsers = chat.users;
+    const newMessageWithChat = await Msg.findById(newMessage._id).populate("chat");
+    console.log(newMessage)
+
+    return res.status(200).json({
+      success: true,
+      message: 'Message sent successfully',
+      newMessage: newMessageWithChat,
+      chatUsers : chatUsers, 
+    });
+
+  } catch (error) {
+    console.log("Message sending error:", error);
+    return res.status(500).json({
+      success: false,
+      message: `Error sending messages: ${error.message}`,
+    });
+  }
+}
+
+exports.findChatMemberDetails = async(req, res) => {
+  try {
+    const chatId = req.params.chatId;
+
+    const chat = await Chat.findById(chatId)
+      .populate({path: 'users', select: '_id firstName lastName',})
+      .populate({path: 'groupAdmin', select: '_id firstName lastName',});
+
+    res.json({
+      success: true,
+      users : chat.users,
+      groupAdmin : chat.groupAdmin,
+    });
+  } catch (error) {
+    console.log("Message fetching error:", error);
+    return res.status(500).json({
+      success: false,
+      message: `Error fetching messages: ${error.message}`,
+    });
+  }
+}
+
+
+exports.updateChatMember = async(req, res)  => {
+  try {
+    const {chatId, selectedContacts, myId} = req.body;
+    const updatedUsers = [...selectedContacts, myId];
+    const updatedChat = await Chat.findByIdAndUpdate(
+      chatId,
+      { users: updatedUsers },
+      { new: true }
+    );
+
+    res.status(200).json({ 
+      success : true,
+      message: "Chat members updated successfully", 
+      chat: updatedChat 
+    });
+  } catch (error) {
+    console.error("Error updating chat members:", error);
+    return res.status(500).json({ 
+      success : false,
+      message: "Internal server error" 
     });
   }
 }
