@@ -12,7 +12,7 @@ import Navbar from "./component/Navbar";
 import NewContact from "./component/NewContact";
 import NewGroup from "./component/NewGroup";
 import Chatting from "./pages/Chatting";
-import VideoCall from "./pages/Home";
+import VideoCall from "./pages/Home/index";
 import RoomPage from "./pages/Room";
 
 function App() {

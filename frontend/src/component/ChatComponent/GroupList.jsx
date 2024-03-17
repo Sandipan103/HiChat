@@ -25,8 +25,8 @@ const GroupList = ({  chats,  handleChatClick,  setChats}) => {
   const { isAuthenticated } = useContext(AuthContext);
   
   return (
-    <div>
-    <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+    <div className="chat-users">
+    <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
     {chats.map((chat, index) => (
        <>
          <ListItem key={index} alignItems="flex-start" className={"user"}

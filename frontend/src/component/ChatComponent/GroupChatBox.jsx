@@ -7,8 +7,49 @@ import { FileShareMenu } from "./FileShareMenu";
 import { FileSendPopUp } from "./FileSendPopUp";
 import ZegoCloud from "./ZegoCloud";
 import { ChatTextInput } from "./ChatTextInput";
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import { styled } from "@mui/material/styles";
+import { Grid, Avatar, Typography } from "@mui/material";
+import Stack from "@mui/material/Stack";
+import Badge from "@mui/material/Badge";
 
 let socket;
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  "& .MuiBadge-badge": {
+    backgroundColor: "#44b700",
+    color: "#44b700",
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    "&::after": {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      borderRadius: "50%",
+      animation: "ripple 1.2s infinite ease-in-out",
+      border: "1px solid currentColor",
+      content: '""',
+    },
+  },
+  "@keyframes ripple": {
+    "0%": {
+      transform: "scale(.8)",
+      opacity: 1,
+    },
+    "100%": {
+      transform: "scale(2.4)",
+      opacity: 0,
+    },
+  },
+}));
+
+const SmallAvatar = styled(Avatar)(({ theme }) => ({
+  width: 22,
+  height: 22,
+  border: `2px solid ${theme.palette.background.paper}`,
+}));
 
 const GroupChatBox = ({
   messages,
@@ -31,6 +72,14 @@ const GroupChatBox = ({
   const messagesEndRef = useRef(null);
 
   const [calleeId, setCalleeId] = useState();
+
+  const Item = styled(Paper)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+    ...theme.typography.body2,
+    padding: theme.spacing(1),
+    textAlign: "center",
+    color: theme.palette.text.secondary,
+  }));
 
   const handleCloseModal = () => {
     setPopOpen(false);
@@ -105,9 +154,9 @@ const GroupChatBox = ({
         // if (messageHeaderRef.current) {
         //   messageHeaderRef.current.appendChild(imgElement);
         // }
-        console.log(imgElement);
       }
     });
+    console.log(messages);
   }, [messages, selectedChat, chats, setChats]);
 
   const handleDeleteMessage = async (messageId) => {
@@ -168,8 +217,34 @@ const GroupChatBox = ({
     <>
       <div className="message-area">
         <div className="message-header">
-          {selectedChat.groupName}
-          <ZegoCloud myId={myId} calleeId={calleeId} />
+          <Box sx={{ flexGrow: 1 }}>
+            <Grid
+              container
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Grid>
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  sx={{ alignItems: "center;" }}
+                >
+                  <StyledBadge
+                    overlap="circular"
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                    variant="dot"
+                  >
+                    <Avatar>H</Avatar>
+                  </StyledBadge>
+                  <Typography>{selectedChat.groupName}</Typography>
+                </Stack>
+              </Grid>
+              <Grid>
+                <ZegoCloud myId={myId} calleeId={calleeId} />
+              </Grid>
+            </Grid>
+          </Box>
         </div>
         {!popOpen && (
           <div className="msg-inner-container">
@@ -188,7 +263,29 @@ const GroupChatBox = ({
                       >
                         <div className="message">
                           <p>{message.sender}</p>
-                          <p>{message.content}</p>
+
+                          {/* Render message content based on message type */}
+                          {message.type === "text" && <p>{message.content}</p>}
+
+                          {message.type === "audio" && (
+                            <audio controls>
+                              <source src={`${server}/fetchfile/${message.audioUrl}`} type="audio/mp3" />
+                              Your browser does not support the audio element.
+                            </audio>
+                          )}
+
+                          {message.type === "video" && (
+                            <video controls>
+                              <source src={message.videoUrl} type="video/mp4" />
+                              Your browser does not support the video element.
+                            </video>
+                          )}
+
+                          {message.type === "image" && (
+                            <img src={`${server}/fetchfile/${message.imageUrl}`} alt="message" />
+                          )}
+
+                          {/* Render delete button only if sender is the current user */}
                           {message.sender === myId && (
                             <button
                               onClick={() => handleDeleteMessage(message._id)}
