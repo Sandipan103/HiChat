@@ -50,6 +50,26 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, cha
   const handleOpen = () => setOpen(!open);
   const handleClose = () => setOpen(false);
 
+  const [isTimerEnabled, setIsTimerEnabled] = useState(false);
+  const [timer, setTimer] = useState('');
+
+
+  useEffect(() => {
+    async function fetchChatData() {
+      try {
+        const response = await axios.get(`${server}/chats/${selectedChat._id}`);
+        
+        // console.log(response.data.timer);
+         setTimer(response.data.timer);
+         setIsTimerEnabled(response.data.isTimerEnabled);
+      } catch (error) {
+        console.error('Error fetching chat data:', error);
+      }
+    }
+
+    fetchChatData();
+  }, [selectedChat._id]); 
+
   const messagesEndRef = useRef(null);
 
   const handleDeleteMessage = async (messageId) => {
@@ -204,13 +224,21 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, cha
   const handleMessageInputChange = (e) => {
     setMessageInput(e.target.value);
   };
-
+  
   const handleSendMessage = async () => {
+    const sendTime = new Date();
+  
+   
+    let deleteAt = null;
     try {
+      if (timer && isTimerEnabled) {
+        deleteAt = new Date(sendTime.getTime() + timer * 60000);
+      }
         const response = await axios.post(`${server}/sendChatMessage`, {
           myId,
           chatId : selectedChat._id,
           messageInput,
+          deleteAt
         });
         // console.log(response.data.newMessage);
         // console.log(response.data.chatUsers);
@@ -304,10 +332,36 @@ const GroupChatBox = ({ messages, setMessages, myId, selectedChat, setChats, cha
       console.error("Error in updating group:", error);
     }
   };
+  
+  const handleCheckboxChange = async (chatId, newValue) => {
+    await axios.post(`${server}/settimer/${chatId}`, { isTimerEnabled: newValue, timer: timer });
+    
+    setChats(chats.map(chat => {
+      if (chat._id === chatId) {
+        return { ...chat, isTimerEnabled: newValue,timer:timer };
+      }
+      return chat;
+    }));
+  };
 
   return (
     <>
       <div className="message-area">
+        <div>
+        <input
+        type="number"
+        value={timer}
+        onChange={(e) => setTimer(e.target.value)}
+        placeholder="Timer in minutes"
+      />
+      <label>
+        <input
+          type="checkbox"
+          checked={isTimerEnabled}
+          onChange={e => handleCheckboxChange(selectedChat._id, e.target.checked)}
+        /> Enable Timer
+      </label>
+        </div>
         <div className="message-header">
           {selectedChat.groupName}
           {selectedChat.isGroupChat &&  <Button onClick={handleGroupShowing}> seeGroup </Button>}

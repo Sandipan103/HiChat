@@ -7,6 +7,11 @@ const msgSchema = mongoose.Schema(
     chat: { type: mongoose.Schema.Types.ObjectId, ref: "Chat" },
     timestamp:{ type: Date, default: Date.now, },
     readBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    deleteAt: {
+      type: Date,
+      default: null
+    },
+    
   },
 );
 
