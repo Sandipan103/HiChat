@@ -28,6 +28,26 @@ const GroupChatBox = ({
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedType, setSelectedType] = useState(null);
 
+  const [isTimerEnabled, setIsTimerEnabled] = useState(false);
+  const [timer, setTimer] = useState('');
+
+
+  useEffect(() => {
+    async function fetchChatData() {
+      try {
+        const response = await axios.get(`${server}/chats/${selectedChat._id}`);
+        
+        // console.log(response.data.timer);
+         setTimer(response.data.timer);
+         setIsTimerEnabled(response.data.isTimerEnabled);
+      } catch (error) {
+        console.error('Error fetching chat data:', error);
+      }
+    }
+
+    fetchChatData();
+  }, [selectedChat._id]); 
+
   const messagesEndRef = useRef(null);
 
   const [calleeId, setCalleeId] = useState();
@@ -110,63 +130,159 @@ const GroupChatBox = ({
     });
   }, [messages, selectedChat, chats, setChats]);
 
+  const handleMessageInputChange = (e) => {
+    setMessageInput(e.target.value);
+  };
+  
+  const handleSendMessage = async () => {
+    const sendTime = new Date();
+  
+   
+    let deleteAt = null;
   const handleDeleteMessage = async (messageId) => {
     try {
-      // await axios.post(`${server}/deletemessage/${messageId}`,{userId});
-      const response = await axios.post(
-        `${server}/deletemessage`,
-        { messageId: messageId, userId: myId },
-        { withCredentials: true }
-      );
+      if (timer && isTimerEnabled) {
+        deleteAt = new Date(sendTime.getTime() + timer * 60000);
+      }
+        const response = await axios.post(`${server}/sendChatMessage`, {
+          myId,
+          chatId : selectedChat._id,
+          messageInput,
+          deleteAt
+        });
+        // console.log(response.data.newMessage);
+        // console.log(response.data.chatUsers);
+        // console.log(messages);
+        
+        socket.emit("new message", {
+          newMessage: response.data.newMessage,
+          chatUsers: response.data.chatUsers,
+        });
 
-      const updatedMessages = messages;
-      setMessages(updatedMessages);
+        const updatedChats = chats.map(chat => {
+          if (chat._id === selectedChat._id) {
+            return { ...chat, latestMessage: messageInput };
+          }
+          return chat;
+        });
+    
+        setChats(updatedChats);
+        setMessageInput("");
+        setMessages([...messages, response.data.newMessage]);
+      } catch (error) {
+        console.error("Error sending message:", error);
+      }
+  }
 
-      socket.emit("message deleted", messageId);
-    } catch (error) {
-      console.error("Failed to delete message:", error);
-    }
+
+  const addToGroup = (contactId) => {
+    const contactToAdd = allContacts.find(contact => contact.contactId === contactId);
+    setSelectedContact([...selectedContact, contactToAdd]);
+    setNotSelectedContact(notSelectedContact.filter(contact => contact.contactId !== contactId));
   };
 
-  const handleFileUpload = () => {
-    console.log(Date.now());
+  const removeFromGroup = (contactId) => {
+    const contactToRemove = selectedContact.find(contact => contact.contactId === contactId);
+    setNotSelectedContact([...notSelectedContact, contactToRemove]);
+    setSelectedContact(selectedContact.filter(contact => contact.contactId !== contactId));
+  };
+
+  const handleGroupShowing = async()=> {
+    const response = await axios.get(`${server}/findChatMemberDetails/${selectedChat._id}`);
+    console.log(response.data.users); 
+    console.log(response.data.groupAdmin);
+
+    // ********************      task ===>  @w3_yogesh        ********************
+    //  frontend me show krna baki hai
+  }
+
+  const modifyGroup = async()=> {
+    setShowModifiedGroup(!showModifiedGroup);
     try {
-      if (selectedFile) {
-        const reader = new FileReader();
+      // Step 1: Find all chat members
+      const chatMembersResponse = await axios.get(`${server}/findChatMemberDetails/${selectedChat._id}`);
+      const chatMembers = chatMembersResponse.data.users;
+      // Step 2: Find all contacts
+      const allContactsResponse = await axios.get(`${server}/getAllFriends/${myId}`);
+      const allContacts = allContactsResponse.data.contacts;
+      // step-3 : show the chatMember top of the searchbar and other contact below the search bar, and other contact below the search bar
+      const selectedContacts = [];
+      const unselectedContacts = [];
 
-        reader.onload = async (e) => {
-          const fileData = e.target.result;
-          const filename = selectedFile.name;
-          const chatId = selectedChat._id;
+      allContacts.forEach(contact => {
+        const isPresentInChat = chatMembers.some(member => member._id === contact.contactId);
+        if (isPresentInChat) {
+          selectedContacts.push(contact);
+        } else {
+          unselectedContacts.push(contact);
+        }
+      });
+      
+      setAllContacts(allContacts); 
+      setSelectedContact(selectedContacts);
+      setNotSelectedContact(unselectedContacts);
+      
+      // step-4 : when click on the submit button it will send the selected user list to the backend, and update the group
+    } catch (error) {
+      console.error("Error modifying group:", error);
+    }
+  }
 
-          const data = new FormData();
-
-          data.append("file", selectedFile);
-          data.append("myId", myId);
-          data.append("chatId", chatId);
-          data.append("type", selectedType);
-          // data.append("fileUrl", fileUrl);
-          data.append("messageInput", messageInput);
-
-          const response = await axios.post(`${server}/sendFiles`, data);
-          console.log(response);
-          // socket.emit("file", {
-          //   chatUsers: response.data.chatUsers,
-          //   filename: filename,
-          //   fileData: fileData,
-          // });
-          setFile(null);
-        };
-        reader.readAsDataURL(selectedFile);
-      }
+  const updateGroup = async () => {
+    try {
+      const selectedContactIds = selectedContact.map(contact => contact.contactId); 
+      const response = await axios.post(`${server}/updateChatMember`, {
+        chatId: selectedChat._id,
+        selectedContacts: selectedContactIds,
+        myId : myId,
+      });
+      console.log(response);
+      toast.success("Group updated successfully");
     } catch (error) {
       console.error("Error file sending: ", error);
     }
+  };
+  
+  const handleCheckboxChange = async (chatId, newValue) => {
+    await axios.post(`${server}/settimer/${chatId}`, { isTimerEnabled: newValue, timer: timer });
+    
+    setChats(chats.map(chat => {
+      if (chat._id === chatId) {
+        return { ...chat, isTimerEnabled: newValue,timer:timer };
+      }
+      return chat;
+    }));
+  };
+  
+  const handleCheckboxChange = async (chatId, newValue) => {
+    await axios.post(`${server}/settimer/${chatId}`, { isTimerEnabled: newValue, timer: timer });
+    
+    setChats(chats.map(chat => {
+      if (chat._id === chatId) {
+        return { ...chat, isTimerEnabled: newValue,timer:timer };
+      }
+      return chat;
+    }));
   };
 
   return (
     <>
       <div className="message-area">
+        <div>
+        <input
+        type="number"
+        value={timer}
+        onChange={(e) => setTimer(e.target.value)}
+        placeholder="Timer in minutes"
+      />
+      <label>
+        <input
+          type="checkbox"
+          checked={isTimerEnabled}
+          onChange={e => handleCheckboxChange(selectedChat._id, e.target.checked)}
+        /> Enable Timer
+      </label>
+        </div>
         <div className="message-header">
           {selectedChat.groupName}
           <ZegoCloud myId={myId} calleeId={calleeId} />
