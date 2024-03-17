@@ -1,6 +1,7 @@
-import React from "react";
+import React , { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { server, AuthContext } from "../../context/UserContext";
+
 
 
 
@@ -12,17 +13,29 @@ import IconButton from "@mui/material/IconButton";
 import AddReactionIcon from "@mui/icons-material/AddReaction";
 
 
-export const ChatTextInput = ({messageInput,setMessageInput,myId,selectedChat,socket, setChats,chats,setMessages,messages }) => {
+export const ChatTextInput = ({messageInput,setMessageInput,myId,selectedChat,socket, setChats,chats,setMessages,messages,isTimerEnabled,timer }) => {
   const handleMessageInputChange = (e) => {
     setMessageInput(e.target.value);
   };
+  
+ 
+
 
   const handleSendMessage = async () => {
+    const sendTime = new Date();
+  
+   
+    let deleteAt = null;
     try {
+      if (timer && isTimerEnabled) {
+        deleteAt = new Date(sendTime.getTime() + timer * 60000);
+      }
+
       const response = await axios.post(`${server}/sendChatMessage`, {
         myId,
         chatId: selectedChat._id,
         messageInput,
+        deleteAt
       });
       // console.log(response.data.newMessage);
       // console.log(response.data.chatUsers);
