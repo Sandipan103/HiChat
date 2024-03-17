@@ -14,14 +14,32 @@ import NewGroup from "./component/NewGroup";
 import Chatting from "./pages/Chatting";
 import VideoCall from "./pages/Home";
 import RoomPage from "./pages/Room";
+import GlobalStyle from "./globalStyles";
+import { ThemeProvider } from "styled-components";
+import { lightTheme } from "./component/theme";
+import { DarkTheme } from "./component/theme";
+
+// import { AnimatePresence } from "framer-motion";
+
+//Components
+import Main from "./component/Main";
+import AboutPage from "./component/AboutPage";
+import Features from "./component/FeaturesPage";
+// import SoundBar from "./subComponents/SoundBar";
 
 function App() {
   return (
+    // <GlobalStyle>
+    <ThemeProvider theme={DarkTheme}>
     <AuthProvider>
       <Router>
         <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/start" element={<Main />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/features" element={<Features />} />
+
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/profile" element={<ProfilePage /> } />
@@ -35,6 +53,8 @@ function App() {
       </Router>
       <Toaster/>
     </AuthProvider>
+    </ThemeProvider>
+    //  </GlobalStyle>
   );
 }
 
