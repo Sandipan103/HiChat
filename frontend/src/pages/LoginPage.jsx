@@ -41,6 +41,20 @@ const LoginPage = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    // password and email validation before call backend
+    const emailPattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    if (!emailPattern.test(userDetail.email)) {
+      toast.error("Please use a valid email address.");
+      return;
+    }
+
+    if (!userDetail.password) {
+      toast.error("Please enter your password.");
+      return;
+    }
+
     try {
       setLoading(true);
       const response = await axios.post(`${server}/login`,
@@ -52,8 +66,8 @@ const LoginPage = () => {
       Cookies.set("tokenf", response.data.token, {
         expires: 1,
       });
-      // console.log(`isAuthenticated : `, isAuthenticated);
-      navigate(`/profile`);
+      // after login user will redirect to chatting page 
+      navigate(`/chatting`);
       toast.success(`logged in`)
     } catch (error) {
       if(error.response.data.message) {

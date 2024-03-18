@@ -169,3 +169,5 @@ app.use("/api/v1", authRoutes)
 app.use("/api/v1", profileRoutes)
 app.use("/api/v1", chatRoutes)
 app.use("/api/v1", groupRoutes)
+
+app.use('/fetchfile', express.static('uploads/users/files'));
