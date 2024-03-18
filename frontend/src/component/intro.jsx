@@ -44,6 +44,8 @@ const Text = styled.div`
     font-size: calc(1em + 1vw);
     color: white;
     padding: 2rem;
+    font-family: 'Pacifico',cursive;
+
     cursor: pointer;
     display: flex;
     flex-direction: column;
@@ -67,6 +69,8 @@ const RoundedButton = styled.button`
     border-radius: 25px;
     border: none;
     outline: none;
+    font-family: 'Pacifico',cursive;
+
     font-size: calc(0.3rem + 1vw);
     font-weight: 200;
     

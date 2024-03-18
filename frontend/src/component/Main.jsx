@@ -6,7 +6,7 @@ import PowerButton from './PowerButton'
 import { YinYang } from './Allsvg'
 import img1 from '../assets/start.png'; 
 import Intro from './intro.jsx'
-
+import LogoComponent from './Logo.jsx'
 const Image = styled.img`
   width: ${({ click }) => (click ? '120px' : '200px')};
   height: ${({ click }) => (click ? '120px' : '200px')};
@@ -107,6 +107,7 @@ const Center = styled.button`
   outline: none;
   background-color: transparent;
   cursor: pointer;
+  font-family: 'Pacifico',cursive;
 
   display: flex;
   flex-direction: column;
@@ -151,7 +152,7 @@ const Main = () => {
          <DarkDiv   click={click}/>
             <Container>
             <PowerButton />
-           
+            <LogoComponent theme={click ? 'dark' :'light'}/>
             <Center click={click}>
                 <Image src={img1} alt="Sherlock Image" onClick={handleClick} />
                 <h1>Click me to enter into the world of Sherlock Holmes..</h1>

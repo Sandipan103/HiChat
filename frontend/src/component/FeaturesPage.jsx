@@ -14,6 +14,7 @@ import BigTitlte from "./BigTitle";
 
 const Box = styled.div`
   background-color: ${(props) => props.theme.body};
+  font-family: 'Pacifico',cursive;
 
   height: 400vh;
   position: relative;
