@@ -47,7 +47,11 @@ exports.myContacts = async (req, res, next) => {
 exports.fetchChats = async (req, res, next) => {
   try {
     const {chatId} = req.params;
-    const chat = await Chat.findById(chatId);
+    const chat = await Chat.findById(chatId)
+                           .populate({
+                             path: 'users',
+                             select: 'firstName contactNo' 
+                           });
     return res.json({isTimerEnabled : chat.isTimerEnabled,timer:chat.timer});
   } catch (error) {
     return res.json(error);

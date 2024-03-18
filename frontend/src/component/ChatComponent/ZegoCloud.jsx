@@ -8,7 +8,7 @@ import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 import VideocamIcon from '@mui/icons-material/Videocam';
 
 
-const ZegoCloud = ({myId, calleeId}) => {
+const ZegoCloud = ({myId, calleeId,user1,user2}) => {
     const [userInfo, setUserInfo] = useState({
         userName: "",
         userId: "",
@@ -18,7 +18,7 @@ const ZegoCloud = ({myId, calleeId}) => {
     async function init() {
         const userId = myId;
     
-        const userName = "user_" + userId;
+        const userName = user2;
         setUserInfo({
           userName,
           userId,
@@ -52,7 +52,7 @@ const ZegoCloud = ({myId, calleeId}) => {
         // send call invitation
         zeroCloudInstance.current
           .sendCallInvitation({
-            callees: [{ userID: callee, userName: "user_" + callee }],
+            callees: [{ userID: callee, userName: user1 }],
             callType: callType,
             timeout: 60,
           })

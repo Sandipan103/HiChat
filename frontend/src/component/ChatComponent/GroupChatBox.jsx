@@ -15,6 +15,7 @@ import { Grid, Avatar, Typography } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import Badge from "@mui/material/Badge";
 import { GroupManage } from "./GroupManage";
+import toast from "react-hot-toast";
 
 let socket;
 
@@ -78,17 +79,25 @@ const GroupChatBox = ({
 
   const [isTimerEnabled, setIsTimerEnabled] = useState(false);
   const [timer, setTimer] = useState("");
+  const [user1,setuser1]=useState('');
+  const [user2,setuser2]=useState('');
+  const [isChecked,setChecked]=useState(null);
+  
+
 
   useEffect(() => {
     async function fetchChatData() {
       try {
         const response = await axios.get(`${server}/chats/${selectedChat._id}`);
-
-        // console.log(response.data.timer);
-        setTimer(response.data.timer);
-        setIsTimerEnabled(response.data.isTimerEnabled);
+        setuser1(response.data.users[0].contactNo);
+        setuser2(response.data.users[1].contactNo);
+        console.log(response);
+         setTimer(response.data.timer);
+         setIsTimerEnabled(response.data.isTimerEnabled);
+         toast.success("chat data fetched");
       } catch (error) {
-        console.error("Error fetching chat data:", error);
+        // toast.success("something went wrong, chat data not fetched");
+        console.error('Error fetching chat data:', error);
       }
     }
 
@@ -230,40 +239,49 @@ const GroupChatBox = ({
   };
 
   const handleCheckboxChange = async (chatId, newValue) => {
-    await axios.post(`${server}/settimer/${chatId}`, {
-      isTimerEnabled: newValue,
-      timer: timer,
-    });
+    await axios.post(`${server}/settimer/${chatId}`, { isTimerEnabled: newValue, timer: timer });
+    setChecked(newValue);
+    setChats(chats.map(chat => {
+      if (chat._id === chatId) {
+        return { ...chat, isTimerEnabled: newValue,timer:timer };
+      }
+      return chat;
+    }));
+  };
 
-    setChats(
-      chats.map((chat) => {
-        if (chat._id === chatId) {
-          return { ...chat, isTimerEnabled: newValue, timer: timer };
-        }
-        return chat;
-      })
-    );
+
+  const timerOptions = {
+    '1 Minute': 1,
+    '1 Hour': 60,
+    '1 Day': 1440,
+    '1 Week': 10080,
+    '1 Month': 43200, 
+  };
+
+
+  const handleTimerChange = (e) => {
+   
+    const minutes = timerOptions[e.target.value];
+    setTimer(minutes);
   };
 
   return (
     <>
       <div className="message-area">
+      <select value={Object.keys(timerOptions).find(key => timerOptions[key] === timer)} onChange={handleTimerChange}>
+        {Object.entries(timerOptions).map(([label, value]) => (
+          <option key={value} value={label}>
+            {label}
+          </option>
+        ))}
+      </select>
+      <label>
         <input
-          type="number"
-          value={timer}
-          onChange={(e) => setTimer(e.target.value)}
-          placeholder="Timer in minutes"
-        />
-        <label>
-          <input
-            type="checkbox"
-            checked={isTimerEnabled}
-            onChange={(e) =>
-              handleCheckboxChange(selectedChat._id, e.target.checked)
-            }
-          />{" "}
-          Enable Timer
-        </label>
+          type="checkbox"
+          checked={isTimerEnabled||isChecked}
+          onChange={e => handleCheckboxChange(selectedChat._id, e.target.checked)}
+        /> Enable Timer
+      </label>
         <div className="message-header">
         <Box sx={{ flexGrow: 1 }}>
             <Grid
@@ -290,7 +308,7 @@ const GroupChatBox = ({
                 </Stack>
               </Grid>
               <Grid>
-                <ZegoCloud myId={myId} calleeId={calleeId} />
+              <ZegoCloud myId={myId} calleeId={calleeId} user1={user1} user2={user2} />
               </Grid>
             </Grid>
           </Box>
