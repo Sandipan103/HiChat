@@ -57,6 +57,11 @@ const SignupPage = () => {
     }
     
     // password validation
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,12}$/;
+    if (!passwordPattern.test(signupData.password)) {
+      toast.error("Password must be 8-12 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character.");
+      return;
+    }
 
     try {
       setLoading(true);
