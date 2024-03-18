@@ -18,7 +18,7 @@ const ZegoCloud = ({myId, calleeId,user1,user2}) => {
     async function init() {
         const userId = myId;
     
-        const userName = user2;
+        const userName = "Calling" + user1;
         setUserInfo({
           userName,
           userId,
@@ -42,7 +42,8 @@ const ZegoCloud = ({myId, calleeId,user1,user2}) => {
     
       function handleSend(callType) {
         const callee = calleeId;
-        console.log("call id", callee);
+
+        console.log("call id", user2);
         console.log(myId);
         if (!callee) {
           alert("userID cannot be empty!!");
@@ -52,7 +53,7 @@ const ZegoCloud = ({myId, calleeId,user1,user2}) => {
         // send call invitation
         zeroCloudInstance.current
           .sendCallInvitation({
-            callees: [{ userID: callee, userName: user1 }],
+            callees: [{ userID: callee, userName: "Calling " + user1 }],
             callType: callType,
             timeout: 60,
           })

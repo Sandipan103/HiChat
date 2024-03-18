@@ -15,6 +15,11 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Unstable_Grid2";
 
+
+import {SpeedDial, SpeedDialAction } from "@mui/material";
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import GroupIcon from '@mui/icons-material/Group';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
@@ -32,6 +37,7 @@ const Chatting = () => {
   const [loading, setLoading] = useState(false);
   const inputRef = useRef(null);
   const navigate = useNavigate();
+  const [speedDialOpen, setSpeedDialOpen] = useState(false);
 
   const fetchUserDetail = async () => {
     const token = Cookies.get("tokenf");
@@ -159,6 +165,28 @@ const Chatting = () => {
               </Grid>
             </Grid>
           </Box>
+          <div>
+          <SpeedDial
+            ariaLabel="SpeedDial tooltip example"
+            sx={{ position: 'absolute', bottom: 16, left: 100 }}
+            icon={<AddCircleIcon />}
+            open={speedDialOpen}
+            onClick={() => setSpeedDialOpen(!speedDialOpen)}
+          >
+            <SpeedDialAction
+              icon={<GroupIcon />}
+              tooltipTitle='create group'
+              tooltipOpen
+              onClick={()=>{navigate('/createGroup')}}
+            />
+            <SpeedDialAction
+              icon={<PersonAddIcon />}
+              tooltipTitle='new contact'
+              tooltipOpen
+              onClick={()=>{navigate('/addContact')}}
+            />
+          </SpeedDial>
+        </div>
         </div>
       </div>
     </div>

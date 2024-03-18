@@ -103,15 +103,15 @@ export const GroupManage = ({ selectedChat, myId }) => {
 
   return (
     <>
-    {/* {selectedChat.isGroupChat && (
+    {selectedChat.isGroupChat && (
       <Button onClick={handleGroupShowing}> seeGroup </Button>
     )}
     {selectedChat.isGroupChat &&
       selectedChat.groupAdmin === myId && (
         <Button onClick={modifyGroup}> modifyGroup </Button>
-      )} */}
+      )}
       
-      <div>GroupManage</div>
+      {/* <div>GroupManage</div> */}
       {/* <Button onClick={handleGroupShowing}> seeGroup </Button>
       <Button onClick={modifyGroup}> modifyGroup </Button> */}
       {showModifiedGroup && (

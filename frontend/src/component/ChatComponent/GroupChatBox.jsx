@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+
 import axios from "axios";
 import io from "socket.io-client";
 import { server, AuthContext } from "../../context/UserContext";
@@ -8,6 +10,7 @@ import { FileSendPopUp } from "./FileSendPopUp";
 import ZegoCloud from "./ZegoCloud";
 import { ChatTextInput } from "./ChatTextInput";
 
+
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
@@ -16,6 +19,9 @@ import Stack from "@mui/material/Stack";
 import Badge from "@mui/material/Badge";
 import { GroupManage } from "./GroupManage";
 import toast from "react-hot-toast";
+
+
+
 
 let socket;
 
@@ -72,7 +78,7 @@ const GroupChatBox = ({
   const [popOpen, setPopOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedType, setSelectedType] = useState(null);
-
+  
   const messagesEndRef = useRef(null);
 
   const [calleeId, setCalleeId] = useState();
@@ -89,9 +95,9 @@ const GroupChatBox = ({
     async function fetchChatData() {
       try {
         const response = await axios.get(`${server}/chats/${selectedChat._id}`);
-        setuser1(response.data.users[0].contactNo);
-        setuser2(response.data.users[1].contactNo);
-        console.log(response);
+        setuser1(response.data.chatUsers[0].contactNo);
+        setuser2(response.data.chatUsers[1].contactNo);
+        // console.log("chatuser",response.data.chatUsers);
          setTimer(response.data.timer);
          setIsTimerEnabled(response.data.isTimerEnabled);
          toast.success("chat data fetched");
@@ -118,6 +124,8 @@ const GroupChatBox = ({
     if (messages.length > 0) {
       scrollToBottom();
     }
+    // console.log(user1);
+
   }, [messages]);
 
   useEffect(() => {
@@ -267,7 +275,9 @@ const GroupChatBox = ({
 
   return (
     <>
+     
       <div className="message-area">
+    
       <select value={Object.keys(timerOptions).find(key => timerOptions[key] === timer)} onChange={handleTimerChange}>
         {Object.entries(timerOptions).map(([label, value]) => (
           <option key={value} value={label}>

@@ -201,7 +201,7 @@ const NewGroup = () => {
       );
       console.log(response);
       toast.success('Group created successfully');
-      navigate('/chat');
+      navigate('/chatting');
     } catch (error) {
       toast.error('Something went wrong. Group creation failed');
       console.error('Group creation error:', error);

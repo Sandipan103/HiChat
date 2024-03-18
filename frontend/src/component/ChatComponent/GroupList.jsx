@@ -58,15 +58,15 @@ const GroupList = ({ chats, handleChatClick, setChats }) => {
 
   return (
     <div className="chat-users">
-  <GroupManage/>      
-      <Stack direction="row" spacing={2} sx={{ mx: "auto", mt: 2, width: 300 }}>
+  {/* <GroupManage/>       */}
+      {/* <Stack direction="row" spacing={2} sx={{ mx: "auto", mt: 2, width: 300 }}>
         <Button variant="outlined" onClick={handleAddContact}>
           Add Contact
         </Button>
         <Button variant="outlined" onClick={handleCreateGroup}>
           Create Group
         </Button>
-      </Stack>
+      </Stack> */}
 
       <div>
         <Dialog
