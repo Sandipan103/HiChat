@@ -144,17 +144,17 @@ app.use(
 
 
 // Schedule a task to run every minute
-// cron.schedule('* * * * *', async () => {
-//   const now = new Date();
-//   try {
-//     await Message.deleteMany({
-//       deleteAt: { $lt: now, $ne: null } // Exclude documents where deleteAt is null
-//     });
-//     console.log('Expired messages deleted');
-//   } catch (error) {
-//     console.error('Error deleting messages:', error);
-//   }
-// });
+cron.schedule('* * * * *', async () => {
+  const now = new Date();
+  try {
+    await Message.deleteMany({
+      deleteAt: { $lt: now, $ne: null } // Exclude documents where deleteAt is null
+    });
+    console.log('Expired messages deleted');
+  } catch (error) {
+    console.error('Error deleting messages:', error);
+  }
+});
 
 app.use(cookieParser());
 app.use(express.json());
