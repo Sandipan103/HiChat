@@ -72,7 +72,7 @@ const ResponsiveAppBar = () => {
               textDecoration: "none",
             }}
           >
-            LOGO
+            hiChat
           </Typography>
 
           {!isAuthenticated && (
@@ -141,7 +141,7 @@ const ResponsiveAppBar = () => {
               textDecoration: "none",
             }}
           >
-            LOGO
+            hiChat
           </Typography>
           {!isAuthenticated && (
             <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>

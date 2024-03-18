@@ -25,11 +25,11 @@ export const FileSendPopUp = ({
     console.log(fileUrl);
 
     if (fileType === "image") {
-      return <img src={fileUrl} alt="Image" />;
+      return <img className="sendFileView" src={fileUrl} alt="Image" />;
     } else if (fileType === "video") {
       return (
         <div>
-          <video controls>
+          <video className="sendFileView" controls>
             <source src={fileUrl} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
@@ -38,7 +38,7 @@ export const FileSendPopUp = ({
     } else if (fileType === "audio") {
       return (
         <div>
-          <audio controls>
+          <audio  className="sendFileView" controls>
             <source src={fileUrl} type="audio/mp3" />
             Your browser does not support the audio tag.
           </audio>
@@ -99,10 +99,10 @@ export const FileSendPopUp = ({
       >
         <CloseIcon onClick={handleCloseModal} variant="contained" sx={{ mt: 1, mb: 1 }}/>
         <Divider/>
-        
-        <h1>{fileType}</h1>
-        {renderContent()}
-        <Button onClick={handleFileUpload} variant="contained" sx={{ mt: 2 }}>
+        <div className="send-file-box">
+          {renderContent()}
+        </div>
+        <Button variant="outlined" onClick={handleFileUpload} >
           Send
         </Button>
       </Box>

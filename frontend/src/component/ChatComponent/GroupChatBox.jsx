@@ -14,6 +14,7 @@ import { styled } from "@mui/material/styles";
 import { Grid, Avatar, Typography } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import Badge from "@mui/material/Badge";
+import { GroupManage } from "./GroupManage";
 
 let socket;
 
@@ -210,16 +211,18 @@ const GroupChatBox = ({
           // data.append("fileUrl", fileUrl);
           data.append("messageInput", messageInput);
 
-          const response = await axios.post(`${server}/sendFiles, data`);
+          const response = await axios.post(`${server}/sendFiles`, data);
           console.log(response);
-          // socket.emit("file", {
-          //   chatUsers: response.data.chatUsers,
-          //   filename: filename,
-          //   fileData: fileData,
-          // });
+          socket.emit("file", {
+            chatUsers: response.data.chatUsers,
+            filename: filename,
+            fileData: fileData,
+          });
+          setPopOpen(false);
           setFile(null);
         };
         reader.readAsDataURL(selectedFile);
+
       }
     } catch (error) {
       console.error("Error file sending: ", error);
@@ -283,6 +286,7 @@ const GroupChatBox = ({
                     <Avatar>H</Avatar>
                   </StyledBadge>
                   <Typography>{selectedChat.groupName}</Typography>
+                  <GroupManage selectedChat={selectedChat} myId={myId}/>
                 </Stack>
               </Grid>
               <Grid>
@@ -307,33 +311,41 @@ const GroupChatBox = ({
                         }
                       >
                         <div className="message">
-                          <p>{message.sender}</p>
+                          <span className="chat-user-name">{selectedChat.groupName}</span>
                           {/* Render message content based on message type */}
                           {message.type === "text" && <p>{message.content}</p>}
 
+                          <div className="chatfile-box">
                           {message.type === "audio" && (
-                            <audio controls>
+                            
+                            <audio controls className="chatfile">
                               <source
                                 src={`${server}/fetchfile/${message.audioUrl}`}
                                 type="audio/mp3"
                               />
                               Your browser does not support the audio element.
                             </audio>
+                            
                           )}
 
                           {message.type === "video" && (
-                            <video controls>
+                            
+                            <video controls className="chatfile">
                               <source src={message.videoUrl} type="video/mp4" />
                               Your browser does not support the video element.
                             </video>
+                          
                           )}
 
                           {message.type === "image" && (
-                            <img
+                           
+                              <img className="chatfile"
                               src={`${server}/fetchfile/${message.imageUrl}`}
                               alt="message"
                             />
+                          
                           )}
+                          </div>
 
                           {/* Render delete button only if sender is the current user */}
                           {message.sender === myId &&

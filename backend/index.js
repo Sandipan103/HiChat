@@ -9,6 +9,7 @@ require("dotenv").config();
 const http = require("http");
 // required env string
 const PORT = process.env.PORT;
+const path = require('path');
 
 const cron = require('node-cron');
 const Message = require('./models/MsgModel');
@@ -170,4 +171,7 @@ app.use("/api/v1", profileRoutes)
 app.use("/api/v1", chatRoutes)
 app.use("/api/v1", groupRoutes)
 
-app.use('/fetchfile', express.static('uploads/users/files'));
+const uploadDirectory = path.join(__dirname, '/uploads/users/files');
+
+
+app.use('/api/v1/fetchfile', express.static(uploadDirectory));
