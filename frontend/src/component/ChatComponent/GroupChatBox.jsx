@@ -69,6 +69,7 @@ const GroupChatBox = ({
   setChats,
   chats,
 }) => {
+  // console.log("selchat: ",selectedChat);
   const [messageInput, setMessageInput] = useState("");
   const [file, setFile] = useState(null);
   const [socketConnected, setSocketConnected] = useState(false);
@@ -88,7 +89,7 @@ const GroupChatBox = ({
   const [user1,setuser1]=useState('');
   const [user2,setuser2]=useState('');
   const [isChecked,setChecked]=useState(null);
-  
+  const [u,su]=useState('');
 
 
   useEffect(() => {
@@ -96,6 +97,7 @@ const GroupChatBox = ({
       try {
         const response = await axios.get(`${server}/chats/${selectedChat._id}`);
         setuser1(response.data.chatUsers[0].contactNo);
+        su(response.data.chatUsers[1].firstName);
         setuser2(response.data.chatUsers[1].contactNo);
         // console.log("chatuser",response.data.chatUsers);
          setTimer(response.data.timer);
@@ -339,8 +341,11 @@ const GroupChatBox = ({
                         }
                       >
                         <div className="message">
-                          <span className="chat-user-name">{selectedChat.groupName}</span>
-                          {/* Render message content based on message type */}
+                        {message.sender !== myId ? (
+    <span className="chat-user-name">{selectedChat.groupName}</span>
+) : (
+    <span className="chat-user-name">{u}</span>
+)}
                           {message.type === "text" && <p>{message.content}</p>}
 
                           <div className="chatfile-box">

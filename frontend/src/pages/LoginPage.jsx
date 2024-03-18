@@ -53,7 +53,7 @@ const LoginPage = () => {
         expires: 1,
       });
       // console.log(`isAuthenticated : `, isAuthenticated);
-      navigate(`/profile`);
+      navigate(`/chatting`);
       toast.success(`logged in`)
     } catch (error) {
       if(error.response.data.message) {

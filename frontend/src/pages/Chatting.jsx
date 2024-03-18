@@ -140,7 +140,7 @@ const Chatting = () => {
       <div className="chat-box">
         <div className="chat-body">
           <Box sx={{ flexGrow: 1 }}>
-            <Grid container >
+            <Grid container wrap={'wrap'}>
               <Grid xs={4}>
                 <GroupList
                   chats={chats}
@@ -149,7 +149,7 @@ const Chatting = () => {
                 />
               </Grid>
 
-              <Grid xs={8}>
+              <Grid  xs={8} sm={'auto'}>
                 <div className="message-body">
                   {selectedChat && (
                     <GroupChatBox
@@ -161,6 +161,7 @@ const Chatting = () => {
                       setChats={setChats}
                     />
                   )}
+                  {!selectedChat && <p>Please select the chat</p>}
                 </div>
               </Grid>
             </Grid>

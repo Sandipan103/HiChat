@@ -152,7 +152,7 @@ const Main = () => {
          <DarkDiv   click={click}/>
             <Container>
             <PowerButton />
-            <LogoComponent theme={click ? 'dark' :'light'}/>
+            {/* <LogoComponent theme={click ? 'dark' :'light'}/> */}
             <Center click={click}>
                 <Image src={img1} alt="Sherlock Image" onClick={handleClick} />
                 <h1>Click me to enter into the world of Sherlock Holmes..</h1>

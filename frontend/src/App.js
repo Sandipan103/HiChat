@@ -43,8 +43,8 @@ function App() {
           {/* Conditional rendering of Navbar */}
           {isNavbarVisible() && <Navbar />}
           <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/start" element={<Main />} />
+            <Route path="/home" element={<HomePage />} />
+            <Route path="/" element={<Main />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/features" element={<Features />} />
 
