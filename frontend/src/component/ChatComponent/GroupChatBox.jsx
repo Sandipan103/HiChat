@@ -90,7 +90,7 @@ const GroupChatBox = ({
         !selectedChat || // if chat is not selected or doesn't match current chat
         selectedChat._id !== newMessage.chat
       ) {
-        // console.log('new message recived : ', newMessage)
+        console.log('new message recived : ', newMessage)
         // console.log('selectedChat : ', selectedChat)
         const updatedChats = chats.map((chat) => {
           if (chat._id === newMessage.chat) {
