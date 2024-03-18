@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom'; // Import Link from React Router
 import Me from '../assets/sh2.png';
 
 const Box = styled(motion.div)`
@@ -9,11 +10,11 @@ const Box = styled(motion.div)`
     top: 50%;
     transform: translate(-50%, -50%);
     width: 65vw;
-    height: 55vh;
+    height: 60vh;
     display: flex;
     z-index: 1;
     overflow: hidden;
-    border: 2px solid white; /* Added white border */
+    border: 3px solid white; /* Added white border */
 `;
 
 const BackgroundImage = styled.div`
@@ -27,8 +28,8 @@ const BackgroundImage = styled.div`
 const SubBox = styled.div`
     width: 50%;
     position: relative;
-    display: flex;
-
+     justify-content: center; /* Center child elements horizontally */
+    align-items: center; 
     .pic {
         position: absolute;
         bottom: 0;
@@ -40,52 +41,59 @@ const SubBox = styled.div`
 `;
 
 const Text = styled.div`
-    font-size: calc(1em + 1.5vw);
+    font-size: calc(1em + 1vw);
     color: white;
     padding: 2rem;
     cursor: pointer;
-
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; /* Changed to flex-start */
+    
+    justify-content: space-evenly;
 
     & > *:last-child {
-        color:grey;
-        font-size: calc(0.3rem +.5vw);
-        font-weight: 300;
-        margin-top: .5rem; /* Added margin-top */
-    }
-
-    button {
-        padding: 0.5rem 1rem;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 1rem;
-        transition: background-color 0.3s;
-        align-self: flex-start; /* Align button to the start */
-    }
-
-    button:hover {
-        background-color: #0056b3;
+        color: grey;
+        font-size: calc(0.3rem + 1vw);
+        font-weight: 200;
     }
 `;
+
+const RoundedButton = styled.button`
+    color: black;
+    background: white;
+    box-shadow: 0 0 8px 6px rgba(12, 237, 233,0.5);
+    margin-left:  9rem;
+    padding: 1rem 2rem;
+    cursor: pointer;
+    border-radius: 25px;
+    border: none;
+    outline: none;
+    font-size: calc(0.3rem + 1vw);
+    font-weight: 200;
+    
+    &:hover {
+        box-shadow: 0 0 8px 6px rgba(0,255,0,0.7);
+
+    }
+`;
+
+
 
 const Intro = () => {
     return (
         <Box
             initial={{ height: 0 }}
             animate={{ height: '55vh' }}
-            transition={{ type: 'spring', duration: 3, delay: .8 }}
+            transition={{ type: 'spring', duration: 3, delay: .6 }}
         >
             <SubBox>
                 <Text>
                     <h1>CryptGuard</h1>
                     <h6>An encrypted platform for Sherlock Holmes and Dr. Watson, offering secure messaging, video calls, and group chats, safeguarding their investigations with confidentiality and versatility</h6>
-                    <button>Learn More</button>
                 </Text>
+                {/* Link to the signup page */}
+                <Link to="/signup">
+                    <RoundedButton>Get Started</RoundedButton>
+                </Link>
             </SubBox>
             <SubBox>
                 <BackgroundImage />

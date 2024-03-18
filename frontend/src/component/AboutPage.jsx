@@ -6,7 +6,7 @@ import {DarkTheme} from './theme';
 import PowerButton from './PowerButton';
 import ParticleComponent from './ParticleComponent';
 import BigTitle from './BigTitle'
-import astronaut from '../assets/spaceman.png'
+import astronaut from '../assets/sher.png'
 
 const Box = styled.div`
 background-color: ${props => props.theme.body};
@@ -23,8 +23,8 @@ const float = keyframes`
 `
 const Spaceman = styled.div`
 position: absolute;
-top: 10%;
-right: 5%;
+top: 30%;
+right: 8%;
 width: 20vw;
 animation: ${float} 4s ease infinite;
 img{

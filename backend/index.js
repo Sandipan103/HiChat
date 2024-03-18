@@ -1,6 +1,7 @@
 
 // required dependency
 const express = require("express");
+
 const app = express();
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -8,6 +9,9 @@ require("dotenv").config();
 const http = require("http");
 // required env string
 const PORT = process.env.PORT;
+
+const cron = require('node-cron');
+const Message = require('./models/MsgModel');
 
 // // connect with db
 const dbConnect = require("./config/database");
@@ -94,6 +98,26 @@ dbConnect()
         });
       });
 
+
+      socket.on('file', ( {chatUsers, filename, fileData}) => {
+        if (chatUsers.length === 0) return console.log("chat.users not defined");
+    
+        chatUsers.forEach((user) => {
+          // if (user == newMessage.sender) return;
+          // console.log(filename);
+          socket.in(user).emit("file recieved", fileData);
+        });
+
+        // const toSocket = userConnections.get(to);
+        // if (toSocket) {
+        //   toSocket.emit('file', { from: userId, filename});
+        // }
+        // console.log('File received:', filename);
+        
+        // Save the file to disk
+        // fs.writeFileSync(`uploads/${data.filename}`, data.fileData);        
+      });
+
       socket.off("setup", () => {
         console.log("USER DISCONNECTED");
         socket.leave(userData._id);
@@ -117,6 +141,20 @@ app.use(
 );
 
 
+
+// Schedule a task to run every minute
+// cron.schedule('* * * * *', async () => {
+//   const now = new Date();
+//   try {
+//     await Message.deleteMany({
+//       deleteAt: { $lt: now, $ne: null } // Exclude documents where deleteAt is null
+//     });
+//     console.log('Expired messages deleted');
+//   } catch (error) {
+//     console.error('Error deleting messages:', error);
+//   }
+// });
+
 app.use(cookieParser());
 app.use(express.json());
 
@@ -131,6 +169,3 @@ app.use("/api/v1", authRoutes)
 app.use("/api/v1", profileRoutes)
 app.use("/api/v1", chatRoutes)
 app.use("/api/v1", groupRoutes)
-
-
-
