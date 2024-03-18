@@ -6,17 +6,28 @@ import Cookies from "js-cookie";
 import toast from "react-hot-toast";
 
 import axios from "axios";
-import "../styles/chat.css"
+import "../styles/chat.css";
 import GroupList from "../component/ChatComponent/GroupList";
 import GroupChatBox from "../component/ChatComponent/GroupChatBox";
-import {server, AuthContext} from '../context/UserContext';
+import { server, AuthContext } from "../context/UserContext";
+import { styled } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import Grid from "@mui/material/Unstable_Grid2";
 
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: "center",
+  color: theme.palette.text.secondary,
+}));
 
 const Chatting = () => {
   const { isAuthenticated } = useContext(AuthContext);
   const [myId, setMyId] = useState("");
-  const [chats, setChats] = useState([])
-  const [selectedChat, setSelectedChat] = useState()
+  const [chats, setChats] = useState([]);
+  const [selectedChat, setSelectedChat] = useState();
   const [messages, setMessages] = useState([""]);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef(null);
@@ -24,8 +35,8 @@ const Chatting = () => {
 
   const fetchUserDetail = async () => {
     const token = Cookies.get("tokenf");
-    if(!token)  {
-      navigate('/login');
+    if (!token) {
+      navigate("/login");
     }
     if (token) {
       try {
@@ -33,12 +44,8 @@ const Chatting = () => {
         const decodedToken = jwtDecode(token);
         const { id: userId } = decodedToken;
 
-        const response = await axios.get(
-          `${server}/findAllChats/${userId}`
-        );
-        const myContacts = await axios.get(
-          `${server}/contacts/${userId}`
-        );
+        const response = await axios.get(`${server}/findAllChats/${userId}`);
+        const myContacts = await axios.get(`${server}/contacts/${userId}`);
         setMyId(userId);
 
         const userChats = response.data.chats;
@@ -46,39 +53,42 @@ const Chatting = () => {
 
         // console.log(userChats)
         // console.log(myContacts.data.contacts);
-        
-        const modifiedChats = userChats.map(chat => {
 
+        const modifiedChats = userChats.map((chat) => {
           let unreadMsgCount = 0;
-          
+
           if (!chat.isGroupChat) {
-            const otherUserId = chat.users.find(id => id !== userId);
-            const contact = contacts.find(contact => contact.contactId === otherUserId);
+            const otherUserId = chat.users.find((id) => id !== userId);
+            const contact = contacts.find(
+              (contact) => contact.contactId === otherUserId
+            );
             if (contact) {
-              chat.groupName = contact.name
+              chat.groupName = contact.name;
             } else {
-              chat.groupName = "unknown"
+              chat.groupName = "unknown";
             }
           }
 
-          chat.allChatMessages.forEach(message => {
+          chat.allChatMessages.forEach((message) => {
             if (!message.readBy.includes(userId)) {
-                unreadMsgCount++;
+              unreadMsgCount++;
             }
           });
           chat.unreadMsgCount = unreadMsgCount;
           return chat;
         });
 
-        // console.log(modifiedGroups) 
-        modifiedChats.sort((a, b) => new Date(b.latestMessageTime) - new Date(a.latestMessageTime));
-        console.log(modifiedChats)
+        // console.log(modifiedGroups)
+        modifiedChats.sort(
+          (a, b) =>
+            new Date(b.latestMessageTime) - new Date(a.latestMessageTime)
+        );
+        // console.log(modifiedChats);
         setChats(modifiedChats);
-
       } catch (error) {
         toast.error("chat data not fetched");
         console.error("Error finding chat : ", error);
-        navigate('/login');
+        navigate("/login");
       } finally {
         setLoading(false);
       }
@@ -89,57 +99,69 @@ const Chatting = () => {
     fetchUserDetail();
   }, [navigate]);
 
-  const handleChatClick = async(chat) => {
+  const handleChatClick = async (chat) => {
     try {
-        // console.log('group : ', group);
-        if(selectedChat)  {
-          await axios.post(`${server}/readAllMessages`, {
-            myId,
-            chatId : selectedChat._id,
-          });
-        }
-        setSelectedChat(chat);
-        const response = await axios.get(`${server}/fetchAllMessages/${chat._id}` );
-        const responseReadMsg = await axios.post(`${server}/readAllMessages`, {
+      // console.log('group : ', group);
+      if (selectedChat) {
+        await axios.post(`${server}/readAllMessages`, {
           myId,
-          chatId : chat._id,
+          chatId: selectedChat._id,
         });
-        await fetchUserDetail();
-        chat.unreadMsgCount = 0;
-        setMessages(response.data.messages);
-        setChats(prevChats => {
-          const updatedChats = prevChats.filter(grp => grp._id !== chat._id);
-          return [chat, ...updatedChats];
-        });
+      }
+      setSelectedChat(chat);
+      const response = await axios.get(
+        `${server}/fetchAllMessages/${chat._id}`
+      );
+      const responseReadMsg = await axios.post(`${server}/readAllMessages`, {
+        myId,
+        chatId: chat._id,
+      });
+      await fetchUserDetail();
+      chat.unreadMsgCount = 0;
+      setMessages(response.data.messages);
+      setChats((prevChats) => {
+        const updatedChats = prevChats.filter((grp) => grp._id !== chat._id);
+        return [chat, ...updatedChats];
+      });
+      toast.success("chat list fetched")
     } catch (error) {
-        console.log('chat not detected');
-        console.log(error);
+      toast.error("chat not detected")
+      console.log("chat not detected");
+      console.log(error);
     }
-  }
+  };
 
-  
   return (
     <div className="main-container">
       <div className="chat-box">
-      <div className="chat-body">
-        <GroupList
-            chats={chats}
-            setChats = {setChats}
-            handleChatClick = {handleChatClick}
-        />
-        <div className="message-body">
-            {selectedChat && (
-              <GroupChatBox
-                myId={myId}
-                messages={messages}
-                setMessages={setMessages}
-                selectedChat={selectedChat}
-                chats={chats}
-                setChats = {setChats}
-              />
-            )}
-          </div>
-      </div>
+        <div className="chat-body">
+          <Box sx={{ flexGrow: 1 }}>
+            <Grid container >
+              <Grid xs={4}>
+                <GroupList
+                  chats={chats}
+                  setChats={setChats}
+                  handleChatClick={handleChatClick}
+                />
+              </Grid>
+
+              <Grid xs={8}>
+                <div className="message-body">
+                  {selectedChat && (
+                    <GroupChatBox
+                      myId={myId}
+                      messages={messages}
+                      setMessages={setMessages}
+                      selectedChat={selectedChat}
+                      chats={chats}
+                      setChats={setChats}
+                    />
+                  )}
+                </div>
+              </Grid>
+            </Grid>
+          </Box>
+        </div>
       </div>
     </div>
   );

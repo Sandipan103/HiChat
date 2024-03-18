@@ -11,6 +11,7 @@ import InputBase from "@mui/material/InputBase";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import AddReactionIcon from "@mui/icons-material/AddReaction";
+import toast from "react-hot-toast";
 
 
 export const ChatTextInput = ({messageInput,setMessageInput,myId,selectedChat,socket, setChats,chats,setMessages,messages,isTimerEnabled,timer }) => {
@@ -31,15 +32,19 @@ export const ChatTextInput = ({messageInput,setMessageInput,myId,selectedChat,so
         deleteAt = new Date(sendTime.getTime() + timer * 60000);
       }
 
+      // blank msg validation
+      if(messageInput === "") {
+        toast.error("blank msg can't be send : ");
+        return;
+      }
+
       const response = await axios.post(`${server}/sendChatMessage`, {
         myId,
         chatId: selectedChat._id,
         messageInput,
         deleteAt
       });
-      // console.log(response.data.newMessage);
-      // console.log(response.data.chatUsers);
-      // console.log(messages);
+
       socket.emit("new message", {
         newMessage: response.data.newMessage,
         chatUsers: response.data.chatUsers,
@@ -55,6 +60,7 @@ export const ChatTextInput = ({messageInput,setMessageInput,myId,selectedChat,so
       setMessageInput("");
       setMessages([...messages, response.data.newMessage]);
     } catch (error) {
+      toast.error("something went wrong, msg not send")
       console.error("Error sending message:", error);
     }
   };

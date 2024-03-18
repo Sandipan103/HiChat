@@ -37,7 +37,6 @@ const ProfilePage = () => {
         setUserData(user);
 
         const defaultGender = user.gender || "";
-        const defaultDateOfBirth = user.dateOfBirth || "";
         const defaultContactNo = user.contactNo || "";
 
         setEditedData({
@@ -45,7 +44,6 @@ const ProfilePage = () => {
           lastName: user.lastName || "",
           email: user.email || "",
           gender: defaultGender,
-          dateOfBirth: defaultDateOfBirth,
           contactNo: defaultContactNo,
         });
       } catch (error) {
@@ -76,7 +74,25 @@ const ProfilePage = () => {
 
   const handleSubmit = async () => {
     const token = Cookies.get("tokenf");
-    console.log("editedData : ", editedData);
+    // console.log("editedData : ", editedData);
+    if(!token)  {
+      toast.error("please login first : ");
+      navigate("/login");
+    }
+
+    // validation check
+    // Check if required fields are not empty
+    if (!editedData.firstName || !editedData.lastName || !editedData.gender || !editedData.contactNo) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+
+    // Validate contactNo length
+    if (editedData.contactNo.length !== 10) {
+      toast.error("Contact number should be 10 digits long.");
+      return;
+    }
+
     if (token) {
       try {
         setLoading(true);

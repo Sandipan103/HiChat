@@ -57,6 +57,21 @@ const SignupPage = () => {
     }
     
     // password validation
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,12}$/;
+    if (!passwordPattern.test(signupData.password)) {
+      toast.error("Password must be 8-12 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character.");
+      return;
+    }
+
+    // firstName and lastName validation
+    if(signupData.firstName === "") {
+      toast.error("please enter your firstName");
+      return;
+    }
+    if(signupData.lastName === "") {
+      toast.error("please enter your lastName");
+      return;
+    }
 
     try {
       setLoading(true);
@@ -66,7 +81,7 @@ const SignupPage = () => {
         { withCredentials: true }
       );
       toast.success(`Otp successfully send to your mail 📫`);
-      console.log(response.data);
+      // console.log(response.data);
       setProgress(true);
     } catch (error) {
       
@@ -93,7 +108,8 @@ const SignupPage = () => {
         { withCredentials: true }
       );
       console.log(response.data);
-      toast.success(``)
+      toast.success('acount created successfully');
+      toast.success('please update your profile first');
       navigate('/login');
     } catch (error) {
       toast.error(`invalid Otp ⛔ `);

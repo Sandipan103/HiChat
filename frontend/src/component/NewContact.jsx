@@ -67,8 +67,7 @@ const NewContact = () => {
             { withCredentials: true }
           );
           toast.success('contact saved')
-        navigate('/chat')
-        // console.log(response);
+        navigate('/chatting')
     } catch (error) {
         toast.error('something wrong contact not saved');
         console.log(error);
