@@ -7,6 +7,8 @@ import axios from "axios";
 import { server } from "../../context/UserContext";
 import Button from "@mui/material/Button";
 import { IconButton } from "@mui/material";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
 
 export const GroupManage = ({ selectedChat, myId }) => {
   const [showModifiedGroup, setShowModifiedGroup] = useState(false);
@@ -47,7 +49,8 @@ export const GroupManage = ({ selectedChat, myId }) => {
   };
 
   const modifyGroup = async () => {
-    setShowModifiedGroup(!showModifiedGroup);
+    // setShowModifiedGroup(!showModifiedGroup);
+    setOpen(true);
     try {
       // Step 1: Find all chat members
       const chatMembersResponse = await axios.get(
@@ -101,8 +104,20 @@ export const GroupManage = ({ selectedChat, myId }) => {
     }
   };
 
+
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <>
+    
     {selectedChat.isGroupChat && (
       <Button onClick={handleGroupShowing}> seeGroup </Button>
     )}
@@ -164,6 +179,66 @@ export const GroupManage = ({ selectedChat, myId }) => {
           <Button onClick={updateGroup}> Update </Button>
         </div>
       )}
+
+
+<div>
+        <Dialog
+          open={open}
+          onClose={handleClose}
+        >
+          <DialogActions>
+            <Button onClick={handleClose}>Cancel</Button>
+          </DialogActions>
+          <div className="gorupModify">
+          <h2>Selected Members:</h2>
+          <div style={{ display: "flex", flexWrap: "wrap" }}>
+            {selectedContact.map((contact) => {
+              // Accessing the contactId property directly from each object
+              const contactId = contact.contactId;
+              return (
+                <div key={contact.contactId}>
+                  <Avatar src={contact.avatarUrl} alt={contact.name} />
+                  <Typography>{contact.name}</Typography>
+                  <IconButton onClick={() => removeFromGroup(contactId)}>
+                    <CloseIcon />
+                  </IconButton>
+                </div>
+              );
+            })}
+          </div>
+          <div>
+            <h2>Not Selected Members:</h2>
+            <TextField
+              label="Search Contacts"
+              variant="outlined"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
+            <div style={{ display: "flex", flexWrap: "wrap" }}>
+              {notSelectedContact
+                .filter((contact) =>
+                  contact.name.toLowerCase().includes(searchQuery.toLowerCase())
+                )
+                .map((contact) => (
+                  <div
+                    key={contact.contactId}
+                    style={{ margin: "5px", textAlign: "center" }}
+                  >
+                    <Avatar src={contact.avatarUrl} alt={contact.name} />
+                    <Typography>{contact.name}</Typography>
+                    <IconButton onClick={() => addToGroup(contact.contactId)}>
+                      <PersonAddIcon />
+                    </IconButton>
+                  </div>
+                ))}
+            </div>
+          </div>
+          <Button onClick={updateGroup}> Update </Button>
+        </div>
+        </Dialog>
+      </div>
     </>
   );
 };
