@@ -183,25 +183,6 @@ export const FileShareMenu = ({
           />
         </MenuItem>
       </Menu>
-
-      {/* {selectedImage && (
-        <>
-      
-        <Modal
-          open={popOpen} 
-          onClose={handleCloseModal}
-         
-        >
-          <div>
-            <img
-              src={URL.createObjectURL(selectedImage)}
-              alt="Selected Image"
-            />
-          </div>
-        </Modal>
-        </>
-        
-      )} */}
     </React.Fragment>
   );
 };

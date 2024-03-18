@@ -83,7 +83,7 @@ const Chatting = () => {
           (a, b) =>
             new Date(b.latestMessageTime) - new Date(a.latestMessageTime)
         );
-        console.log(modifiedChats);
+        // console.log(modifiedChats);
         setChats(modifiedChats);
       } catch (error) {
         toast.error("chat data not fetched");
@@ -123,7 +123,9 @@ const Chatting = () => {
         const updatedChats = prevChats.filter((grp) => grp._id !== chat._id);
         return [chat, ...updatedChats];
       });
+      toast.success("chat list fetched")
     } catch (error) {
+      toast.error("chat not detected")
       console.log("chat not detected");
       console.log(error);
     }

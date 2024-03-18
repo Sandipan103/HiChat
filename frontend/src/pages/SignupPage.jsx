@@ -63,6 +63,16 @@ const SignupPage = () => {
       return;
     }
 
+    // firstName and lastName validation
+    if(signupData.firstName === "") {
+      toast.error("please enter your firstName");
+      return;
+    }
+    if(signupData.lastName === "") {
+      toast.error("please enter your lastName");
+      return;
+    }
+
     try {
       setLoading(true);
       const response = await axios.post(
@@ -71,7 +81,7 @@ const SignupPage = () => {
         { withCredentials: true }
       );
       toast.success(`Otp successfully send to your mail 📫`);
-      console.log(response.data);
+      // console.log(response.data);
       setProgress(true);
     } catch (error) {
       
@@ -98,7 +108,8 @@ const SignupPage = () => {
         { withCredentials: true }
       );
       console.log(response.data);
-      toast.success(``)
+      toast.success('acount created successfully');
+      toast.success('please update your profile first');
       navigate('/login');
     } catch (error) {
       toast.error(`invalid Otp ⛔ `);
