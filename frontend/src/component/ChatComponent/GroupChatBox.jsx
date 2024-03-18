@@ -1,5 +1,7 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { Box, Grid, Stack, Typography, Avatar, Badge, IconButton, Menu, MenuItem } from '@mui/material';
+import { MoreVert as MoreVertIcon } from '@mui/icons-material';
 
 import axios from "axios";
 import io from "socket.io-client";
@@ -10,13 +12,7 @@ import { FileSendPopUp } from "./FileSendPopUp";
 import ZegoCloud from "./ZegoCloud";
 import { ChatTextInput } from "./ChatTextInput";
 
-
-import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
-import { Grid, Avatar, Typography } from "@mui/material";
-import Stack from "@mui/material/Stack";
-import Badge from "@mui/material/Badge";
 import { GroupManage } from "./GroupManage";
 import toast from "react-hot-toast";
 
@@ -90,7 +86,16 @@ const GroupChatBox = ({
   const [user2,setuser2]=useState('');
   const [isChecked,setChecked]=useState(null);
   const [u,su]=useState('');
+  
+  const [anchorEl, setAnchorEl] = useState(null);
 
+  const handleUserMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleUserMenuOpenClose = () => {
+    setAnchorEl(null);
+  };
 
   useEffect(() => {
     async function fetchChatData() {
@@ -215,7 +220,7 @@ const GroupChatBox = ({
     try {
       if (selectedFile) {
         const reader = new FileReader();
-
+        
         reader.onload = async (e) => {
           const fileData = e.target.result;
           const filename = selectedFile.name;
@@ -270,7 +275,6 @@ const GroupChatBox = ({
 
 
   const handleTimerChange = (e) => {
-   
     const minutes = timerOptions[e.target.value];
     setTimer(minutes);
   };
@@ -279,8 +283,49 @@ const GroupChatBox = ({
     <>
      
       <div className="message-area">
-    
-      <select value={Object.keys(timerOptions).find(key => timerOptions[key] === timer)} onChange={handleTimerChange}>
+        <div className="message-header">
+        <Box sx={{ flexGrow: 1 }}>
+      <Grid container direction="row" justifyContent="space-between" alignItems="center">
+        <Grid item>
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Badge
+              overlap="circular"
+              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              variant="dot"
+            >
+              <Avatar>H</Avatar>
+            </Badge>
+            <Typography>{selectedChat.groupName}</Typography>
+            <GroupManage selectedChat={selectedChat} myId={myId}/>
+          </Stack>
+        </Grid>
+        <Grid item>
+          <ZegoCloud myId={myId} calleeId={calleeId} user1={user1} user2={user2} />
+          <IconButton onClick={handleUserMenuOpen}>
+            <MoreVertIcon />
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleUserMenuOpenClose}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+          >
+            <MenuItem onClick={handleClose}>Option 1</MenuItem>
+            <MenuItem onClick={handleClose}>Option 2</MenuItem>
+            <MenuItem onClick={handleClose}>Option 3</MenuItem>
+          </Menu>
+        </Grid>
+      </Grid>
+    </Box>
+        </div>
+        <select value={Object.keys(timerOptions).find(key => timerOptions[key] === timer)} onChange={handleTimerChange}>
         {Object.entries(timerOptions).map(([label, value]) => (
           <option key={value} value={label}>
             {label}
@@ -294,37 +339,6 @@ const GroupChatBox = ({
           onChange={e => handleCheckboxChange(selectedChat._id, e.target.checked)}
         /> Enable Timer
       </label>
-        <div className="message-header">
-        <Box sx={{ flexGrow: 1 }}>
-            <Grid
-              container
-              direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <Grid>
-                <Stack
-                  direction="row"
-                  spacing={2}
-                  sx={{ alignItems: "center;" }}
-                >
-                  <StyledBadge
-                    overlap="circular"
-                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                    variant="dot"
-                  >
-                    <Avatar>H</Avatar>
-                  </StyledBadge>
-                  <Typography>{selectedChat.groupName}</Typography>
-                  <GroupManage selectedChat={selectedChat} myId={myId}/>
-                </Stack>
-              </Grid>
-              <Grid>
-              <ZegoCloud myId={myId} calleeId={calleeId} user1={user1} user2={user2} />
-              </Grid>
-            </Grid>
-          </Box>
-        </div>
         {!popOpen && (
           <div className="msg-inner-container">
             <div className="msg-body">

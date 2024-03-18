@@ -15,11 +15,11 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Unstable_Grid2";
 
+import { SpeedDial, SpeedDialAction } from "@mui/material";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import GroupIcon from "@mui/icons-material/Group";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
-import {SpeedDial, SpeedDialAction } from "@mui/material";
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import GroupIcon from '@mui/icons-material/Group';
-import PersonAddIcon from '@mui/icons-material/PersonAdd';
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
@@ -139,9 +139,9 @@ const Chatting = () => {
     <div className="main-container">
       <div className="chat-box">
         <div className="chat-body">
-          <Box sx={{ flexGrow: 1 }}>
-            <Grid container wrap={'wrap'}>
-              <Grid xs={4}>
+          <Box sx={{ flexGrow: 1 }} >
+            <Grid container wrap={"wrap"} direction="row">
+              <Grid item xs={12} sm={4}>
                 <GroupList
                   chats={chats}
                   setChats={setChats}
@@ -149,45 +149,51 @@ const Chatting = () => {
                 />
               </Grid>
 
-              <Grid  xs={8} sm={'auto'}>
-                <div className="message-body">
-                  {selectedChat && (
-                    <GroupChatBox
-                      myId={myId}
-                      messages={messages}
-                      setMessages={setMessages}
-                      selectedChat={selectedChat}
-                      chats={chats}
-                      setChats={setChats}
-                    />
-                  )}
-                  {!selectedChat && <p>Please select the chat</p>}
-                </div>
+              <Grid item xs={12} sm={8}>
+                <Box sx={{ position: "relative" }}>
+                  <div className="message-body">
+                    {selectedChat ? (
+                      <GroupChatBox
+                        myId={myId}
+                        messages={messages}
+                        setMessages={setMessages}
+                        selectedChat={selectedChat}
+                        chats={chats}
+                        setChats={setChats}
+                      />
+                    ) : (
+                      <p>Please select the chat</p>
+                    )}
+                  </div>
+                </Box>
               </Grid>
             </Grid>
           </Box>
           <div>
-          <SpeedDial
-            ariaLabel="SpeedDial tooltip example"
-            sx={{ position: 'absolute', bottom: 16, left: 100 }}
-            icon={<AddCircleIcon />}
-            open={speedDialOpen}
-            onClick={() => setSpeedDialOpen(!speedDialOpen)}
-          >
-            <SpeedDialAction
-              icon={<GroupIcon />}
-              tooltipTitle='create group'
-              tooltipOpen
-              onClick={()=>{navigate('/createGroup')}}
-            />
-            <SpeedDialAction
-              icon={<PersonAddIcon />}
-              tooltipTitle='new contact'
-              tooltipOpen
-              onClick={()=>{navigate('/addContact')}}
-            />
-          </SpeedDial>
-        </div>
+            {/* <SpeedDial
+              ariaLabel="SpeedDial tooltip example"
+              sx={{ position: 'absolute', bottom: 16, right: 16 }}
+              icon={<AddCircleIcon />}
+              open={speedDialOpen}
+              onClick={() => setSpeedDialOpen(!speedDialOpen)}
+            >
+              <SpeedDialAction
+                icon={<GroupIcon />}
+                tooltipTitle="create group"
+                onClick={() => {
+                  navigate("/createGroup");
+                }}
+              />
+              <SpeedDialAction
+                icon={<PersonAddIcon />}
+                tooltipTitle="New contact"
+                tooltipOpen
+                onClick={() => {
+                  navigate("/addContact");
+                }}
+              />
+            </SpeedDial> */}
+          </div>
         </div>
       </div>
     </div>

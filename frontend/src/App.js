@@ -24,7 +24,7 @@ import AboutPage from "./component/AboutPage";
 import Features from "./component/FeaturesPage";
 
 function useNavbarVisibility() {
-  const excludedPaths = ["/start", "/about", "/features"];
+  const excludedPaths = ["/start", "/about", "/features", "/chatting"];
 
   const isNavbarVisible = () => {
     return !excludedPaths.includes(window.location.pathname);

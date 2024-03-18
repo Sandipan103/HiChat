@@ -3,28 +3,36 @@ import axios from "axios";
 import { server, AuthContext } from "../../context/UserContext";
 
 
-
-
-import SendIcon from "@mui/icons-material/Send";
-import Paper from "@mui/material/Paper";
-import InputBase from "@mui/material/InputBase";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import AddReactionIcon from "@mui/icons-material/AddReaction";
-
+import { Paper, IconButton, InputBase, Divider, Popover, List, ListItem, ListItemIcon,useMediaQuery  } from '@mui/material';
+import { AddReaction as AddReactionIcon, Send as SendIcon } from '@mui/icons-material';
 
 export const ChatTextInput = ({messageInput,setMessageInput,myId,selectedChat,socket, setChats,chats,setMessages,messages,isTimerEnabled,timer }) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const isSmallScreen = useMediaQuery('(max-width:600px)');
+  const [selectedEmoji, setSelectedEmoji] = useState(null);
+  
+  
   const handleMessageInputChange = (e) => {
     setMessageInput(e.target.value);
   };
-  
- 
 
+  const handleReactionClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleEmojiClick = (emoji) => {
+    setMessageInput((prevMessageInput) => prevMessageInput + emoji);
+    setAnchorEl(null);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
 
   const handleSendMessage = async () => {
     const sendTime = new Date();
-  
-   
     let deleteAt = null;
     try {
       if (timer && isTimerEnabled) {
@@ -37,9 +45,6 @@ export const ChatTextInput = ({messageInput,setMessageInput,myId,selectedChat,so
         messageInput,
         deleteAt
       });
-      // console.log(response.data.newMessage);
-      // console.log(response.data.chatUsers);
-      // console.log(messages);
       socket.emit("new message", {
         newMessage: response.data.newMessage,
         chatUsers: response.data.chatUsers,
@@ -60,36 +65,42 @@ export const ChatTextInput = ({messageInput,setMessageInput,myId,selectedChat,so
   };
 
   return (
-    <>
-      <Paper
-        component="form"
-        sx={{
-          p: "2px 4px",
-          display: "flex",
-          alignItems: "center",
-          width: 900,
+    <Paper component="form" sx={{ p: "2px 4px", display: "flex", alignItems: "center", width: 900 }}>
+      <IconButton sx={{ p: "10px" }} aria-label="reaction" onClick={handleReactionClick}>
+        <AddReactionIcon />
+      </IconButton>
+      <InputBase
+        sx={{ ml: 1, flex: 1 }}
+        placeholder="Type a message"
+        value={selectedEmoji ? messageInput + selectedEmoji : messageInput}
+        onChange={(e) => setMessageInput(e.target.value)}
+        inputProps={{ 'aria-label': 'Type a message' }}
+      />
+      <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+      <IconButton color="primary" sx={{ p: "10px" }} aria-label="send" onClick={handleSendMessage}>
+        <SendIcon />
+      </IconButton>
+      <Popover
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
         }}
       >
-        <IconButton sx={{ p: "10px" }} aria-label="menu">
-          <AddReactionIcon />
-        </IconButton>
-        <InputBase
-          sx={{ ml: 1, flex: 1 }}
-          placeholder="Type a message"
-          value={messageInput}
-          onChange={handleMessageInputChange}
-          inputProps={{ ariaLabel: "Type a message" }}
-        />
-        <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
-        <IconButton
-          color="primary"
-          sx={{ p: "10px" }}
-          aria-label="SendIcon"
-          onClick={handleSendMessage}
-        >
-          <SendIcon />
-        </IconButton>
-      </Paper>
-    </>
+        <List>
+          {['😀', '😂', '😊', '😍', '😎', '👍', '👎', '👏', '❤️'].map((emoji, index) => (
+            <ListItem button key={index} onClick={() => handleEmojiClick(emoji)}>
+              <ListItemIcon>{emoji}</ListItemIcon>
+            </ListItem>
+          ))}
+        </List>
+      </Popover>
+    </Paper>
   );
 };

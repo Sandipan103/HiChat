@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Paper, Typography, Avatar, List, ListItem, ListItemText } from '@mui/material';
 
 const MessageBox = ({ messages, myId }) => {
 
@@ -17,40 +18,56 @@ const MessageBox = ({ messages, myId }) => {
 
   return (
     <>
-      <div className="message-area">
-        <div className="message-header"></div>
-        {messages && messages.length > 0 ? (
-          <ul className="messageArea">
-            {messages.map((message, index) => (
-              <li
-                key={index}
-                className={
-                  message.sender === myId ? "own-message" : "other-message"
-                }
-              >
-                <div className="message">
-                  <p>{message.content}</p>
-                </div>
-                <div className="timestamp">
-                  <p className="message-timestamp">
-                    {new Date(message.timestamp).toLocaleString("en-US", {
-                      year: "numeric",
-                      month: "numeric",
-                      day: "numeric",
-                      hour: "numeric",
-                      minute: "numeric",
-                      hour12: true,
-                    })}
-                  </p>
-                </div>
-              </li>
-            ))}
-            <div ref={messagesEndRef} />
-          </ul>
-        ) : (
-          <p className="messageArea">No chat available</p>
-        )}
-      </div>
+     <Paper sx={{ padding: 2 }}>
+      {messages && messages.length > 0 ? (
+       <List>
+       {messages.map((message, index) => (
+         <ListItem
+           key={index}
+           alignItems="flex-start"
+           className={message.sender === myId ? "own-message" : "other-message"}
+         >
+           <ListItemAvatar>
+             <Avatar alt="User Avatar" src={message.senderAvatar} />
+           </ListItemAvatar>
+           <ListItemText
+             primary={
+               <Typography variant="body1" component="span" fontWeight="bold">
+                 {message.senderName}
+               </Typography>
+             }
+             secondary={
+               <>
+                 <Typography variant="body2" color="text.secondary">
+                   {message.content}
+                 </Typography>
+                 <Typography variant="body2" color="text.secondary">
+                   {new Date(message.timestamp).toLocaleString("en-US", {
+                     year: "numeric",
+                     month: "numeric",
+                     day: "numeric",
+                     hour: "numeric",
+                     minute: "numeric",
+                     hour12: true,
+                   })}
+                 </Typography>
+               </>
+             }
+           />
+           <ListItemSecondaryAction>
+             {message.sender === myId && (
+               <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteMessage(index)}>
+                 <DeleteIcon />
+               </IconButton>
+             )}
+           </ListItemSecondaryAction>
+         </ListItem>
+       ))}
+     </List>
+      ) : (
+        <Typography variant="body1">No chat available</Typography>
+      )}
+    </Paper>
     </>
   );
 };

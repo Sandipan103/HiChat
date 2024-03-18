@@ -6,7 +6,7 @@ import VideoCall from "../../pages/Home";
 import { ZIM } from "zego-zim-web";
 import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 import VideocamIcon from '@mui/icons-material/Videocam';
-
+import IconButton from '@mui/material';
 
 const ZegoCloud = ({myId, calleeId,user1,user2}) => {
     const [userInfo, setUserInfo] = useState({
@@ -77,24 +77,19 @@ const ZegoCloud = ({myId, calleeId,user1,user2}) => {
 
   return (
     <>
-         <Button
-            variant="text"
-            onClick={() => {
-              handleSend(ZegoUIKitPrebuilt.InvitationTypeVideoCall);
-            }}
-            startIcon={<VideocamIcon />}
-            color="primary"
-          >
-          </Button>
-          <Button
-            variant="text"
-            onClick={() => {
+    <IconButton onClick={() => {
+      handleSend(ZegoUIKitPrebuilt.InvitationTypeVideoCall);
+    }}>
+    <VideocamIcon />
+  </IconButton>
+
+  <IconButton onClick={() => {
               handleSend(ZegoUIKitPrebuilt.InvitationTypeVoiceCall);
-            }}
-            startIcon={<CallIcon />}
-            color="primary"
-          >
-          </Button>
+            }}>
+    <CallIcon />
+  </IconButton>
+          
+  
     </>
   )
 }
