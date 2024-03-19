@@ -12,12 +12,13 @@ import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import ChatSidebarNav from "./ChatSidebarNav";
+import Badge from '@mui/material/Badge';
+
 
 import { server, AuthContext } from "../../context/UserContext";
 import { Box } from "@mui/material";
-const BASH_URL = process.env.BASH_URL;
 
-const GroupList = ({ chats, handleChatClick, setChats }) => {
+const GroupList = ({ chats, handleChatClick, selectedChat }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const { isAuthenticated } = useContext(AuthContext);
   const [addContact, setAddContact] = useState(false);
@@ -39,6 +40,7 @@ const GroupList = ({ chats, handleChatClick, setChats }) => {
 
   const handleClickOpen = () => {
     setOpen(true);
+    console.log(chats);
   };
 
   const handleClose = () => {
@@ -85,50 +87,69 @@ const GroupList = ({ chats, handleChatClick, setChats }) => {
         <List
           sx={{
             width: "100%",
-            height: "calc(85vh - 48px)",
+            height: "calc(74vh)",
             overflowY: "auto",
             bgcolor: "background.paper",
-            
           }}
         >
           {chats.map((chat, index) => (
             <ListItem
-            key={index}
-            alignItems="flex-start"
-            // className={`user ${selectedChat === chat ? 'selected-chat' : ''}`}
-            onClick={() => {
-              handleChatClick(chat);
-            }}
-            divider
-          >
-            <ListItemAvatar>
-              <Avatar alt={chat.groupName ? chat.groupName : "no name"} />
-            </ListItemAvatar>
-            <ListItemText
-              primary={
-                <>
-                  {chat.groupName ? chat.groupName : "no name"}{" "}
-                  {chat.unreadMsgCount && (
-                   <span className={`unread-count ${chat.unreadMsgCount > 1 ? 'unread' : ''}`}>{chat.unreadMsgCount}</span>
-                  )}
-                </>
-              }
-              secondary={
-                <React.Fragment>
-                  <Typography
-                    sx={{ display: "inline" }}
-                    component="span"
-                    variant="body2"
-                    color="text.primary"
-                  >
-                    {chat.groupName ? chat.groupName : "no name"}
-                  </Typography>
-                  {chat.latestMessage}
-                </React.Fragment>
-              }
-            />
-          </ListItem>
-          
+              key={index}
+              alignItems="flex-start"
+              className={`user ${selectedChat === chat ? "selected-chat" : ""}`}
+              onClick={() => {
+                handleChatClick(chat);
+              }}
+              divider
+            >
+              <ListItemAvatar>
+                <Avatar alt={chat.groupName ? chat.groupName : "no name"} />
+              </ListItemAvatar>
+              <ListItemText
+                primary={
+                  <>
+                    {chat.groupName ? chat.groupName : "no name"}{" "}
+                    {chat.unreadMsgCount ? (
+                      <Badge
+                        badgeContent={chat.unreadMsgCount}
+                        color="error"
+                        sx={{float:"right", top: 20}}
+                      ></Badge>
+                    ) : (
+                      ""
+                    )}
+                  </>
+                }
+                secondary={
+                  <React.Fragment>
+                    <Typography
+                      sx={{ display: "inline" }}
+                      component="span"
+                      variant="body2"
+                      color="text.primary"
+                    >
+                      {chat.isGroupChat
+                        ? chat.latestMessageSender
+                          ? chat.latestMessageSender
+                          : "You: "
+                        : ""}
+                    </Typography>
+                    <Typography
+                      sx={{ display: "inline" }}
+                      component="span"
+                      variant="body2"
+                      color="text.primary"
+                    >
+                      {chat.latestMessage
+                        ? chat.latestMessage.length > 30
+                          ? chat.latestMessage.slice(0, 50) + "..."
+                          : chat.latestMessage
+                        : ""}
+                    </Typography>
+                  </React.Fragment>
+                }
+              />
+            </ListItem>
           ))}
         </List>
       </Box>

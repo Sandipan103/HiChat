@@ -52,7 +52,7 @@ exports.fetchChats = async (req, res, next) => {
                              path: 'users',
                              select: 'firstName contactNo' 
                            });
-    return res.json({isTimerEnabled : chat.isTimerEnabled, timer:chat.timer, chatUsers :chat.users});
+    return res.json({isTimerEnabled : chat.isTimerEnabled, timer:chat.timer, chatUsers :chat.users,isGroup: chat.isGroupChat});
   } catch (error) {
     return res.json(error);
   }

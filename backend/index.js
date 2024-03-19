@@ -100,13 +100,12 @@ dbConnect()
       });
 
 
-      socket.on('file', ( {chatUsers, filename, fileData}) => {
+      socket.on('file', ( {chatUsers, newMessage, fileData}) => {
         if (chatUsers.length === 0) return console.log("chat.users not defined");
-    
         chatUsers.forEach((user) => {
           // if (user == newMessage.sender) return;
           // console.log(filename);
-          socket.in(user).emit("file recieved", fileData);
+          socket.in(user).emit("file recieved", {fileData, newMessage});
         });
 
         // const toSocket = userConnections.get(to);

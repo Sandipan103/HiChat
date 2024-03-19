@@ -6,7 +6,7 @@ import VideoCall from "../../pages/Home";
 import { ZIM } from "zego-zim-web";
 import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 import VideocamIcon from '@mui/icons-material/Videocam';
-import IconButton from '@mui/material';
+import {IconButton} from '@mui/material';
 
 const ZegoCloud = ({myId, calleeId,user1,user2}) => {
     const [userInfo, setUserInfo] = useState({

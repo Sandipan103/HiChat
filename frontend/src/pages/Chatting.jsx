@@ -57,7 +57,7 @@ const Chatting = () => {
         const userChats = response.data.chats;
         const contacts = myContacts.data.contacts;
 
-        // console.log(userChats)
+        console.log("realchat",userChats)
         // console.log(myContacts.data.contacts);
 
         const modifiedChats = userChats.map((chat) => {
@@ -89,7 +89,7 @@ const Chatting = () => {
           (a, b) =>
             new Date(b.latestMessageTime) - new Date(a.latestMessageTime)
         );
-        console.log(modifiedChats);
+        console.log("underchat",modifiedChats);
         setChats(modifiedChats);
       } catch (error) {
         toast.error("chat data not fetched");
@@ -125,6 +125,7 @@ const Chatting = () => {
       await fetchUserDetail();
       chat.unreadMsgCount = 0;
       setMessages(response.data.messages);
+      console.log("selected chat");
       setChats((prevChats) => {
         const updatedChats = prevChats.filter((grp) => grp._id !== chat._id);
         return [chat, ...updatedChats];
@@ -144,8 +145,8 @@ const Chatting = () => {
               <Grid item xs={12} sm={4}>
                 <GroupList
                   chats={chats}
-                  setChats={setChats}
                   handleChatClick={handleChatClick}
+                  selectedChat={selectedChat}
                 />
               </Grid>
 

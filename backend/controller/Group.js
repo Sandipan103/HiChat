@@ -224,10 +224,12 @@ exports.findAllChats = async(req, res) => {
 
     const modifiedChats = chats.map(chat => {
       const latestMessageContent = chat.latestMessage ? chat.latestMessage.content : null;
+      const latestMessageSender = chat.latestMessageSender ? chat.latestMessage.sender : null
       const latestMessageTime = chat.latestMessage ? chat.latestMessage.timestamp : null;
       return {
         ...chat.toObject(),
         latestMessage: latestMessageContent,
+        latestMessageSender: latestMessageSender,
         latestMessageTime : latestMessageTime,
       };
     });

@@ -1,26 +1,33 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Grid, Stack, Typography, Avatar, Badge, IconButton, Menu, MenuItem } from '@mui/material';
-import { MoreVert as MoreVertIcon } from '@mui/icons-material';
+import {
+  Box,
+  Grid,
+  Stack,
+  Typography,
+  Avatar,
+  Badge,
+  IconButton,
+  Menu,
+  MenuItem,
+} from "@mui/material";
+import { MoreVert as MoreVertIcon } from "@mui/icons-material";
 
 import axios from "axios";
 import io from "socket.io-client";
 import { server, AuthContext } from "../../context/UserContext";
+import { DisappearMsg } from "./DisappearMsg";
+import { EditContact } from "./EditContact";
 
 import { FileShareMenu } from "./FileShareMenu";
 import { FileSendPopUp } from "./FileSendPopUp";
 import ZegoCloud from "./ZegoCloud";
 import { ChatTextInput } from "./ChatTextInput";
-
 import { styled } from "@mui/material/styles";
 import { GroupManage } from "./GroupManage";
 import toast from "react-hot-toast";
 
-
-
-
 let socket;
-
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -75,18 +82,18 @@ const GroupChatBox = ({
   const [popOpen, setPopOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [selectedType, setSelectedType] = useState(null);
-  
+
   const messagesEndRef = useRef(null);
 
   const [calleeId, setCalleeId] = useState();
 
   const [isTimerEnabled, setIsTimerEnabled] = useState(false);
   const [timer, setTimer] = useState("");
-  const [user1,setuser1]=useState('');
-  const [user2,setuser2]=useState('');
-  const [isChecked,setChecked]=useState(null);
-  const [u,su]=useState('');
-  
+  const [user1, setuser1] = useState("");
+  const [user2, setuser2] = useState("");
+  const [isGroup, setIsGroup] = useState(false);
+  const [u, su] = useState("");
+
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleUserMenuOpen = (event) => {
@@ -104,13 +111,14 @@ const GroupChatBox = ({
         setuser1(response.data.chatUsers[0].contactNo);
         su(response.data.chatUsers[1].firstName);
         setuser2(response.data.chatUsers[1].contactNo);
-        // console.log("chatuser",response.data.chatUsers);
-         setTimer(response.data.timer);
-         setIsTimerEnabled(response.data.isTimerEnabled);
-         toast.success("chat data fetched");
+        setIsGroup(response.data.isGroup);
+        // console.log("chatuser",response.data.isGroup);
+        setTimer(response.data.timer);
+        setIsTimerEnabled(response.data.isTimerEnabled);
+        toast.success("chat data fetched");
       } catch (error) {
         // toast.success("something went wrong, chat data not fetched");
-        console.error('Error fetching chat data:', error);
+        console.error("Error fetching chat data:", error);
       }
     }
 
@@ -132,7 +140,6 @@ const GroupChatBox = ({
       scrollToBottom();
     }
     // console.log(user1);
-
   }, [messages]);
 
   useEffect(() => {
@@ -149,13 +156,12 @@ const GroupChatBox = ({
 
   useEffect(() => {
     socket.on("message recieved", (newMessage) => {
-      console.log(newMessage);
+      console.log("txt",newMessage)
+
       if (
         !selectedChat || // if chat is not selected or doesn't match current chat
         selectedChat._id !== newMessage.chat
       ) {
-        // console.log('new message recived : ', newMessage)
-        // console.log('selectedChat : ', selectedChat)
         const updatedChats = chats.map((chat) => {
           if (chat._id === newMessage.chat) {
             const cnt = (chat.unreadMsgCount || 0) + 1;
@@ -181,19 +187,41 @@ const GroupChatBox = ({
       }
     });
 
-    socket.on("file recieved", (imageData) => {
-      if (imageData) {
-        const imgElement = document.createElement("img");
-        imgElement.src = imageData;
+    socket.on("file recieved", ({fileData, newMessage}) => {
+      newMessage.imageUrl = fileData;
+      console.log("img",newMessage.imageUrl);
+      if (
+        !selectedChat || // if chat is not selected or doesn't match current chat
+        selectedChat._id !== newMessage.chat
+      ) {
+        console.log("file rec", newMessage);
+        const updatedChats = chats.map((chat) => {
+          if (chat._id === newMessage.chat) {
+            const cnt = (chat.unreadMsgCount || 0) + 1;
+            return {
+              ...chat,
+              unreadMsgCount: cnt,
+              latestMessage: newMessage.imageUrl,  
+            };
+          }
+          
+          return chat;
 
-        // const newMsg = { type: 'img', content: imgElement };
-        setMessages([...messages, imgElement]);
+        });
 
-        // if (messageHeaderRef.current) {
-        //   messageHeaderRef.current.appendChild(imgElement);
-        // }
-        console.log(imgElement);
+        const index = updatedChats.findIndex(
+          (chat) => chat._id === newMessage.chat
+        );
+        if (index !== -1) {
+          const chatWithNewMessage = updatedChats.splice(index, 1)[0];
+          updatedChats.unshift(chatWithNewMessage);
+        }
+        setChats(updatedChats);
+      } else {
+        setMessages([...messages, newMessage]);
       }
+
+     
     });
   }, [messages, selectedChat, chats, setChats]);
 
@@ -220,7 +248,7 @@ const GroupChatBox = ({
     try {
       if (selectedFile) {
         const reader = new FileReader();
-        
+
         reader.onload = async (e) => {
           const fileData = e.target.result;
           const filename = selectedFile.name;
@@ -236,200 +264,186 @@ const GroupChatBox = ({
           data.append("messageInput", messageInput);
 
           const response = await axios.post(`${server}/sendFiles`, data);
-          console.log(response);
-          socket.emit("file", {
-            chatUsers: response.data.chatUsers,
-            filename: filename,
-            fileData: fileData,
+          const newMessage = response.data.newMessage;
+          console.log("NewFileMSGrs", response);
+          socket.emit("file", {chatUsers: response.data.chatUsers,newMessage, fileData});
+
+          newMessage.imageUrl = fileData;
+
+          const updatedChats = chats.map((chat) => {
+            if (chat._id === selectedChat._id) {
+              return { ...chat, latestMessage: messageInput };
+            }
+            return chat;
           });
+    
+          setChats(updatedChats);
+          setMessageInput("");
+          setMessages([...messages, response.data.newMessage]);
+
+
           setPopOpen(false);
           setFile(null);
         };
         reader.readAsDataURL(selectedFile);
-
       }
     } catch (error) {
       console.error("Error file sending: ", error);
     }
   };
 
-  const handleCheckboxChange = async (chatId, newValue) => {
-    await axios.post(`${server}/settimer/${chatId}`, { isTimerEnabled: newValue, timer: timer });
-    setChecked(newValue);
-    setChats(chats.map(chat => {
-      if (chat._id === chatId) {
-        return { ...chat, isTimerEnabled: newValue,timer:timer };
-      }
-      return chat;
-    }));
-  };
-
-
-  const timerOptions = {
-    '1 Minute': 1,
-    '1 Hour': 60,
-    '1 Day': 1440,
-    '1 Week': 10080,
-    '1 Month': 43200, 
-  };
-
-
-  const handleTimerChange = (e) => {
-    const minutes = timerOptions[e.target.value];
-    setTimer(minutes);
-  };
-
   return (
     <>
-     
       <div className="message-area">
         <div className="message-header">
-        <Box sx={{ flexGrow: 1 }}>
-      <Grid container direction="row" justifyContent="space-between" alignItems="center">
-        <Grid item>
-          <Stack direction="row" spacing={2} alignItems="center">
-            <Badge
-              overlap="circular"
-              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-              variant="dot"
+          <Box sx={{ flexGrow: 1 }}>
+            <Grid
+              container
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
             >
-              <Avatar>H</Avatar>
-            </Badge>
-            <Typography>{selectedChat.groupName}</Typography>
-            <GroupManage selectedChat={selectedChat} myId={myId}/>
-          </Stack>
-        </Grid>
-        <Grid item>
-          <ZegoCloud myId={myId} calleeId={calleeId} user1={user1} user2={user2} />
-          <IconButton onClick={handleUserMenuOpen}>
-            <MoreVertIcon />
-          </IconButton>
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleUserMenuOpenClose}
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-          >
-            <MenuItem onClick={handleClose}>Option 1</MenuItem>
-            <MenuItem onClick={handleClose}>Option 2</MenuItem>
-            <MenuItem onClick={handleClose}>Option 3</MenuItem>
-          </Menu>
-        </Grid>
-      </Grid>
-    </Box>
+              <Grid item>
+                <Stack direction="row" spacing={2} alignItems="center">
+                  <StyledBadge
+                    overlap="circular"
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                    variant="dot"
+                  >
+                    <Avatar>H</Avatar>
+                  </StyledBadge>
+                  <Typography>{selectedChat.groupName}</Typography>
+                  <GroupManage selectedChat={selectedChat} myId={myId} />
+                </Stack>
+              </Grid>
+              <Grid item>
+                <ZegoCloud
+                  myId={myId}
+                  calleeId={calleeId}
+                  user1={user1}
+                  user2={user2}
+                />
+                <IconButton onClick={handleUserMenuOpen}>
+                  <MoreVertIcon />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleUserMenuOpenClose}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  sx={{ ml: -2, mt: 8 }}
+                >
+                  <MenuItem onClick={handleClose}>
+                    <DisappearMsg
+                      setChats={setChats}
+                      chats={chats}
+                      isTimerEnabled={isTimerEnabled}
+                      selectedChat={selectedChat}
+                    />
+                  </MenuItem>
+                  <MenuItem onClick={handleClose}><EditContact/></MenuItem>
+                  <MenuItem onClick={handleClose}>Option 3</MenuItem>
+                </Menu>
+              </Grid>
+            </Grid>
+          </Box>
         </div>
-        <select value={Object.keys(timerOptions).find(key => timerOptions[key] === timer)} onChange={handleTimerChange}>
-        {Object.entries(timerOptions).map(([label, value]) => (
-          <option key={value} value={label}>
-            {label}
-          </option>
-        ))}
-      </select>
-      <label>
-        <input
-          type="checkbox"
-          checked={isTimerEnabled||isChecked}
-          onChange={e => handleCheckboxChange(selectedChat._id, e.target.checked)}
-        /> Enable Timer
-      </label>
+
         {!popOpen && (
           <div className="msg-inner-container">
-            <div className="msg-body">
-              <ul className="messageArea">
-                {messages && messages.length > 0 ? (
-                  <ul className="messageArea">
-                    {messages.map((message, index) => (
-                      <li
-                        key={index}
-                        className={
-                          message.sender === myId
-                            ? "own-message"
-                            : "other-message"
-                        }
-                      >
-                        <div className="message">
-                        {message.sender !== myId ? (
-    <span className="chat-user-name">{selectedChat.groupName}</span>
-) : (
-    <span className="chat-user-name">{u}</span>
-)}
-                          {message.type === "text" && <p>{message.content}</p>}
-
+            <Box className="msg-body">
+              {messages && messages.length > 0 ? (
+                <ul className="messageArea">
+                  {messages.map((message, index) => (
+                    <li
+                      key={index}
+                      className={
+                        message.sender === myId
+                          ? "own-message"
+                          : "other-message"
+                      }
+                    >
+                      <div className="message">
+                        {isGroup && (
+                          <span className="chat-user-name">
+                            {message.sender !== myId
+                              ? selectedChat.groupName
+                              : u}
+                          </span>
+                        )}
+                        {message.type === "text" ? (
+                          <span className="chat-content">
+                            {message.content}
+                          </span>
+                        ) : (
                           <div className="chatfile-box">
-                          {message.type === "audio" && (
-                            
-                            <audio controls className="chatfile">
-                              <source
-                                src={`${server}/fetchfile/${message.audioUrl}`}
-                                type="audio/mp3"
-                              />
-                              Your browser does not support the audio element.
-                            </audio>
-                            
-                          )}
-
-                          {message.type === "video" && (
-                            
-                            <video controls className="chatfile">
-                              <source src={message.videoUrl} type="video/mp4" />
-                              Your browser does not support the video element.
-                            </video>
-                          
-                          )}
-
-                          {message.type === "image" && (
-                           
-                              <img className="chatfile"
-                              src={`${server}/fetchfile/${message.imageUrl}`}
-                              alt="message"
-                            />
-                          
-                          )}
+                            {message.type === "audio" && (
+                              <audio controls className="chatfile">
+                                <source
+                                  src={`${server}/fetchfile/${message.audioUrl}`}
+                                  type="audio/mp3"
+                                />
+                                Your browser does not support the audio element.
+                              </audio>
+                            )}
+                            {message.type === "video" && (
+                              <video controls className="chatfile">
+                                <source
+                                  src={message.videoUrl}
+                                  type="video/mp4"
+                                />
+                                Your browser does not support the video element.
+                              </video>
+                            )}
+                            {message.imageUrl && (
+                              message.imageUrl.startsWith("data:image") ? (
+                                <img className="chatfile" src={message.imageUrl} alt="Chat Image" />
+                              ) : (
+                                <img className="chatfile" src={`${server}/fetchfile/${message.imageUrl}`} alt="Chat Image" />
+                              )
+                            )}
                           </div>
+                        )}
 
-                          {/* Render delete button only if sender is the current user */}
-                          {message.sender === myId &&
-                            message.isDeleted === false && (
-                              <button
-                                onClick={() => handleDeleteMessage(message._id)}
-                                className="delete-message-btn"
-                              >
-                                Delete
-                              </button>
-                            )}
-                        </div>
-                        <div className="timestamp">
-                          <p className="message-timestamp">
-                            {new Date(message.timestamp).toLocaleString(
-                              "en-US",
-                              {
-                                year: "numeric",
-                                month: "numeric",
-                                day: "numeric",
-                                hour: "numeric",
-                                minute: "numeric",
-                                hour12: true,
-                              }
-                            )}
-                          </p>
-                        </div>
-                      </li>
-                    ))}
-                    <div ref={messagesEndRef}> </div>
-                  </ul>
-                ) : (
-                  <p className="messageArea">No chat available</p>
-                )}
-                {/* <div ref={messagesEndRef} /> */}
-              </ul>
-            </div>
+                        {/* Render delete button only if sender is the current user */}
+                        {message.sender === myId &&
+                          message.isDeleted === false && (
+                            <button
+                              onClick={() => handleDeleteMessage(message._id)}
+                              className="delete-message-btn"
+                            >
+                              Delete
+                            </button>
+                          )}
+                      </div>
+                      <div className="timestamp">
+                        <p className="message-timestamp">
+                          {new Date(message.timestamp).toLocaleString("en-US", {
+                            year: "numeric",
+                            month: "numeric",
+                            day: "numeric",
+                            hour: "numeric",
+                            minute: "numeric",
+                            hour12: true,
+                          })}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                  <div ref={messagesEndRef}> </div>
+                </ul>
+              ) : (
+                <p className="messageArea">No chat available</p>
+              )}
+            </Box>
+
             <div className="message-footer">
               <FileShareMenu
                 popOpen={popOpen}
