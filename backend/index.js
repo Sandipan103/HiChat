@@ -103,8 +103,8 @@ dbConnect()
       socket.on('file', ( {chatUsers, newMessage, fileData}) => {
         if (chatUsers.length === 0) return console.log("chat.users not defined");
         chatUsers.forEach((user) => {
-          // if (user == newMessage.sender) return;
-          // console.log(filename);
+          if (user == newMessage.sender) return;
+          // console.log(fileData);
           socket.in(user).emit("file recieved", {fileData, newMessage});
         });
 
@@ -171,6 +171,8 @@ app.use("/api/v1", chatRoutes)
 app.use("/api/v1", groupRoutes)
 
 const uploadDirectory = path.join(__dirname, '/uploads/users/files');
-
-
 app.use('/api/v1/fetchfile', express.static(uploadDirectory));
+
+
+const profileDirectory = path.join(__dirname, '/uploads/users/profile');
+app.use('/api/v1/fetchprofile', express.static(profileDirectory));

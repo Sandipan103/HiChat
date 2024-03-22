@@ -22,8 +22,6 @@ export const FileSendPopUp = ({
 }) => {
   const fileUrl = URL.createObjectURL(selectedFile);
   const renderContent = () => {
-    console.log(fileUrl);
-
     if (fileType === "image") {
       return <img className="sendFileView" src={fileUrl} alt="Image" />;
     } else if (fileType === "video") {

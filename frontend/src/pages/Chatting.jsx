@@ -37,18 +37,33 @@ const Chatting = () => {
   const [loading, setLoading] = useState(false);
   const inputRef = useRef(null);
   const navigate = useNavigate();
-  const [speedDialOpen, setSpeedDialOpen] = useState(false);
+  const [userData, setUserData] = useState([]);
+
+
+  
 
   const fetchUserDetail = async () => {
     const token = Cookies.get("tokenf");
     if (!token) {
       navigate("/login");
     }
+    const decodedToken = jwtDecode(token);
+    const { id: userId } = decodedToken;
+
+    const response = await axios.get(
+      `${server}/getUserProfileById/${userId}`
+    );
+    const userData = response.data.user;
+    setUserData(userData);
+    
+   
     if (token) {
       try {
         setLoading(true);
-        const decodedToken = jwtDecode(token);
+    const decodedToken = jwtDecode(token);
+        
         const { id: userId } = decodedToken;
+       
 
         const response = await axios.get(`${server}/findAllChats/${userId}`);
         const myContacts = await axios.get(`${server}/contacts/${userId}`);
@@ -57,7 +72,7 @@ const Chatting = () => {
         const userChats = response.data.chats;
         const contacts = myContacts.data.contacts;
 
-        console.log("realchat",userChats)
+        // console.log("realchat", userChats);
         // console.log(myContacts.data.contacts);
 
         const modifiedChats = userChats.map((chat) => {
@@ -89,7 +104,7 @@ const Chatting = () => {
           (a, b) =>
             new Date(b.latestMessageTime) - new Date(a.latestMessageTime)
         );
-        console.log("underchat",modifiedChats);
+        console.log("underchat", modifiedChats);
         setChats(modifiedChats);
       } catch (error) {
         toast.error("chat data not fetched");
@@ -140,13 +155,14 @@ const Chatting = () => {
     <div className="main-container">
       <div className="chat-box">
         <div className="chat-body">
-          <Box sx={{ flexGrow: 1 }} >
+          <Box sx={{ flexGrow: 1 }}>
             <Grid container wrap={"wrap"} direction="row">
               <Grid item xs={12} sm={4}>
                 <GroupList
                   chats={chats}
                   handleChatClick={handleChatClick}
                   selectedChat={selectedChat}
+                  userData={userData}
                 />
               </Grid>
 
@@ -170,31 +186,6 @@ const Chatting = () => {
               </Grid>
             </Grid>
           </Box>
-          <div>
-            {/* <SpeedDial
-              ariaLabel="SpeedDial tooltip example"
-              sx={{ position: 'absolute', bottom: 16, right: 16 }}
-              icon={<AddCircleIcon />}
-              open={speedDialOpen}
-              onClick={() => setSpeedDialOpen(!speedDialOpen)}
-            >
-              <SpeedDialAction
-                icon={<GroupIcon />}
-                tooltipTitle="create group"
-                onClick={() => {
-                  navigate("/createGroup");
-                }}
-              />
-              <SpeedDialAction
-                icon={<PersonAddIcon />}
-                tooltipTitle="New contact"
-                tooltipOpen
-                onClick={() => {
-                  navigate("/addContact");
-                }}
-              />
-            </SpeedDial> */}
-          </div>
         </div>
       </div>
     </div>

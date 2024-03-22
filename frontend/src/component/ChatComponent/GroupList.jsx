@@ -6,84 +6,36 @@ import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
-import NewContact from "../NewContact";
-import NewGroup from "../NewGroup";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
 import ChatSidebarNav from "./ChatSidebarNav";
-import Badge from '@mui/material/Badge';
-
+import Badge from "@mui/material/Badge";
+import Stack from "@mui/material/Stack";
 
 import { server, AuthContext } from "../../context/UserContext";
 import { Box } from "@mui/material";
 
-const GroupList = ({ chats, handleChatClick, selectedChat }) => {
+const GroupList = ({ chats, handleChatClick, selectedChat, userData}) => {
   const [currentUser, setCurrentUser] = useState(null);
   const { isAuthenticated } = useContext(AuthContext);
-  const [addContact, setAddContact] = useState(false);
-  const [createGroup, SetCreateGroup] = useState(false);
-
-  const handleAddContact = () => {
-    SetCreateGroup(false);
-    setOpen(true);
-    setAddContact(true);
-  };
-
-  const handleCreateGroup = () => {
-    setAddContact(false);
-    SetCreateGroup(true);
-    setOpen(true);
-  };
-
-  const [open, setOpen] = React.useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-    console.log(chats);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   return (
     <div className="chat-users">
-      {/* <GroupManage/>       */}
-      {/* <Stack direction="row" spacing={2} sx={{ mx: "auto", mt: 2, width: 300 }}>
-        <Button variant="outlined" onClick={handleAddContact}>
-          Add Contact
-        </Button>
-        <Button variant="outlined" onClick={handleCreateGroup}>
-          Create Group
-        </Button>
-      </Stack> */}
-
-      <div>
-        <Dialog
-          open={open}
-          onClose={handleClose}
-          PaperProps={{
-            component: "form",
-            onSubmit: (event) => {
-              event.preventDefault();
-              const formData = new FormData(event.currentTarget);
-              const formJson = Object.fromEntries(formData.entries());
-              const email = formJson.email;
-              console.log(email);
-              handleClose();
-            },
-          }}
-        >
-          <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-          </DialogActions>
-          {addContact && <NewContact />}
-          {createGroup && <NewGroup />}
-        </Dialog>
-      </div>
       <Box>
-        <ChatSidebarNav />
+        <ChatSidebarNav userData={userData}/>
+        {/* <Box
+          height={"94vh"}
+          width={'32vw'}
+          // my={4}
+          display="flex"
+          alignItems="center"
+          position={"fixed"}
+          top={20}
+          // gap={4}
+          p={2}
+          zIndex={10}
+          sx={{ border: "2px solid grey", boxSizing: "border-box"}}
+        >
+          This Box uses MUI System props for quick customization.
+        </Box> */}
         <List
           sx={{
             width: "100%",
@@ -113,7 +65,7 @@ const GroupList = ({ chats, handleChatClick, selectedChat }) => {
                       <Badge
                         badgeContent={chat.unreadMsgCount}
                         color="error"
-                        sx={{float:"right", top: 20}}
+                        sx={{ float: "right", top: 20 }}
                       ></Badge>
                     ) : (
                       ""

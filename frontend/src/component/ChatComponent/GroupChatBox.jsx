@@ -156,7 +156,7 @@ const GroupChatBox = ({
 
   useEffect(() => {
     socket.on("message recieved", (newMessage) => {
-      console.log("txt",newMessage)
+      console.log("txt", newMessage);
 
       if (
         !selectedChat || // if chat is not selected or doesn't match current chat
@@ -187,26 +187,30 @@ const GroupChatBox = ({
       }
     });
 
-    socket.on("file recieved", ({fileData, newMessage}) => {
-      newMessage.imageUrl = fileData;
-      console.log("img",newMessage.imageUrl);
-      if (
-        !selectedChat || // if chat is not selected or doesn't match current chat
-        selectedChat._id !== newMessage.chat
-      ) {
-        console.log("file rec", newMessage);
+    socket.on("file recieved", ({ fileData, newMessage }) => {
+      const type = fileData;
+      console.log(newMessage)
+      if (type === "image") {
+        newMessage.imageUrl = fileData;
+      } else if (type === "video") {
+        newMessage.videoUrl = fileData;
+      } else if (type === "audio") {
+        newMessage.audioUrl = fileData;
+      } else {
+        newMessage.audioUrl = fileData;
+      }
+      console.log(newMessage.videoUrl);
+      if (!selectedChat || selectedChat._id !== newMessage.chat) {
         const updatedChats = chats.map((chat) => {
           if (chat._id === newMessage.chat) {
             const cnt = (chat.unreadMsgCount || 0) + 1;
             return {
               ...chat,
               unreadMsgCount: cnt,
-              latestMessage: newMessage.imageUrl,  
+              latestMessage: newMessage.type,
             };
           }
-          
           return chat;
-
         });
 
         const index = updatedChats.findIndex(
@@ -220,8 +224,6 @@ const GroupChatBox = ({
       } else {
         setMessages([...messages, newMessage]);
       }
-
-     
     });
   }, [messages, selectedChat, chats, setChats]);
 
@@ -244,7 +246,6 @@ const GroupChatBox = ({
   };
 
   const handleFileUpload = () => {
-    console.log(Date.now());
     try {
       if (selectedFile) {
         const reader = new FileReader();
@@ -266,21 +267,32 @@ const GroupChatBox = ({
           const response = await axios.post(`${server}/sendFiles`, data);
           const newMessage = response.data.newMessage;
           console.log("NewFileMSGrs", response);
-          socket.emit("file", {chatUsers: response.data.chatUsers,newMessage, fileData});
-
-          newMessage.imageUrl = fileData;
-
+          socket.emit("file", {
+            chatUsers: response.data.chatUsers,
+            newMessage,
+            fileData,
+          });
+          const type = newMessage.type;
+          console.log(fileData)
+          if (type === "image") {
+            newMessage.imageUrl = fileData;
+          } else if (type === "video") {
+            newMessage.videoUrl = fileData;
+          } else if (type === "audio") {
+            newMessage.audioUrl = fileData;
+          } else {
+            newMessage.audioUrl = fileData;
+          }
           const updatedChats = chats.map((chat) => {
             if (chat._id === selectedChat._id) {
               return { ...chat, latestMessage: messageInput };
             }
             return chat;
           });
-    
+
           setChats(updatedChats);
           setMessageInput("");
           setMessages([...messages, response.data.newMessage]);
-
 
           setPopOpen(false);
           setFile(null);
@@ -348,7 +360,9 @@ const GroupChatBox = ({
                       selectedChat={selectedChat}
                     />
                   </MenuItem>
-                  <MenuItem onClick={handleClose}><EditContact/></MenuItem>
+                  <MenuItem onClick={handleClose}>
+                    <EditContact />
+                  </MenuItem>
                   <MenuItem onClick={handleClose}>Option 3</MenuItem>
                 </Menu>
               </Grid>
@@ -384,31 +398,62 @@ const GroupChatBox = ({
                           </span>
                         ) : (
                           <div className="chatfile-box">
-                            {message.type === "audio" && (
-                              <audio controls className="chatfile">
-                                <source
-                                  src={`${server}/fetchfile/${message.audioUrl}`}
-                                  type="audio/mp3"
-                                />
-                                Your browser does not support the audio element.
-                              </audio>
-                            )}
-                            {message.type === "video" && (
-                              <video controls className="chatfile">
-                                <source
-                                  src={message.videoUrl}
-                                  type="video/mp4"
-                                />
-                                Your browser does not support the video element.
-                              </video>
-                            )}
-                            {message.imageUrl && (
-                              message.imageUrl.startsWith("data:image") ? (
-                                <img className="chatfile" src={message.imageUrl} alt="Chat Image" />
+                            {message.audioUrl &&
+                              (message.audioUrl.startsWith("data:audio") ? (
+                                <audio controls className="chatfile">
+                                  <source
+                                    src={message.audioUrl}
+                                    type="audio/mp3"
+                                  />
+                                  Your browser does not support the audio
+                                  element.
+                                </audio>
                               ) : (
-                                <img className="chatfile" src={`${server}/fetchfile/${message.imageUrl}`} alt="Chat Image" />
-                              )
-                            )}
+                                <audio controls className="chatfile">
+                                  <source
+                                    src={`${server}/fetchfile/${message.audioUrl}`}
+                                    type="audio/mp3"
+                                  />
+                                  Your browser does not support the audio
+                                  element.
+                                </audio>
+                              ))}
+
+                            {message.videoUrl &&
+                              (message.videoUrl.startsWith("data:video") ? (
+                                <video controls className="chatfile">
+                                  <source
+                                    src={message.videoUrl}
+                                    type="video/mp4"
+                                  />
+                                  Your browser does not support the video
+                                  element.
+                                </video>
+                              ) : (
+                                <video controls className="chatfile">
+                                  <source
+                                    src={`${server}/fetchfile/${message.videoUrl}`}
+                                    type="video/mp4"
+                                  />
+                                  Your browser does not support the video
+                                  element.
+                                </video>
+                              ))}
+
+                            {message.imageUrl &&
+                              (message.imageUrl.startsWith("data:image") ? (
+                                <img
+                                  className="chatfile"
+                                  src={message.imageUrl}
+                                  alt="Chat Image"
+                                />
+                              ) : (
+                                <img
+                                  className="chatfile"
+                                  src={`${server}/fetchfile/${message.imageUrl}`}
+                                  alt="Chat Image"
+                                />
+                              ))}
                           </div>
                         )}
 
@@ -465,11 +510,6 @@ const GroupChatBox = ({
                 isTimerEnabled={isTimerEnabled}
                 timer={timer}
               />
-
-              {/* <div>
-          <input type="file" onChange={handleFileChange} />
-          <button onClick={handleFileUpload}>Upload File</button>
-        </div> */}
             </div>
           </div>
         )}

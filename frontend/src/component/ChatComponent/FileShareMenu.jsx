@@ -47,7 +47,6 @@ export const FileShareMenu = ({
     setAnchorEl(null);
     setSelectedFile(event.target.files[0]);
     setSelectedType(event.target.name)
-    console.log("Selected type:");
     setPopOpen(true);
   };
 
