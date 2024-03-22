@@ -13,7 +13,7 @@ import Stack from "@mui/material/Stack";
 import { server, AuthContext } from "../../context/UserContext";
 import { Box } from "@mui/material";
 
-const GroupList = ({ chats, handleChatClick, selectedChat, userData}) => {
+const GroupList = ({ chats, handleChatClick, selectedChat, userData,setUserData}) => {
   const [currentUser, setCurrentUser] = useState(null);
   const { isAuthenticated } = useContext(AuthContext);
 
@@ -21,21 +21,6 @@ const GroupList = ({ chats, handleChatClick, selectedChat, userData}) => {
     <div className="chat-users">
       <Box>
         <ChatSidebarNav userData={userData}/>
-        {/* <Box
-          height={"94vh"}
-          width={'32vw'}
-          // my={4}
-          display="flex"
-          alignItems="center"
-          position={"fixed"}
-          top={20}
-          // gap={4}
-          p={2}
-          zIndex={10}
-          sx={{ border: "2px solid grey", boxSizing: "border-box"}}
-        >
-          This Box uses MUI System props for quick customization.
-        </Box> */}
         <List
           sx={{
             width: "100%",

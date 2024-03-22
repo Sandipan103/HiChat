@@ -73,46 +73,49 @@ useEffect(() => {
 
   const handleSubmit = async () => {
     const token = Cookies.get("tokenf");
-        
-        // console.log(data.get("profile"))
-
     if (token) {
       try {
         const data = new FormData();
         data.append("userId", userData._id);
-        data.append("firstName", "Yogesh");
+        data.append("firstName", name);
         data.append("about", about);
         data.append("profile", profile);
         console.log(data.get("userId"));
         setLoading(true);
         const response = await axios.put(`${server}/updateUserProfileById`, data);
         toast.success("profile updated");
+        
       } catch (error) {
         toast.error("profile not updated");
         console.error("Error updating profile:", error);
       }finally{
         setLoading(false);
+        window.location.reload();
+
       }
     }
   };
 
 
   const handleProfileChange = async (e) => {
-    console.log(userData)
     setProfile(e.target.files[0]);
+    const file = e.target.files[0]
+        const reader = new FileReader();
     if(profile){
         const data = new FormData();
         data.append("profile", profile);
         data.append("userId", userData._id);
-    
-    try {
-        const response = await axios.put(`${server}/uploadProfile`, data);
-        console.log(response)
-
-    } catch (error) {
-        
+        setProfileUrl(profile)
+        console.log(profileUrl)
     }
-    }
+    reader.onloadend = () => {
+        setProfile(file);
+        setProfileUrl(reader.result);
+      };
+  
+      if (file) {
+        reader.readAsDataURL(file);
+      }
   };
 
 
@@ -209,7 +212,7 @@ useEffect(() => {
           </DialogContent>
           <DialogActions>
           <Button onClick={handleClose} color="primary" variant="outlined">
-              Cancle
+              Close
             </Button>
             <Button onClick={handleSubmit} color="primary" variant="contained">
               Save

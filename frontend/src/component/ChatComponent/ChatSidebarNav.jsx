@@ -25,7 +25,6 @@ import { UpdateProfile } from "./UpdateProfile";
 import { server } from "../../context/UserContext";
 
 const ChatSidebarNav = ({ userData }) => {
-  const [drawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
   const [profileUrl, setProfileUrl] = useState();

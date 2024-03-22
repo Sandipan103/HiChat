@@ -147,7 +147,7 @@ const GroupChatBox = ({
     // setSocket(socketIO);
     socket.emit("setup", myId);
     socket.on("connected", () => setSocketConnected(true));
-
+    console.log(selectedChat);
     socket.emit("join chat", selectedChat._id);
 
     const oth = selectedChat.users.find((id) => id != myId);
