@@ -24,7 +24,7 @@ import NewGroup from "./NewGroup";
 import { UpdateProfile } from "./UpdateProfile";
 import { server } from "../../context/UserContext";
 
-const ChatSidebarNav = ({ userData }) => {
+const ChatSidebarNav = ({ userData, setSearchQuery }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
   const [profileUrl, setProfileUrl] = useState();
@@ -97,6 +97,7 @@ useEffect(() => {
         <TextField
           variant="outlined"
           placeholder="Search..."
+          onChange={(e) => setSearchQuery(e.target.value)}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
