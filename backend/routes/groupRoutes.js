@@ -3,11 +3,13 @@ const router = express.Router();
 const multer = require("multer");
 const path = require('path');
 
-const { addContact, getAllFriends, createGroup, findAllChats, fetchAllMessages, sendChatMessage, readAllMessages, sendFiles, findChatMemberDetails, updateChatMember} = require('../controller/Group');
+const { addContact,editContact, getAllFriends, createGroup, findAllChats, fetchAllMessages, sendChatMessage, readAllMessages, sendFiles, findChatMemberDetails, updateChatMember} = require('../controller/Group');
 
 
 router.get("/getAllFriends/:userId", getAllFriends);
 router.post("/addContact", addContact);
+router.put("/editContact", editContact);
+
 router.post("/createGroup", createGroup);
 router.get("/findAllChats/:userId", findAllChats);
 router.get("/fetchAllMessages/:chatId", fetchAllMessages);

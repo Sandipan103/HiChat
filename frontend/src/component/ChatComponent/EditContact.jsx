@@ -1,48 +1,61 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import axios from "axios";
 import { server } from "../../context/UserContext";
 import {
   Dialog,
   Button,
-  FormControlLabel,
-  Checkbox,
-  Radio,
-  RadioGroup,
+  Box,
+  TextField,
 } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
+import toast from "react-hot-toast";
 
-export const EditContact = ({ setChats, chats, selectedChat }) => {
+
+
+export const EditContact = ({selectedChat}) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [timer, setTimer] = useState("");
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const [contactName, setContactName] = useState("");
+  const [contactNo, setContactNo] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleCheckboxChange = async (chatId, newValue) => {
-    await axios.post(`${server}/settimer/${chatId}`, {
-      isTimerEnabled: newValue,
-      timer: timer,
-    });
+  useEffect(() => {
+    setContactName(selectedChat.groupName);
+    setContactNo("8158934080");
+    console.log("user",selectedChat)
+}, [])
 
-    setChats(
-      chats.map((chat) => {
-        if (chat._id === chatId) {
-          return { ...chat, isTimerEnabled: newValue, timer: timer };
-        }
-        return chat;
-      })
-    );
-  };
+const handleSubmit = async () => {
+      try {
+        const data = {
+          userId : selectedChat.users[1],
+          contactName:contactName,
+          contactNo : contactNo,
+      }
+      console.log(data)
+        setLoading(true);
+        const response = await axios.put(
+          `${server}/editContact`,
+          data
+        );
+        toast.success("Contact updated");
+        window.location.reload();
 
-  const timerOptions = {
-    "1 Hour": 60,
-    "24 Hour": 1440,
-    "7 Days": 10080,
-    "1 Month": 43200,
-    "Off" : '',
-  };
-
-  const handleTimerChange = (e) => {
-    const minutes = timerOptions[e.target.value];
-    setTimer(minutes);
+      } catch (error) {
+        toast.error("Contact not updated");
+        console.error("Error updating profile:", error);
+      } finally {
+        setLoading(false);
+        // window.location.reload();
+      }
   };
 
   const handleClick = (event) => {
@@ -55,28 +68,53 @@ export const EditContact = ({ setChats, chats, selectedChat }) => {
 
   return (
     <div>
-      <Button onClick={handleClick}>Edit Contact</Button>
-      <Dialog
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "center",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
-        maxWidth={'xs'}
-        fullWidth
-       
-      >
-        <div style={{ padding: "20px 40px" }}>
-          <Button onClick={handleClose}>Close</Button>
-        </div>
-      </Dialog>
+<Button onClick={handleClick}>Edit Contact</Button>
+      <React.Fragment>
+        <Dialog
+          fullScreen={fullScreen}
+          open={anchorEl}
+          onClose={handleClose}
+          aria-labelledby="responsive-dialog-title"
+          sx={{ m: 0, p: 2 }}
+          maxWidth = "xs"
+          fullWidth = "true"
+        >
+          <DialogContent>
+            <Box
+              alignItems="center"
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                textAlign: "center",
+              }}
+            >
+              <TextField
+                label="Name"
+                value={contactName}
+                onChange={(e) => setContactName(e.target.value)}
+                fullWidth
+                margin="normal"
+              />
+              <TextField
+                label="Phone number"
+                value={contactNo}
+                onChange={(e) => setContactNo(e.target.value)}
+                fullWidth
+                margin="normal"
+              />
+            </Box>
+          </DialogContent>
+          <DialogActions>
+          <Button onClick={handleClose} color="primary" variant="outlined">
+              Close
+            </Button>
+            <Button onClick={handleSubmit} color="primary" variant="contained">
+              Save
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </React.Fragment>
     </div>
   );
 };

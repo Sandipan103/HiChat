@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { server, AuthContext } from "../../context/UserContext";
@@ -8,19 +7,15 @@ import toast from "react-hot-toast";
 import { Box } from "@mui/material";
 import { Button, TextField } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { deepOrange, green } from "@mui/material/colors";
 import { styled } from "@mui/material/styles";
-import IconButton from "@mui/material/IconButton";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
-
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { Block, Spa } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -45,34 +40,29 @@ export const UpdateProfile = ({ userData, setOpen }) => {
   const [loading, setLoading] = useState(false);
   const [editedData, setEditedData] = useState({});
   const [profileUrl, setProfileUrl] = useState();
+  const navigate = useNavigate();
 
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
-useEffect(() => {
+  useEffect(() => {
     setName(userData.firstName);
     setAbout(userData.about);
-    const profileImageUrl = userData.profile && `${server}/fetchprofile/${userData.profile}`;
+    const profileImageUrl =
+      userData.profile && `${server}/fetchprofile/${userData.profile}`;
     setProfileUrl(profileImageUrl);
-}, [])
-
+  }, []);
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  const handleMouseOver = () => {
-    setIsHovered(true);
-    console.log(userData);
-  };
-
-  const handleMouseOut = () => {
-    setIsHovered(false);
-  };
-
   const handleSubmit = async () => {
     const token = Cookies.get("tokenf");
+    if (!token) {
+      navigate("/login");
+    }
     if (token) {
       try {
         const data = new FormData();
@@ -82,44 +72,42 @@ useEffect(() => {
         data.append("profile", profile);
         console.log(data.get("userId"));
         setLoading(true);
-        const response = await axios.put(`${server}/updateUserProfileById`, data);
+        const response = await axios.put(
+          `${server}/updateUserProfileById`,
+          data
+        );
         toast.success("profile updated");
-        
+        window.location.reload();
       } catch (error) {
         toast.error("profile not updated");
         console.error("Error updating profile:", error);
-      }finally{
+      } finally {
         setLoading(false);
-        window.location.reload();
-
+       
       }
     }
   };
-
 
   const handleProfileChange = async (e) => {
     setProfile(e.target.files[0]);
-    const file = e.target.files[0]
-        const reader = new FileReader();
-    if(profile){
-        const data = new FormData();
-        data.append("profile", profile);
-        data.append("userId", userData._id);
-        setProfileUrl(profile)
-        console.log(profileUrl)
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    if (profile) {
+      const data = new FormData();
+      data.append("profile", profile);
+      data.append("userId", userData._id);
+      setProfileUrl(profile);
+      console.log(profileUrl);
     }
     reader.onloadend = () => {
-        setProfile(file);
-        setProfileUrl(reader.result);
-      };
-  
-      if (file) {
-        reader.readAsDataURL(file);
-      }
+      setProfile(file);
+      setProfileUrl(reader.result);
+    };
+
+    if (file) {
+      reader.readAsDataURL(file);
+    }
   };
-
-
-
 
   return (
     <div>
@@ -130,8 +118,8 @@ useEffect(() => {
           onClose={handleClose}
           aria-labelledby="responsive-dialog-title"
           sx={{ m: 0, p: 2 }}
-          maxWidth = "xs"
-          fullWidth = "true"
+          maxWidth="xs"
+          fullWidth="true"
         >
           <DialogContent>
             <Box
@@ -143,7 +131,7 @@ useEffect(() => {
                 textAlign: "center",
               }}
             >
-              <Avatar 
+              <Avatar
                 role="button"
                 className="userImage"
                 src={profileUrl}
@@ -152,40 +140,32 @@ useEffect(() => {
                   height: "150px",
                   cursor: "pointer",
                 }}
-                onMouseOver={handleMouseOver}
-                onMouseOut={handleMouseOut}
+              ></Avatar>
+              <Button
+                component="label"
+                role={undefined}
+                variant="text"
+                color="secondary"
+                tabIndex={-1}
+                sx={{
+                  color: "#000000b5",
+                  background: "#aab6ca",
+                  textTransform: "node",
+                }}
               >
-                
-              </Avatar>
-              {1 && (
-                  <Button
-                    component="label"
-                    role={undefined}
-                    variant="text"
-                    color="secondary"
-                    tabIndex={-1}
-                    sx={{
-                      color: "#000000b5",
-                      background: "#aab6ca",
-                      textTransform:"node"
-                    }}
-                  >
-                    <CloudUploadIcon />
-                    <span
-                      style={{ display: "inline-grid", alignItems: "center" }}
-                    >
-                      Change Profile
-                    </span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      style={{ display: "none" }}
-                      name="image"
-                      onChange={handleProfileChange}
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                  </Button>
-                )}
+                <CloudUploadIcon />
+                <span style={{ display: "inline-grid", alignItems: "center" }}>
+                  Change Profile
+                </span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  name="image"
+                  onChange={handleProfileChange}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </Button>
               <br />
               <TextField
                 label="Name"
@@ -198,7 +178,7 @@ useEffect(() => {
                 label="About"
                 value={about}
                 onChange={(e) => setAbout(e.target.value)}
-                fullWidth 
+                fullWidth
                 margin="normal"
               />
               <TextField
@@ -211,7 +191,7 @@ useEffect(() => {
             </Box>
           </DialogContent>
           <DialogActions>
-          <Button onClick={handleClose} color="primary" variant="outlined">
+            <Button onClick={handleClose} color="primary" variant="outlined">
               Close
             </Button>
             <Button onClick={handleSubmit} color="primary" variant="contained">

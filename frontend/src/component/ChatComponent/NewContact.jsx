@@ -80,9 +80,14 @@ const NewContact = () => {
         { name: friend.name, contactNo: friend.contactNo, userId: userId },
         { withCredentials: true }
       );
-      toast.success("contact saved");
-      setOpen(false);
-      // console.log(response);
+      const success = response.data.success;
+      const message = response.data.message;
+      console.log(success);
+      if(success){
+        toast.success(message);
+      }else{
+        toast.error(message)
+      }
     } catch (error) {
       toast.error("something wrong contact not saved");
       console.log(error);

@@ -361,7 +361,7 @@ const GroupChatBox = ({
                     />
                   </MenuItem>
                   <MenuItem onClick={handleClose}>
-                    <EditContact />
+                    <EditContact selectedChat={selectedChat} />
                   </MenuItem>
                   <MenuItem onClick={handleClose}>Option 3</MenuItem>
                 </Menu>
