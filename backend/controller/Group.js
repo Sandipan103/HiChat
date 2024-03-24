@@ -186,7 +186,7 @@ exports.findAllChats = async(req, res) => {
     const userId = req.params.userId;
     
     // Find all groups where the user is a member
-    const chats = await Chat.find({ users: userId }).populate('allChatMessages').populate('latestMessage');
+    const chats = await Chat.find({ users: userId }).populate('allChatMessages').populate('latestMessage').populate('users','-password -contacts -gender -lastName');
 
     const modifiedChats = chats.map(chat => {
       const latestMessageContent = chat.latestMessage ? chat.latestMessage.content : null;

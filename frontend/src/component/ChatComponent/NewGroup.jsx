@@ -15,6 +15,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  MenuItem,
 } from "@mui/material";
 import toast from "react-hot-toast";
 import CloseIcon from "@mui/icons-material/Close";
@@ -245,7 +246,7 @@ const NewGroup = () => {
           {loading ? <CircularProgress size={100} /> : renderForm()}
         </DialogContent>
       </Dialog>
-      <Button onClick={handleCreateGroup}>New Group</Button>
+      <span onClick={handleCreateGroup}>New Group</span>
     </>
   );
 };

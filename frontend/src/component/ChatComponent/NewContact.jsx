@@ -160,8 +160,8 @@ const NewContact = () => {
           {loading ? <CircularProgress size={100} /> : renderForm()}
         </DialogContent>
       </Dialog>
-      <IconButton>
-      <PersonAddAltRoundedIcon onClick={handleAddContact}/>
+      <IconButton onClick={handleAddContact}>
+      <PersonAddAltRoundedIcon />
           </IconButton>
     </>
   );

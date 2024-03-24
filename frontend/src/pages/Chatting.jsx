@@ -4,43 +4,54 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
-
+import io from "socket.io-client";
 import axios from "axios";
 import "../styles/chat.css";
 import GroupList from "../component/ChatComponent/GroupList";
 import GroupChatBox from "../component/ChatComponent/GroupChatBox";
-import { server, AuthContext } from "../context/UserContext";
-import { styled } from "@mui/material/styles";
+import { server } from "../context/UserContext";
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Unstable_Grid2";
 
-import { SpeedDial, SpeedDialAction } from "@mui/material";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import GroupIcon from "@mui/icons-material/Group";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
+let socket;
 
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: "center",
-  color: theme.palette.text.secondary,
-}));
 
 const Chatting = () => {
-  const { isAuthenticated } = useContext(AuthContext);
-  const [myId, setMyId] = useState("");
+  const [myId, setMyId] = useState(null);
   const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState();
   const [messages, setMessages] = useState([""]);
+  const [myContacts, setMycontacts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const inputRef = useRef(null);
   const navigate = useNavigate();
   const [userData, setUserData] = useState([]);
+  const [socketConnected, setSocketConnected] = useState(false);
+  const [onlineUsers, setOnlineUsers] = useState([]);
 
 
-  
+  useEffect(() => {
+    // Setup socket connection
+    if(myId){
+      socket = io("http://localhost:4000");
+      socket.emit("setup", myId);
+      socket.on("connected", () => setSocketConnected(true));
+      return () => {
+          socket.disconnect();
+          setSocketConnected(false)
+      };
+    }
+}, [myId]);
+
+useEffect(()=>{
+  socket = io("http://localhost:4000");
+  socket.on("onlineUsers", (map) => {
+    // setOnlineUsers(userSocketMap);
+    console.log(map)
+  });
+})
+
+
+
 
   const fetchUserDetail = async () => {
     const token = Cookies.get("tokenf");
@@ -50,20 +61,15 @@ const Chatting = () => {
     const decodedToken = jwtDecode(token);
     const { id: userId } = decodedToken;
 
-    const response = await axios.get(
-      `${server}/getUserProfileById/${userId}`
-    );
+    const response = await axios.get(`${server}/getUserProfileById/${userId}`);
     const userData = response.data.user;
     setUserData(userData);
-    
-   
+
     if (token) {
       try {
         setLoading(true);
-    const decodedToken = jwtDecode(token);
-        
+        const decodedToken = jwtDecode(token);
         const { id: userId } = decodedToken;
-       
 
         const response = await axios.get(`${server}/findAllChats/${userId}`);
         const myContacts = await axios.get(`${server}/contacts/${userId}`);
@@ -71,24 +77,28 @@ const Chatting = () => {
 
         const userChats = response.data.chats;
         const contacts = myContacts.data.contacts;
-
-        // console.log("realchat", userChats);
-        // console.log(myContacts.data.contacts);
+        setMycontacts(contacts);
 
         const modifiedChats = userChats.map((chat) => {
           let unreadMsgCount = 0;
 
           if (!chat.isGroupChat) {
-            const otherUserId = chat.users.find((id) => id !== userId);
-            const contact = contacts.find(
-              (contact) => contact.contactId === otherUserId
-            );
+
+            const otherUserId = chat.users.find(id => id !== userId);
+            const contact = contacts.find(contact => contact.contactId === otherUserId._id);
+            // console.log(otherUserId);
+
+
             if (contact) {
-              chat.groupName = contact.name;
+              // console.log(contact._id)
+                chat.groupName = contact.name;
+                contact._id = chat._id;
+                // console.log(contact._id)
             } else {
-              chat.groupName = "unknown";
+                chat.groupName = otherUserId.contactNo;
             }
-          }
+        }
+        
 
           chat.allChatMessages.forEach((message) => {
             if (!message.readBy.includes(userId)) {
@@ -99,12 +109,10 @@ const Chatting = () => {
           return chat;
         });
 
-        // console.log(modifiedGroups)
         modifiedChats.sort(
           (a, b) =>
             new Date(b.latestMessageTime) - new Date(a.latestMessageTime)
         );
-        console.log("underchat", modifiedChats);
         setChats(modifiedChats);
       } catch (error) {
         toast.error("chat data not fetched");
@@ -140,7 +148,6 @@ const Chatting = () => {
       await fetchUserDetail();
       chat.unreadMsgCount = 0;
       setMessages(response.data.messages);
-      console.log("selected chat");
       setChats((prevChats) => {
         const updatedChats = prevChats.filter((grp) => grp._id !== chat._id);
         return [chat, ...updatedChats];
@@ -163,6 +170,7 @@ const Chatting = () => {
                   handleChatClick={handleChatClick}
                   selectedChat={selectedChat}
                   userData={userData}
+                  myContacts={myContacts}
                 />
               </Grid>
 
@@ -177,6 +185,7 @@ const Chatting = () => {
                         selectedChat={selectedChat}
                         chats={chats}
                         setChats={setChats}
+                        socketConnected={socketConnected}
                       />
                     ) : (
                       <p>Please select the chat</p>

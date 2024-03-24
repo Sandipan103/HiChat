@@ -5,10 +5,6 @@ import {
   IconButton,
   Avatar,
   Typography,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
   Box,
   Menu,
   MenuItem,
@@ -24,16 +20,11 @@ import NewGroup from "./NewGroup";
 import { UpdateProfile } from "./UpdateProfile";
 import { server } from "../../context/UserContext";
 
-const ChatSidebarNav = ({ userData, setSearchQuery }) => {
+const ChatSidebarNav = ({ userData, setSearchQuery,setShowMyContacts }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
   const [profileUrl, setProfileUrl] = useState();
-
   
-  // const handleClose = (e) => {
-  //   e.stopPropagation();
-  //   handleUserMenuOpenClose(e);
-  // }
 useEffect(() => {
   const profileImageUrl = userData.profile && `${server}/fetchprofile/${userData.profile}`;
   setProfileUrl(profileImageUrl);
@@ -89,7 +80,8 @@ useEffect(() => {
             }}
             sx={{ ml: -1, mt: 6 }}
           >
-            <MenuItem onClick={(e)=>handleUserMenuOpenClose}><NewGroup /></MenuItem>
+            <MenuItem><NewGroup /></MenuItem>
+            <MenuItem onClick={(e)=>setShowMyContacts(true)}>My Contacts</MenuItem>
           </Menu>
           
           

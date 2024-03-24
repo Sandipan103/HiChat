@@ -41,10 +41,11 @@ const ZegoCloud = ({myId, calleeId,user1,user2}) => {
       }
     
       function handleSend(callType) {
-        const callee = calleeId;
+        const callee = calleeId._id;
 
-        console.log("call id", user2);
-        console.log(myId);
+        console.log("call id", callee);
+        console.log("myid",myId);
+
         if (!callee) {
           alert("userID cannot be empty!!");
           return;

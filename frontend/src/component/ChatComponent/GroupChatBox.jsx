@@ -71,11 +71,11 @@ const GroupChatBox = ({
   selectedChat,
   setChats,
   chats,
+  socketConnected,
 }) => {
   // console.log("selchat: ",selectedChat);
   const [messageInput, setMessageInput] = useState("");
   const [file, setFile] = useState(null);
-  const [socketConnected, setSocketConnected] = useState(false);
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(!open);
   const handleClose = () => setOpen(false);
@@ -105,6 +105,7 @@ const GroupChatBox = ({
   };
 
   useEffect(() => {
+    console.log("chat",selectedChat);
     async function fetchChatData() {
       try {
         const response = await axios.get(`${server}/chats/${selectedChat._id}`);
@@ -144,20 +145,21 @@ const GroupChatBox = ({
 
   useEffect(() => {
     socket = io("http://localhost:4000");
-    // setSocket(socketIO);
     socket.emit("setup", myId);
-    socket.on("connected", () => setSocketConnected(true));
-    console.log(selectedChat);
+    // socket.on("connected", () => setSocketConnected(true));
     socket.emit("join chat", selectedChat._id);
 
+    socket.on("onlineUsers", () => {
+      // setOnlineUsers(userSocketMap);
+      console.log("onuser")
+    });
     const oth = selectedChat.users.find((id) => id != myId);
     setCalleeId(oth);
   }, [selectedChat]);
 
   useEffect(() => {
     socket.on("message recieved", (newMessage) => {
-      console.log("txt", newMessage);
-
+     
       if (
         !selectedChat || // if chat is not selected or doesn't match current chat
         selectedChat._id !== newMessage.chat
@@ -189,7 +191,7 @@ const GroupChatBox = ({
 
     socket.on("file recieved", ({ fileData, newMessage }) => {
       const type = fileData;
-      console.log(newMessage)
+      console.log(fileData)
       if (type === "image") {
         newMessage.imageUrl = fileData;
       } else if (type === "video") {

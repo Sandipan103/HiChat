@@ -44,33 +44,36 @@ dbConnect()
       },
     });
 
-    const userConnections = new Map();
-
-    // io.on('connection', (socket) => {
-      
-    //   const userId = socket.handshake.query.userId; // Extract user ID from query parameters
-    //   userConnections.set(userId, socket);
-    
-    //   socket.on('private-message', ({ to, message }) => {
-    //     const toSocket = userConnections.get(to);
-    //     if (toSocket) {
-    //       toSocket.emit('private-message', { from: userId, message });
-          
-    //     }
-    //   });
-    
-    //   socket.on('disconnect', () => {
-    //     userConnections.delete(userId);
-    //   });
-    // });
+    const userSocketMap = {};
 
     io.on('connection', (socket) => {
-      console.log("Connected to socket.io");
+      // console.log("Connected to socket.io");
 
       socket.on("setup", (userId) => {
+        userSocketMap[userId] = socket.id;
         socket.join(userId);
         socket.emit("connected");
+        console.log("connected");     
+        io.emit("onlineUsers", userSocketMap);  
       });
+     
+      
+      socket.on("disconnect", () => {
+        console.log("User disconnected")      
+        const disconnectedUserId = Object.keys(userSocketMap).find(
+          (userId) => userSocketMap[userId] === socket.id
+        );        
+      if (disconnectedUserId) {
+        delete userSocketMap[disconnectedUserId];
+        socket.emit("onlineUsers");
+      }        
+      // socket.emit("onlineUsers", (userSocketMap)=>{
+      //   console.log('sent')
+      // } );
+      // console.log(userSocketMap);
+      io.emit("onlineUsers", userSocketMap);
+    });
+    
 
       socket.on("join chat", (room) => {
         socket.join(room);
@@ -90,8 +93,7 @@ dbConnect()
       // });
 
       socket.on("new message", ({newMessage, chatUsers}) => {
-        if (chatUsers.length === 0) return console.log("chat.users not defined");
-    
+        if (chatUsers.length === 0) return console.log("chat.users not defined");   
         chatUsers.forEach((user) => {
           if (user == newMessage.sender) return;
     
@@ -104,8 +106,8 @@ dbConnect()
         if (chatUsers.length === 0) return console.log("chat.users not defined");
         chatUsers.forEach((user) => {
           if (user == newMessage.sender) return;
-          // console.log(fileData);
           socket.in(user).emit("file recieved", {fileData, newMessage});
+          console.log("File Sent");
         });
 
         // const toSocket = userConnections.get(to);
@@ -142,18 +144,18 @@ app.use(
 
 
 
-// Schedule a task to run every minute
-cron.schedule('* * * * *', async () => {
-  const now = new Date();
-  try {
-    await Message.deleteMany({
-      deleteAt: { $lt: now, $ne: null } // Exclude documents where deleteAt is null
-    });
-    console.log('Expired messages deleted');
-  } catch (error) {
-    console.error('Error deleting messages:', error);
-  }
-});
+// // Schedule a task to run every minute
+// cron.schedule('* * * * *', async () => {
+//   const now = new Date();
+//   try {
+//     await Message.deleteMany({
+//       deleteAt: { $lt: now, $ne: null } // Exclude documents where deleteAt is null
+//     });
+//     console.log('Expired messages deleted');
+//   } catch (error) {
+//     console.error('Error deleting messages:', error);
+//   }
+// });
 
 app.use(cookieParser());
 app.use(express.json());
