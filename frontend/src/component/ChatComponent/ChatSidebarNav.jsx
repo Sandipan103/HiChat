@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   AppBar,
   Toolbar,
@@ -15,21 +15,31 @@ import {
 } from "@mui/icons-material";
 import { TextField, InputAdornment } from "@mui/material";
 import { Search as SearchIcon } from "@mui/icons-material";
-import NewContact from "./NewContact";
-import NewGroup from "./NewGroup";
-import { UpdateProfile } from "./UpdateProfile";
-import { server } from "../../context/UserContext";
+import NewContact from "./User/NewContact";
+import NewGroup from "./Group/NewGroup";
+import { UpdateProfile } from "./User/UpdateProfile";
+import { server,AuthContext } from "../../context/UserContext";
+import Cookies from "js-cookie";
+import toast from "react-hot-toast";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const ChatSidebarNav = ({ userData, setSearchQuery,setShowMyContacts }) => {
+
+const ChatSidebarNav = ({ userData, setSearchQuery, setShowMyContacts }) => {
+  const navigate = useNavigate();
+  const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
+
   const [anchorEl, setAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
   const [profileUrl, setProfileUrl] = useState();
-  
-useEffect(() => {
-  const profileImageUrl = userData.profile && `${server}/fetchprofile/${userData.profile}`;
-  setProfileUrl(profileImageUrl);
-  console.log(profileUrl);
-})
+
+  useEffect(() => {
+    const profileImageUrl =
+      userData.profile && `${server}/fetchprofile/${userData.profile}`;
+    setProfileUrl(profileImageUrl);
+    // console.log(profileUrl);
+  });
   const handleUserMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -46,6 +56,24 @@ useEffect(() => {
     setOpen(false);
   };
 
+  const logoutHandler = async () => {
+    try {
+      setLoading(true);
+      await axios.get(`${server}/logout`, {
+        withCredentials: true,
+      });
+      Cookies.remove("tokenf");
+      setIsAuthenticated(false);
+      toast.success("Logged Out !!!!");
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+      toast.error("Problem while Logging out");
+      setIsAuthenticated(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Box>
@@ -54,10 +82,13 @@ useEffect(() => {
           <Avatar
             alt="User Avatar"
             src={profileUrl}
-            onClick={()=>handleOpen() }
+            onClick={() => handleOpen()}
           />
-          <Typography variant="span" sx={{ flexGrow: 1, ml: 2,fontWeight: 500 }}>
-           {userData.firstName}
+          <Typography
+            variant="span"
+            sx={{ flexGrow: 1, ml: 2, fontWeight: 500 }}
+          >
+            {userData.firstName}
           </Typography>
           <IconButton>
             <NewContact />
@@ -80,11 +111,16 @@ useEffect(() => {
             }}
             sx={{ ml: -1, mt: 6 }}
           >
-            <MenuItem><NewGroup /></MenuItem>
-            <MenuItem onClick={(e)=>setShowMyContacts(true)}>My Contacts</MenuItem>
+            <MenuItem>
+              <NewGroup />
+            </MenuItem>
+            <MenuItem onClick={(e) => setShowMyContacts(true)}>
+              My Contacts
+            </MenuItem>
+            <MenuItem onClick={(e) => logoutHandler()}>
+              Logout
+            </MenuItem>
           </Menu>
-          
-          
         </Toolbar>
         <TextField
           variant="outlined"
@@ -101,7 +137,7 @@ useEffect(() => {
           }}
         />
       </AppBar>
-      {open && <UpdateProfile userData={userData} setOpen={setOpen}/>}
+      {open && <UpdateProfile userData={userData} setOpen={setOpen} />}
     </Box>
   );
 };

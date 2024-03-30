@@ -1,4 +1,3 @@
-
 // required dependency
 const express = require("express");
 
@@ -9,10 +8,10 @@ require("dotenv").config();
 const http = require("http");
 // required env string
 const PORT = process.env.PORT;
-const path = require('path');
+const path = require("path");
 
-const cron = require('node-cron');
-const Message = require('./models/MsgModel');
+const cron = require("node-cron");
+const Message = require("./models/MsgModel");
 
 // // connect with db
 const dbConnect = require("./config/database");
@@ -46,67 +45,73 @@ dbConnect()
 
     const userSocketMap = {};
 
-    io.on('connection', (socket) => {
+    io.on("connection", (socket) => {
       // console.log("Connected to socket.io");
 
-      socket.on("setup", (userId) => {
+      socket.on("online", (userId) => {
         userSocketMap[userId] = socket.id;
         socket.join(userId);
-        socket.emit("connected");
-        console.log("connected");     
-        io.emit("onlineUsers", userSocketMap);  
+        console.log("User Online:", userId);
+        io.emit("onlineUsers", userSocketMap);
       });
-     
-      
-      socket.on("disconnect", () => {
-        console.log("User disconnected")      
-        const disconnectedUserId = Object.keys(userSocketMap).find(
-          (userId) => userSocketMap[userId] === socket.id
-        );        
-      if (disconnectedUserId) {
-        delete userSocketMap[disconnectedUserId];
-        socket.emit("onlineUsers");
-      }        
-      // socket.emit("onlineUsers", (userSocketMap)=>{
-      //   console.log('sent')
-      // } );
-      // console.log(userSocketMap);
-      io.emit("onlineUsers", userSocketMap);
-    });
     
+      socket.on("disconnect", () => {
+        // Remove the disconnected user from the userSocketMap
+        const disconnectedUserId = Object.keys(userSocketMap).find(
+          (key) => userSocketMap[key] === socket.id
+        );
+        if (disconnectedUserId) {
+          delete userSocketMap[disconnectedUserId];
+          console.log("User Disconnected:", disconnectedUserId);
+          io.emit("onlineUsers", userSocketMap);
+        }
+      });
+
+      socket.on("setup", (userId) => {
+        socket.join(userId);
+        socket.emit("connected");
+        console.log("connected");
+      });
+
+      socket.on("typeing", (myId) => {
+        console.log('typing...',myId);
+      });
+      // socket.on("disconnect", () => {
+      //   console.log("User disconnected");
+      //   const disconnectedUserId = Object.keys(userSocketMap).find(
+      //     (userId) => userSocketMap[userId] === socket.id
+      //   );
+
+      //   if (disconnectedUserId) {
+      //     delete userSocketMap[disconnectedUserId];
+      //     io.emit("onlineUsers", userSocketMap);
+      //   }
+      //   // socket.emit("onlineUsers", (userSocketMap)=>{
+      //   //   console.log('sent')
+      //   // } );
+      //   // console.log(userSocketMap);
+      // });
 
       socket.on("join chat", (room) => {
         socket.join(room);
         console.log("User Joined Room: " + room);
       });
 
-      // socket.on("new message", ({newMessageRecieved}) => {
-      //   let chat = newMessageRecieved.chat;
-      //   console.log('new message emit ::: ', newMessageRecieved);
-      //   if (!chat.users) return console.log("chat.users not defined");
-    
-      //   chat.users.forEach((user) => {
-      //     if (user == newMessageRecieved.sender) return;
-    
-      //     socket.in(user).emit("message recieved", newMessageRecieved);
-      //   });
-      // });
-
-      socket.on("new message", ({newMessage, chatUsers}) => {
-        if (chatUsers.length === 0) return console.log("chat.users not defined");   
+      socket.on("new message", ({ newMessage, chatUsers }) => {
+        if (chatUsers.length === 0)
+          return console.log("chat.users not defined");
         chatUsers.forEach((user) => {
           if (user == newMessage.sender) return;
-    
           socket.in(user).emit("message recieved", newMessage);
         });
       });
 
-
-      socket.on('file', ( {chatUsers, newMessage, fileData}) => {
-        if (chatUsers.length === 0) return console.log("chat.users not defined");
+      socket.on("file", ({ chatUsers, newMessage, fileData }) => {
+        if (chatUsers.length === 0)
+          return console.log("chat.users not defined");
         chatUsers.forEach((user) => {
           if (user == newMessage.sender) return;
-          socket.in(user).emit("file recieved", {fileData, newMessage});
+          socket.in(user).emit("file recieved", { fileData, newMessage });
           console.log("File Sent");
         });
 
@@ -115,9 +120,9 @@ dbConnect()
         //   toSocket.emit('file', { from: userId, filename});
         // }
         // console.log('File received:', filename);
-        
+
         // Save the file to disk
-        // fs.writeFileSync(`uploads/${data.filename}`, data.fileData);        
+        // fs.writeFileSync(`uploads/${data.filename}`, data.fileData);
       });
 
       socket.off("setup", () => {
@@ -142,8 +147,6 @@ app.use(
   })
 );
 
-
-
 // // Schedule a task to run every minute
 // cron.schedule('* * * * *', async () => {
 //   const now = new Date();
@@ -161,20 +164,18 @@ app.use(cookieParser());
 app.use(express.json());
 
 // routing
-const authRoutes = require("./routes/authRoutes")
-const profileRoutes = require("./routes/profileRoutes")
-const chatRoutes = require("./routes/chatRoutes")
-const groupRoutes = require("./routes/groupRoutes")
+const authRoutes = require("./routes/authRoutes");
+const profileRoutes = require("./routes/profileRoutes");
+const chatRoutes = require("./routes/chatRoutes");
+const groupRoutes = require("./routes/groupRoutes");
 
+app.use("/api/v1", authRoutes);
+app.use("/api/v1", profileRoutes);
+app.use("/api/v1", chatRoutes);
+app.use("/api/v1", groupRoutes);
 
-app.use("/api/v1", authRoutes)
-app.use("/api/v1", profileRoutes)
-app.use("/api/v1", chatRoutes)
-app.use("/api/v1", groupRoutes)
+const uploadDirectory = path.join(__dirname, "/uploads/users/files");
+app.use("/api/v1/fetchfile", express.static(uploadDirectory));
 
-const uploadDirectory = path.join(__dirname, '/uploads/users/files');
-app.use('/api/v1/fetchfile', express.static(uploadDirectory));
-
-
-const profileDirectory = path.join(__dirname, '/uploads/users/profile');
-app.use('/api/v1/fetchprofile', express.static(profileDirectory));
+const profileDirectory = path.join(__dirname, "/uploads/users/profile");
+app.use("/api/v1/fetchprofile", express.static(profileDirectory));

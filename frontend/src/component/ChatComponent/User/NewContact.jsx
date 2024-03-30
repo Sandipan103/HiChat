@@ -11,12 +11,12 @@ import {
   DialogTitle,
   DialogContent,
 } from "@mui/material";
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
-import PersonAddAltRoundedIcon from '@mui/icons-material/PersonAddAltRounded';
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import PersonAddAltRoundedIcon from "@mui/icons-material/PersonAddAltRounded";
 import toast from "react-hot-toast";
 
-import { server, AuthContext } from "../../context/UserContext";
+import { server, AuthContext } from "../../../context/UserContext";
 
 const NewContact = () => {
   const navigate = useNavigate();
@@ -42,7 +42,6 @@ const NewContact = () => {
     if (!token) {
       navigate("/login");
     }
-    console.log("isAuthenticated", isAuthenticated);
     if (token) {
       try {
         setLoading(true);
@@ -83,10 +82,10 @@ const NewContact = () => {
       const success = response.data.success;
       const message = response.data.message;
       console.log(success);
-      if(success){
+      if (success) {
         toast.success(message);
-      }else{
-        toast.error(message)
+      } else {
+        toast.error(message);
       }
     } catch (error) {
       toast.error("something wrong contact not saved");
@@ -161,8 +160,8 @@ const NewContact = () => {
         </DialogContent>
       </Dialog>
       <IconButton onClick={handleAddContact}>
-      <PersonAddAltRoundedIcon />
-          </IconButton>
+        <PersonAddAltRoundedIcon />
+      </IconButton>
     </>
   );
 };

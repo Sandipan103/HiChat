@@ -128,7 +128,7 @@ export const ChatBox = ({
               <li
                 key={index}
                 className={
-                  message.sender === myId ? "own-message" : "other-message"
+                  message.sender._id === myId ? "own-message" : "other-message"
                 }
               >
                 <div className="message">

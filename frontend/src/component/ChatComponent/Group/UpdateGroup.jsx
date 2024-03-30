@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
-import { server, AuthContext } from "../../context/UserContext";
+import { server, AuthContext } from "../../../context/UserContext";
 import toast from "react-hot-toast";
 
 import { Box } from "@mui/material";
@@ -12,34 +12,22 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
+import {Typography} from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { useNavigate } from "react-router-dom";
 
-const VisuallyHiddenInput = styled("input")({
-  clip: "rect(0 0 0 0)",
-  clipPath: "inset(50%)",
-  height: 1,
-  overflow: "hidden",
-  position: "absolute",
-  bottom: 0,
-  left: 0,
-  whiteSpace: "nowrap",
-  width: 1,
-});
-
-export const UpdateProfile = ({ userData, setOpen }) => {
-  //   const [open, setOpen] = useState(false);
+export const UpdateGroup = ({ selectedChat, myId }) => {
   const [name, setName] = useState("");
   const [about, setAbout] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
   const [profile, setProfile] = useState(null);
   const [isImageUploadOpen, setImageUploadOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editedData, setEditedData] = useState({});
   const [profileUrl, setProfileUrl] = useState();
+  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
 
@@ -47,13 +35,15 @@ export const UpdateProfile = ({ userData, setOpen }) => {
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   useEffect(() => {
-    setName(userData.firstName);
-    setAbout(userData.about);
+    setName(selectedChat.groupName);
+    setAbout(selectedChat.about);
     const profileImageUrl =
-      userData.profile && `${server}/fetchprofile/${userData.profile}`;
+      selectedChat.profile && `${server}/fetchprofile/${selectedChat.profile}`;
     setProfileUrl(profileImageUrl);
   }, []);
-
+  const modifyGroup = async () => {
+    setOpen(true);
+}
   const handleClose = () => {
     setOpen(false);
   };
@@ -66,14 +56,13 @@ export const UpdateProfile = ({ userData, setOpen }) => {
     if (token) {
       try {
         const data = new FormData();
-        data.append("userId", userData._id);
-        data.append("firstName", name);
+        data.append("groupId", selectedChat._id);
+        data.append("groupName", name);
         data.append("about", about);
         data.append("profile", profile);
-        console.log(data.get("userId"));
         setLoading(true);
         const response = await axios.put(
-          `${server}/updateUserProfileById`,
+          `${server}/updateGroup`,
           data
         );
         toast.success("profile updated");
@@ -95,7 +84,7 @@ export const UpdateProfile = ({ userData, setOpen }) => {
     if (profile) {
       const data = new FormData();
       data.append("profile", profile);
-      data.append("userId", userData._id);
+      data.append("userId", selectedChat._id);
       setProfileUrl(profile);
       console.log(profileUrl);
     }
@@ -111,10 +100,11 @@ export const UpdateProfile = ({ userData, setOpen }) => {
 
   return (
     <div>
+        <Typography onClick={modifyGroup}>Update Group</Typography>
       <React.Fragment>
         <Dialog
           fullScreen={fullScreen}
-          open={true}
+          open={open}
           onClose={handleClose}
           aria-labelledby="responsive-dialog-title"
           sx={{ m: 0, p: 2 }}
@@ -178,13 +168,6 @@ export const UpdateProfile = ({ userData, setOpen }) => {
                 label="About"
                 value={about}
                 onChange={(e) => setAbout(e.target.value)}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                label="contactNo"
-                value={userData.contactNo}
-                disabled
                 fullWidth
                 margin="normal"
               />

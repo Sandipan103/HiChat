@@ -25,7 +25,7 @@ const MessageBox = ({ messages, myId }) => {
          <ListItem
            key={index}
            alignItems="flex-start"
-           className={message.sender === myId ? "own-message" : "other-message"}
+           className={message.sender._id === myId ? "own-message" : "other-message"}
          >
            <ListItemAvatar>
              <Avatar alt="User Avatar" src={message.senderAvatar} />
@@ -55,7 +55,7 @@ const MessageBox = ({ messages, myId }) => {
              }
            />
            <ListItemSecondaryAction>
-             {message.sender === myId && (
+             {message.sender._id === myId && (
                <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteMessage(index)}>
                  <DeleteIcon />
                </IconButton>

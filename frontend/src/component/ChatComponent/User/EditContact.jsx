@@ -1,12 +1,7 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { server } from "../../context/UserContext";
-import {
-  Dialog,
-  Button,
-  Box,
-  TextField,
-} from "@mui/material";
+import { server } from "../../../context/UserContext";
+import { Dialog, Button, Box, TextField,Typography } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -14,9 +9,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import toast from "react-hot-toast";
 
-
-
-export const EditContact = ({selectedChat}) => {
+export const EditContact = ({ selectedChat, myId }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [timer, setTimer] = useState("");
   const open = Boolean(anchorEl);
@@ -29,33 +22,34 @@ export const EditContact = ({selectedChat}) => {
 
   useEffect(() => {
     setContactName(selectedChat.groupName);
-    setContactNo("8158934080");
-    console.log("user",selectedChat)
-}, [])
+    const mNum =
+      selectedChat.users[0]._id === myId
+        ? selectedChat.users[1].contactNo
+        : selectedChat.users[0].contactNo;
+    setContactNo(mNum);
+    console.log("user", selectedChat);
+  }, []);
+  console.log("chat", selectedChat);
 
-const handleSubmit = async () => {
-      try {
-        const data = {
-          userId : selectedChat.users[1],
-          contactName:contactName,
-          contactNo : contactNo,
-      }
-      console.log(data)
-        setLoading(true);
-        const response = await axios.put(
-          `${server}/editContact`,
-          data
-        );
-        toast.success("Contact updated");
-        window.location.reload();
-
-      } catch (error) {
-        toast.error("Contact not updated");
-        console.error("Error updating profile:", error);
-      } finally {
-        setLoading(false);
-        // window.location.reload();
-      }
+  const handleSubmit = async () => {
+    try {
+      const data = {
+        userId: selectedChat.users[1],
+        contactName: contactName,
+        contactNo: contactNo,
+      };
+      console.log(data);
+      setLoading(true);
+      const response = await axios.put(`${server}/editContact`, data);
+      toast.success("Contact updated");
+      window.location.reload();
+    } catch (error) {
+      toast.error("Contact not updated");
+      console.error("Error updating profile:", error);
+    } finally {
+      setLoading(false);
+      // window.location.reload();
+    }
   };
 
   const handleClick = (event) => {
@@ -68,7 +62,7 @@ const handleSubmit = async () => {
 
   return (
     <div>
-<Button onClick={handleClick}>Edit Contact</Button>
+      <Typography onClick={handleClick}>Edit Contact</Typography>
       <React.Fragment>
         <Dialog
           fullScreen={fullScreen}
@@ -76,8 +70,8 @@ const handleSubmit = async () => {
           onClose={handleClose}
           aria-labelledby="responsive-dialog-title"
           sx={{ m: 0, p: 2 }}
-          maxWidth = "xs"
-          fullWidth = "true"
+          maxWidth="xs"
+          fullWidth="true"
         >
           <DialogContent>
             <Box
@@ -106,7 +100,7 @@ const handleSubmit = async () => {
             </Box>
           </DialogContent>
           <DialogActions>
-          <Button onClick={handleClose} color="primary" variant="outlined">
+            <Button onClick={handleClose} color="primary" variant="outlined">
               Close
             </Button>
             <Button onClick={handleSubmit} color="primary" variant="contained">

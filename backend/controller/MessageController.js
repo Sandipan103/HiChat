@@ -37,7 +37,10 @@ exports.fetchMessages = async (req, res, next) => {
 exports.myContacts = async (req, res, next) => {
   try {
     const {userId} = req.params;
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).populate({
+      path: "contacts.contactId",
+      select: "about profile",
+    });
     return res.json({contacts : user.contacts});
   } catch (error) {
     return res.json(error);

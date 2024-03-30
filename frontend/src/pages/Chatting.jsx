@@ -12,12 +12,13 @@ import GroupChatBox from "../component/ChatComponent/GroupChatBox";
 import { server } from "../context/UserContext";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Unstable_Grid2";
+import { useMediaQuery, useTheme } from "@mui/material";
+import ChatReturnComponent from "../component/ChatComponent/ChatReturnComponent";
 
 let socket;
 
-
 const Chatting = () => {
-  const [myId, setMyId] = useState(null);
+  const [myId, setMyId] = useState();
   const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState();
   const [messages, setMessages] = useState([""]);
@@ -28,30 +29,41 @@ const Chatting = () => {
   const [socketConnected, setSocketConnected] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState([]);
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [showChatWindow, setShowChatWindow] = useState(false);
 
   useEffect(() => {
-    // Setup socket connection
-    if(myId){
-      socket = io("http://localhost:4000");
-      socket.emit("setup", myId);
-      socket.on("connected", () => setSocketConnected(true));
-      return () => {
-          socket.disconnect();
-          setSocketConnected(false)
-      };
+    let socketInstance;
+
+    const establishSocketConnection = () => {
+      socketInstance = io("http://localhost:4000");
+      socketInstance.emit("online", myId);
+      socketInstance.on("onlineUsers", (map) => {
+        setSocketConnected(true);
+      });
+    };
+    const cleanUpSocketConnection = () => {
+      if (socketInstance) {
+        socketInstance.disconnect();
+        setSocketConnected(false);
+        console.log("Socket connection closed.");
+      }
+    };
+
+    if (myId) {
+      establishSocketConnection();
+
+      return cleanUpSocketConnection;
     }
-}, [myId]);
+  }, [myId, navigate]);
 
-useEffect(()=>{
-  socket = io("http://localhost:4000");
-  socket.on("onlineUsers", (map) => {
-    // setOnlineUsers(userSocketMap);
-    console.log(map)
+  useEffect(() => {
+    socket = io("http://localhost:4000");
+    socket.on("onlineUsers", (map) => {
+      setOnlineUsers(map);
+    });
   });
-})
-
-
-
 
   const fetchUserDetail = async () => {
     const token = Cookies.get("tokenf");
@@ -65,6 +77,7 @@ useEffect(()=>{
     const userData = response.data.user;
     setUserData(userData);
 
+    setMyId(userId);
     if (token) {
       try {
         setLoading(true);
@@ -73,32 +86,42 @@ useEffect(()=>{
 
         const response = await axios.get(`${server}/findAllChats/${userId}`);
         const myContacts = await axios.get(`${server}/contacts/${userId}`);
-        setMyId(userId);
 
         const userChats = response.data.chats;
         const contacts = myContacts.data.contacts;
-        setMycontacts(contacts);
+
+        const updateContactList = [];
+
+        // Update contactlist as a chat list for direct msg from mycontactlist
+        const updateContacts = contacts.map((contact) => {
+          const contactId = contact.contactId._id;
+          // const userIdToSearch = "65f74373993a252804cd515e";
+          const chatWithUser = userChats.find((chat) => {
+            if (!chat.isGroupChat) {
+              return chat.users.some((user) => user._id === contactId);            }
+          });
+          updateContactList.push(chatWithUser);
+
+        });
+        setMycontacts(updateContactList);
+
+
 
         const modifiedChats = userChats.map((chat) => {
           let unreadMsgCount = 0;
 
           if (!chat.isGroupChat) {
-
-            const otherUserId = chat.users.find(id => id !== userId);
-            const contact = contacts.find(contact => contact.contactId === otherUserId._id);
-            // console.log(otherUserId);
-
-
+            const otherUserId = chat.users.find((id) => id !== userId);
+            const contact = contacts.find(
+              (contact) => contact.contactId._id === otherUserId._id
+            );
             if (contact) {
-              // console.log(contact._id)
-                chat.groupName = contact.name;
-                contact._id = chat._id;
-                // console.log(contact._id)
+              chat.groupName = contact.name;
+              contact._id = chat._id;
             } else {
-                chat.groupName = otherUserId.contactNo;
+              chat.groupName = otherUserId.contactNo;
             }
-        }
-        
+          }
 
           chat.allChatMessages.forEach((message) => {
             if (!message.readBy.includes(userId)) {
@@ -128,30 +151,34 @@ useEffect(()=>{
     fetchUserDetail();
   }, [navigate]);
 
+  const fatchMsg = async (chatId) => {
+    const response = await axios.get(`${server}/fetchAllMessages/${chatId}`);
+    setMessages(response.data.messages.reverse());
+  };
+
   const handleChatClick = async (chat) => {
+    setShowChatWindow(true);
     try {
-      // console.log('group : ', group);
+      setSelectedChat(chat);
+      fatchMsg(chat._id);
+
       if (selectedChat) {
         await axios.post(`${server}/readAllMessages`, {
           myId,
           chatId: selectedChat._id,
         });
       }
-      setSelectedChat(chat);
-      const response = await axios.get(
-        `${server}/fetchAllMessages/${chat._id}`
-      );
       const responseReadMsg = await axios.post(`${server}/readAllMessages`, {
         myId,
         chatId: chat._id,
       });
       await fetchUserDetail();
       chat.unreadMsgCount = 0;
-      setMessages(response.data.messages);
-      setChats((prevChats) => {
-        const updatedChats = prevChats.filter((grp) => grp._id !== chat._id);
-        return [chat, ...updatedChats];
-      });
+
+      // setChats((prevChats) => {
+      //   const updatedChats = prevChats.filter((grp) => grp._id !== chat._id);
+      //   return [chat, ...updatedChats];
+      // });
     } catch (error) {
       console.log("chat not detected");
       console.log(error);
@@ -162,37 +189,77 @@ useEffect(()=>{
     <div className="main-container">
       <div className="chat-box">
         <div className="chat-body">
-          <Box sx={{ flexGrow: 1 }}>
-            <Grid container wrap={"wrap"} direction="row">
-              <Grid item xs={12} sm={4}>
-                <GroupList
-                  chats={chats}
-                  handleChatClick={handleChatClick}
-                  selectedChat={selectedChat}
-                  userData={userData}
-                  myContacts={myContacts}
-                />
-              </Grid>
+          <Box
+            sx={{ flexGrow: 1, height: "100%", boxSizing: "border-box" }}
+            display={isMobile && !showChatWindow ? "block" : "content"}
+          >
+            <Grid
+              sx={{ height: "100%", overflow: "auto" }}
+              container
+              direction={isMobile ? "column" : "row"}
+            >
+              {/* Mobile Left sidebar for chat list */}
+              {isMobile && !showChatWindow && (
+                <Grid item="true" xs={12} sm={3} sx={{height:"-webkit-fill-available"}}>
+                  <GroupList
+                    chats={chats}
+                    handleChatClick={handleChatClick}
+                    selectedChat={selectedChat}
+                    userData={userData}
+                    myContacts={myContacts}
+                    myId={myId}
+                  />
+                </Grid>
+              )}
 
-              <Grid item xs={12} sm={8}>
-                <Box sx={{ position: "relative" }}>
-                  <div className="message-body">
-                    {selectedChat ? (
-                      <GroupChatBox
-                        myId={myId}
-                        messages={messages}
-                        setMessages={setMessages}
-                        selectedChat={selectedChat}
-                        chats={chats}
-                        setChats={setChats}
-                        socketConnected={socketConnected}
-                      />
-                    ) : (
-                      <p>Please select the chat</p>
-                    )}
-                  </div>
-                </Box>
-              </Grid>
+              {/* Chat window (visible on mobile when chat is selected) */}
+              {isMobile && showChatWindow && (
+                <Grid item="true" xs={12} sm={4} sx={{height:' -webkit-fill-available'}}>
+                  <GroupChatBox
+                    myId={myId}
+                    messages={messages}
+                    setMessages={setMessages}
+                    selectedChat={selectedChat}
+                    chats={chats}
+                    setChats={setChats}
+                    socketConnected={socketConnected}
+                    showChatWindow={showChatWindow}
+                    setShowChatWindow={setShowChatWindow}
+                  />
+                </Grid>
+              )}
+
+              {/* Chat window (visible on larger screens when chat is selected) */}
+
+              {!isMobile && (
+                <Grid item="true" xs={12} sm={4}>
+                  <GroupList
+                    chats={chats}
+                    handleChatClick={handleChatClick}
+                    selectedChat={selectedChat}
+                    userData={userData}
+                    myContacts={myContacts}
+                    myId={myId}
+                  />
+                </Grid>
+              )}
+              {!isMobile && showChatWindow && (
+                <Grid item="true" xs={12} sm={8}>
+                  <GroupChatBox
+                    myId={myId}
+                    messages={messages}
+                    setMessages={setMessages}
+                    selectedChat={selectedChat}
+                    setSelectedChat={setSelectedChat}
+                    setShowChatWindow={setShowChatWindow}
+                    chats={chats}
+                    setChats={setChats}
+                    socketConnected={socketConnected}
+                  />
+                </Grid>
+              )}
+
+              {!selectedChat && !isMobile && <ChatReturnComponent />}
             </Grid>
           </Box>
         </div>

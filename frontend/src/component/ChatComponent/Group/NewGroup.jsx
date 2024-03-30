@@ -15,12 +15,14 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  MenuItem,
 } from "@mui/material";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
 import toast from "react-hot-toast";
 import CloseIcon from "@mui/icons-material/Close";
 
-import { server, AuthContext } from "../../context/UserContext";
+import { server, AuthContext } from "../../../context/UserContext";
 
 const NewGroup = () => {
   const navigate = useNavigate();
@@ -33,7 +35,6 @@ const NewGroup = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestedFriends, setSuggestedFriends] = useState([]);
   const [open, setOpen] = useState(false);
-
 
   const fetchUserDetail = async () => {
     const token = Cookies.get("tokenf");
@@ -137,31 +138,54 @@ const NewGroup = () => {
           />
           <div
             style={{
-              display: "flex",
-              alignItems: "center",
+             
               marginBottom: "10px",
             }}
           >
-            {selectedFriends.map((friendId) => {
+            {selectedFriends.map((friendId, index) => {
               const selectedFriend = friends.find(
                 (friend) => friend.contactId === friendId
               );
               return (
-                <div
-                  key={selectedFriend.contactId}
-                  style={{ marginRight: "5px" }}
-                >
-                  <IconButton
-                    size="small"
-                    onClick={() => handleRemoveFriend(selectedFriend.contactId)}
+                <>
+                  <ListItem
+                    key={selectedFriend.contactId}
+                    alignItems="flex-start"
+                    onClick={() => handleFriendSelection(selectedFriend.contactId)}
+                    divider
                   >
-                    <Avatar
-                      src={selectedFriend.avatarUrl}
-                      alt={selectedFriend.name}
+                    <ListItemAvatar>
+                      <Avatar
+                        alt={selectedFriend.name}
+                        src={`${server}/fetchprofile/${selectedFriend.contactId.profile}`}
+                      />
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={<>{selectedFriend.name}</>}
+                      secondary={<>{selectedFriend.contactId.about}</>}
                     />
-                  </IconButton>
-                  <Typography variant="body2">{selectedFriend.name}</Typography>
-                </div>
+                  </ListItem>
+
+                  {/* <div
+                    key={selectedFriend.contactId}
+                    style={{ marginRight: "5px" }}
+                  >
+                    <IconButton
+                      size="small"
+                      onClick={() =>
+                        handleRemoveFriend(selectedFriend.contactId)
+                      }
+                    >
+                      <Avatar
+                        src={selectedFriend.avatarUrl}
+                        alt={selectedFriend.name}
+                      />
+                    </IconButton>
+                    <Typography variant="body2">
+                      {selectedFriend.name}
+                    </Typography>
+                  </div> */}
+                </>
               );
             })}
           </div>
@@ -176,28 +200,68 @@ const NewGroup = () => {
           {searchQuery === "" && (
             <div style={{ marginTop: "10px", textAlign: "left" }}>
               {friends.map((friend) => (
-                <IconButton
-                  key={friend.contactId}
-                  onClick={() => handleFriendSelection(friend.contactId)}
-                  style={{ marginRight: "5px" }}
-                >
-                  <Avatar src={friend.avatarUrl} alt={friend.name} />
-                  <Typography variant="body2">{friend.name}</Typography>
-                </IconButton>
+                <>
+                  <ListItem
+                    key={friend.contactId}
+                    alignItems="flex-start"
+                    onClick={() => handleFriendSelection(friend.contactId)}
+                    divider
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                        alt={friend.name}
+                        src={`${server}/fetchprofile/${friend.contactId.profile}`}
+                      />
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={<>{friend.name}</>}
+                      secondary={<>{friend.contactId.about}</>}
+                    />
+                  </ListItem>
+                  {/* <IconButton
+                    key={friend.contactId}
+                    onClick={() => handleFriendSelection(friend.contactId)}
+                    style={{ marginRight: "5px" }}
+                  >
+                    <Avatar src={friend.avatarUrl} alt={friend.name} />
+                    <Typography variant="body2">{friend.name}</Typography>
+                  </IconButton> */}
+                </>
               ))}
             </div>
           )}
           {searchQuery !== "" && searchQuery && (
             <div style={{ marginTop: "10px", textAlign: "left" }}>
               {suggestedFriends.map((friend) => (
-                <IconButton
+
+                <>
+                 <ListItem
+                    key={friend.contactId}
+                    alignItems="flex-start"
+                    onClick={() => handleFriendSelection(friend.contactId)}
+                    divider
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                        alt={friend.name}
+                        src={`${server}/fetchprofile/${friend.contactId.profile}`}
+                      />
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={<>{friend.name}</>}
+                      secondary={<>{friend.contactId.about}</>}
+                    />
+                  </ListItem>
+                
+                {/* <IconButton
                   key={friend.contactId}
                   onClick={() => handleFriendSelection(friend.contactId)}
                   style={{ marginRight: "5px" }}
-                >
+                  >
                   <Avatar src={friend.avatarUrl} alt={friend.name} />
                   <Typography variant="body2">{friend.name}</Typography>
-                </IconButton>
+                </IconButton> */}
+                  </>
               ))}
             </div>
           )}

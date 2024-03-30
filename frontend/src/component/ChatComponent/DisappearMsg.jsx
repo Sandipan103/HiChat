@@ -8,6 +8,7 @@ import {
   Checkbox,
   Radio,
   RadioGroup,
+  Typography,
 } from "@mui/material";
 
 export const DisappearMsg = ({ setChats, chats, selectedChat }) => {
@@ -55,7 +56,7 @@ export const DisappearMsg = ({ setChats, chats, selectedChat }) => {
 
   return (
     <div>
-      <Button onClick={handleClick}>Disappear Message</Button>
+      <Typography onClick={handleClick}>Disappear Message</Typography>
       <Dialog
         id={id}
         open={open}
