@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useContext} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../component/Navbar";
 import {
@@ -17,6 +17,7 @@ import {
 import { LinkedIn, GitHub, Instagram } from '@mui/icons-material';
 import  '../styles/homePage.css'
 
+import { useNavigate } from "react-router-dom";
 
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -26,9 +27,7 @@ import Atmajit from "../assets/atmajit-sahoo.jpg";
 import Sandipan from "../assets/sandipan-sarkar.jpg";
 import W3yogesh from "../assets/w3yogesh.jpg";
 
-
-
-
+import {AuthContext } from "../context/UserContext";
 import {
   HomeHeroImage,
   RealtimeMsg,
@@ -39,7 +38,7 @@ import {
   MessageEncryption,
   AboutImage,
 } from "../component/SVG/HomeSvg";
-// import {} from '../component/SVG/HomeSvg'
+
 const useStyles = makeStyles((theme) => ({
   root: {
     marginTop: theme.spacing(2),
@@ -182,6 +181,12 @@ const useStyles = makeStyles((theme) => ({
 
 const HomePage = () => {
   const classes = useStyles();
+  const navigate = useNavigate();
+  const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
+
+  if (isAuthenticated) {
+    navigate("/chatting");
+  }
 
   // Dummy testimonial data
   const testimonials = [

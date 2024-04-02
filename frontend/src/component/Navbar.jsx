@@ -50,10 +50,10 @@ const NavBar = () => {
           <ListItemText primary="Home" />
         </ListItem>
         <ListItem button>
-          <ListItemText primary="Chats" />
+          <ListItemText primary="About" />
         </ListItem>
         <ListItem button>
-          <ListItemText primary="Contacts" />
+          <ListItemText primary="Team" />
         </ListItem>
         {/* Add more items as needed */}
       </List>
@@ -81,8 +81,8 @@ const NavBar = () => {
             </Typography>
             <Hidden xsDown>
               <Button color="inherit" component={Link} to="/">Home</Button>
-              <Button color="inherit">Chats</Button>
-              <Button color="inherit">Contacts</Button>
+              <Button color="inherit">About</Button>
+              <Button color="inherit">Team</Button>
               <Button color="inherit" component={Link} to="/signup">Signup</Button>
               <Button color="inherit" component={Link} to="/login">Login</Button>
             </Hidden>

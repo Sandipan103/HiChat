@@ -12,7 +12,7 @@ import {
   Button,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-
+import imageCompression from "browser-image-compression";
 import { MoreVert as MoreVertIcon } from "@mui/icons-material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
@@ -20,17 +20,17 @@ import axios from "axios";
 import io from "socket.io-client";
 import { server } from "../../context/UserContext";
 import { DisappearMsg } from "./DisappearMsg";
-import { EditContact } from "./UserComponent/EditContact";
+import { EditContact } from "../UserComponent/EditContact";
 
 import { FileShareMenu } from "./FileShareMenu";
 import { FileSendPopUp } from "./FileSendPopUp";
 import ZegoCloud from "./ZegoCloud";
 import { ChatTextInput } from "./ChatTextInput";
 import { styled } from "@mui/material/styles";
-import { GroupManage } from "./GroupComponent/AddGroupMember";
+import { GroupManage } from "../GroupComponent/AddGroupMember";
 import toast from "react-hot-toast";
-import { GroupInfo } from "./GroupComponent/GroupInfo";
-import { UpdateGroup } from "./GroupComponent/UpdateGroup";
+import { GroupInfo } from "../GroupComponent/GroupInfo";
+import { UpdateGroup } from "../GroupComponent/UpdateGroup";
 
 let socket;
 
@@ -171,9 +171,7 @@ const GroupChatBox = ({
     //   // setOnlineUsers(userSocketMap);
     //   console.log("onuser")
     // });
-    const oth = selectedChat.users.find(user => user._id !== myId);
-    console.log("oth",selectedChat.users,oth)
-
+    const oth = selectedChat.users.find((user) => user._id !== myId);
     setCalleeId(oth);
   }, [selectedChat]);
 
@@ -303,7 +301,9 @@ const GroupChatBox = ({
         const reader = new FileReader();
 
         reader.onload = async (e) => {
-          const fileData = e.target.result;
+          const nonCompressfileData = e.target.result;
+          const fileData = await compressImage(nonCompressfileData);
+
           const filename = selectedFile.name;
           const chatId = selectedChat._id;
 
@@ -318,14 +318,12 @@ const GroupChatBox = ({
 
           const response = await axios.post(`${server}/sendFiles`, data);
           const newMessage = response.data.newMessage;
-          console.log("NewFileMSGrs", response);
           socket.emit("file", {
             chatUsers: response.data.chatUsers,
             newMessage,
             fileData,
           });
           const type = newMessage.type;
-          console.log(fileData);
           if (type === "image") {
             newMessage.imageUrl = fileData;
           } else if (type === "video") {
@@ -337,13 +335,18 @@ const GroupChatBox = ({
           }
           const updatedChats = chats.map((chat) => {
             if (chat._id === selectedChat._id) {
-              return { ...chat, latestMessage: messageInput };
+              return {
+                ...chat,
+                latestMessage: messageInput ? messageInput : selectedType,
+              };
             }
             return chat;
           });
 
           setChats(updatedChats);
           setMessageInput("");
+          console.log(response.data.newMessage);
+          console.log(messages);
           setMessages([...messages, response.data.newMessage]);
 
           setPopOpen(false);
@@ -353,6 +356,20 @@ const GroupChatBox = ({
       }
     } catch (error) {
       console.error("Error file sending: ", error);
+    }
+  };
+
+  // Function to compress the selected image
+  const compressImage = async (file) => {
+    try {
+      const options = {
+        maxSizeMB: 0.001, // Max size in MB
+        maxWidthOrHeight: 64, // Max width or height
+      };
+      return await imageCompression(file, options);
+    } catch (error) {
+      console.error("Error compressing image: ", error);
+      return file; // Return the original file if compression fails
     }
   };
 
@@ -421,7 +438,6 @@ const GroupChatBox = ({
                       ></Avatar>
                     </StyledBadge>
                     <Typography>{selectedChat.groupName}</Typography>
-                    {console.log("hey ", selectedChat)}
                     {selectedChat.isTyping && (
                       <Typography variant="body2" color="textSecondary">
                         Typing...

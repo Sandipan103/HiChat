@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { server } from "../../../context/UserContext";
+import { server } from "../../context/UserContext";
 import {
   Typography,
   IconButton,

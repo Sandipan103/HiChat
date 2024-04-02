@@ -15,10 +15,11 @@ import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import toast from "react-hot-toast";
 import NavBar from "../component/Navbar";
+import LoginSvg from "../component/SVG/LoginSvg";
 
 import { server, AuthContext } from "../context/UserContext";
-import { Container } from "@mui/material";
-
+import { Container, Typography } from "@mui/material";
+import '../styles/login.css'
 const LoginPage = () => {
   const navigate = useNavigate();
   const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
@@ -77,110 +78,117 @@ const LoginPage = () => {
   return (
     <>
       <NavBar />
-      <Container maxWidth="lg">
-        <Grid container justifyContent="center" alignItems="center" spacing={2}>
-          {/* Left side image section */}
-          <Grid item xs={12} sm={6}>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                height: "100%",
-              }}
-            >
-              <img
-                src="your-image-url.jpg"
-                alt="login"
-                style={{ maxWidth: "100%", height: "auto" }}
-              />
-            </Box>
-          </Grid>
-
-          {/* Right side login form section */}
-          <Grid item xs={12} sm={6}>
-            <Paper
-              elevation={3}
-              style={{
-                padding: "20px",
-                borderRadius: "10px",
-                textAlign: "center",
-              }}
-            >
-              <h1>Login Page</h1>
-              {!loading && (
-                <form onSubmit={handleSubmit}>
-                  <TextField
-                    label="Email"
-                    variant="outlined"
-                    type="email"
-                    name="email"
-                    value={userDetail.email}
-                    onChange={handleChange}
-                    fullWidth
-                    margin="normal"
-                    size="small"
-                    autoFocus
-                    required
-                  />
-                  <TextField
-                    label="Password"
-                    variant="outlined"
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    value={userDetail.password}
-                    onChange={handleChange}
-                    fullWidth
-                    margin="normal"
-                    size="small"
-                    required
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            edge="end"
-                            onClick={handleTogglePasswordVisibility}
-                          >
-                            {showPassword ? (
-                              <VisibilityIcon />
-                            ) : (
-                              <VisibilityOffIcon />
-                            )}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    style={{ marginTop: "10px" }}
-                    size="large"
-                  >
-                    Login
-                  </Button>
-                </form>
-              )}
-
-              {loading && <CircularProgress size={100} />}
-
-              {/* Signup button */}
-              <Button
-                variant="outlined"
-                color="primary"
-                fullWidth
-                style={{ marginTop: "10px" }}
-                component={Link}
-                to="/signup"
+      <Box
+        sx={{
+          minHeight: "calc(100vh - 90px)", // Adjust for navbar height
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          overflow: "auto",
+          background: "#eee"
+        }}
+      >
+        <Container maxWidth="lg">
+          <Grid container spacing={3} flexDirection={"row-reverse"}>
+            <Grid item xs={12} sm={6}  sx={{position:'relative'}} >
+            <div class="background">
+                  <div class="shape"></div>
+                  <div class="shape"></div>
+                </div>
+              <Box
+              class={'loginForm'}
+     
               >
-                Sign Up
-              </Button>
-            </Paper>
+                
+                <Typography variant="h4" component="h1" gutterBottom>
+                  Login
+                </Typography>
+                {!loading && (
+                  <form onSubmit={handleSubmit}>
+                    <TextField
+                      label="Email"
+                      variant="outlined"
+                      type="email"
+                      name="email"
+                      value={userDetail.email}
+                      onChange={handleChange}
+                      fullWidth
+                      margin="normal"
+                      size="small"
+                      autoFocus
+                      required
+                    />
+                    <TextField
+                      label="Password"
+                      variant="outlined"
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      value={userDetail.password}
+                      onChange={handleChange}
+                      fullWidth
+                      margin="normal"
+                      size="small"
+                      required
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              edge="end"
+                              onClick={handleTogglePasswordVisibility}
+                            >
+                              {showPassword ? (
+                                <VisibilityIcon />
+                              ) : (
+                                <VisibilityOffIcon />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                      style={{ marginTop: "10px" }}
+                      size="large"
+                    >
+                      Login
+                    </Button>
+                  </form>
+                )}
+                
+                {loading && <CircularProgress size={100} />}
+                {/* Signup button */}
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  fullWidth
+                  style={{ marginTop: "10px" }}
+                  component={Link}
+                  to="/signup"
+                >
+                  Sign Up
+                </Button>
+              </Box>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                }}
+              >
+                <LoginSvg />
+              </Box>
+            </Grid>
           </Grid>
-        </Grid>
-      </Container>
+        </Container>
+      </Box>
+      ;
     </>
   );
 };

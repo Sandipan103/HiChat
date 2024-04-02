@@ -32,11 +32,24 @@
 
   @keyframes moveUp {
     0% {
-      opacity: 1;
-      transform: translateX(0) translateY(0);
+      opacity: 0.1;
+      transform: translateX(-20px) translateY(-10px) ;
+    }
+    50% {
+      opacity: 0.7;
+      transform: translateX(-40px) translateY(-20px) ;
     }
     100% {
       opacity: 0;
-      transform: translateX(-50px) translateY(-50px);
+      transform: translateX(-80px) translateY(-40px) ;
+    }
+  }
+
+  @keyframes rotate {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
     }
   }

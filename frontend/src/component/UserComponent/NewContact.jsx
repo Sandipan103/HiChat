@@ -16,7 +16,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import PersonAddAltRoundedIcon from "@mui/icons-material/PersonAddAltRounded";
 import toast from "react-hot-toast";
 
-import { server, AuthContext } from "../../../context/UserContext";
+import { server, AuthContext } from "../../context/UserContext";
 
 const NewContact = () => {
   const navigate = useNavigate();

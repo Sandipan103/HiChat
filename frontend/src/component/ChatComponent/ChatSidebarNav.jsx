@@ -15,8 +15,8 @@ import {
 } from "@mui/icons-material";
 import { TextField, InputAdornment } from "@mui/material";
 import { Search as SearchIcon } from "@mui/icons-material";
-import NewContact from "./UserComponent/NewContact";
-import NewGroup from "./GroupComponent/NewGroup";
+import NewContact from "../UserComponent/NewContact";
+import NewGroup from "../GroupComponent/NewGroup";
 import { UpdateProfile } from "../UserComponent/UpdateProfile";
 import { server,AuthContext } from "../../context/UserContext";
 import Cookies from "js-cookie";
@@ -76,8 +76,8 @@ const ChatSidebarNav = ({ userData, setSearchQuery, setShowMyContacts }) => {
   };
 
   return (
-    <Box>
-      <AppBar position="static" color="default" elevation={0}>
+    <Box >
+      <AppBar position="static" color="default" sx={{backgroundImage: 'linear-gradient(45deg, #84fab0 0%, #8fd3f4 100%)'}} elevation={0}>
         <Toolbar>
           <Avatar
             alt="User Avatar"

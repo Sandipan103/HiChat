@@ -9,16 +9,22 @@ import InputAdornment from "@mui/material/InputAdornment";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
+import { Typography } from "@mui/material";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
+import "../styles/signup.css";
 
-import { server } from "../context/UserContext";
 import NavBar from "../component/Navbar";
+import { server, AuthContext } from "../context/UserContext";
 
 const SignupPage = () => {
   const navigate = useNavigate();
-
+  const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
+  if (isAuthenticated) {
+    navigate("/chatting");
+  }
+  
   const [signupData, setSignupData] = useState({
     firstName: "",
     lastName: "",
@@ -106,16 +112,18 @@ const SignupPage = () => {
     <>
       <NavBar />
       <Grid container justifyContent="center" alignItems="center">
-        <Grid item xs={12} sm={8} md={6} lg={4}>
-          <Paper
+        <Grid item xs={12} sm={8} md={6} lg={4} sx={{ position: "relative" }}>
+          <div class="background">
+            <div class="shape"></div>
+            <div class="shape"></div>
+          </div>
+          <Box
+          class={'signup'}
             elevation={3}
-            style={{
-              padding: "20px",
-              borderRadius: "10px",
-              textAlign: "center",
-            }}
           >
-            <h1>Signup Page</h1>
+            <Typography variant="h4" component="h1" gutterBottom>
+              Signup
+            </Typography>
             {loading && <CircularProgress size={100} />}
             {!loading && !progress && (
               <form onSubmit={handleSubmit}>
@@ -223,7 +231,7 @@ const SignupPage = () => {
             >
               Log in here
             </Button>
-          </Paper>
+          </Box>
         </Grid>
       </Grid>
     </>

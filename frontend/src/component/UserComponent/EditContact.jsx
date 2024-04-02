@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { server } from "../../../context/UserContext";
+import { server } from "../../context/UserContext";
 import { Dialog, Button, Box, TextField,Typography } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import DialogActions from "@mui/material/DialogActions";

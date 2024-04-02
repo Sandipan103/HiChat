@@ -22,7 +22,7 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import toast from "react-hot-toast";
 import CloseIcon from "@mui/icons-material/Close";
 
-import { server, AuthContext } from "../../../context/UserContext";
+import { server, AuthContext } from "../../context/UserContext";
 
 const NewGroup = () => {
   const navigate = useNavigate();

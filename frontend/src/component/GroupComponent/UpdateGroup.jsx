@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
-import { server, AuthContext } from "../../../context/UserContext";
+import { server, AuthContext } from "../../context/UserContext";
 import toast from "react-hot-toast";
 
 import { Box } from "@mui/material";

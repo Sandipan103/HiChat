@@ -3,7 +3,7 @@ import {AuthContext } from "../../context/UserContext";
 import { Box } from "@mui/material";
 import { ChatList } from "./ChatList";
 import ChatSidebarNav from "./ChatSidebarNav";
-import { MyContactList } from "./UserComponent/MyContactList";
+import { MyContactList } from "../UserComponent/MyContactList";
 
 const GroupList = ({
   chats,

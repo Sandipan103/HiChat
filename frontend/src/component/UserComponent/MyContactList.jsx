@@ -9,7 +9,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Box from "@mui/material/Box";
 import DialogTitle from "@mui/material/DialogTitle";
 import Divider from "@mui/material/Divider";
-import { server } from "../../../context/UserContext";
+import { server } from "../../context/UserContext";
 
 export const MyContactList = ({
   searchQuery,

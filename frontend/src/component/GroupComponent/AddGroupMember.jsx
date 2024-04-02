@@ -3,7 +3,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { server } from "../../../context/UserContext";
+import { server } from "../../context/UserContext";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
