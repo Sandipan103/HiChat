@@ -397,6 +397,7 @@ exports.sendFiles = async (req, res) => {
       readBy: [myId],
       ...updateFields,
     });
+    const newMessageMeta = newMessage.populate({path:'sender', select:'_id profile firstName'})
 
     // const chat = await Chat.findById(newMessage.chat);
     const chat = await Chat.findByIdAndUpdate(newMessage.chat, {
