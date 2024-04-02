@@ -6,9 +6,9 @@ import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import Badge from "@mui/material/Badge";
-import { server, AuthContext } from "../../context/UserContext";
+import { server } from "../../context/UserContext";
 
-export const ChattingList = ({
+export const ChatList = ({
   chats,
   searchQuery,
   handleChatClick,

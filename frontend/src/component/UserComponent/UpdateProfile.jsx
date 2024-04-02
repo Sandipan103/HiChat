@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import axios from "axios";
-import { server, AuthContext } from "../../../context/UserContext";
+import { server } from "../../context/UserContext";
 import toast from "react-hot-toast";
 
 import { Box } from "@mui/material";
@@ -11,7 +11,6 @@ import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -28,7 +27,6 @@ const VisuallyHiddenInput = styled("input")({
   whiteSpace: "nowrap",
   width: 1,
 });
-
 export const UpdateProfile = ({ userData, setOpen }) => {
   //   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");

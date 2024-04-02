@@ -1,5 +1,5 @@
 // Chat.js
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
@@ -7,8 +7,8 @@ import toast from "react-hot-toast";
 import io from "socket.io-client";
 import axios from "axios";
 import "../styles/chat.css";
-import GroupList from "../component/ChatComponent/GroupList";
-import GroupChatBox from "../component/ChatComponent/GroupChatBox";
+import ChatSidebar from "../component/ChatComponent/ChatSidebar";
+import ChatWindow from "../component/ChatComponent/ChatWindow";
 import { server } from "../context/UserContext";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Unstable_Grid2";
@@ -201,7 +201,7 @@ const Chatting = () => {
               {/* Mobile Left sidebar for chat list */}
               {isMobile && !showChatWindow && (
                 <Grid item="true" xs={12} sm={3} sx={{height:"-webkit-fill-available"}}>
-                  <GroupList
+                  <ChatSidebar
                     chats={chats}
                     handleChatClick={handleChatClick}
                     selectedChat={selectedChat}
@@ -215,7 +215,7 @@ const Chatting = () => {
               {/* Chat window (visible on mobile when chat is selected) */}
               {isMobile && showChatWindow && (
                 <Grid item="true" xs={12} sm={4} sx={{height:' -webkit-fill-available'}}>
-                  <GroupChatBox
+                  <ChatWindow
                     myId={myId}
                     messages={messages}
                     setMessages={setMessages}
@@ -233,7 +233,7 @@ const Chatting = () => {
 
               {!isMobile && (
                 <Grid item="true" xs={12} sm={4}>
-                  <GroupList
+                  <ChatSidebar
                     chats={chats}
                     handleChatClick={handleChatClick}
                     selectedChat={selectedChat}
@@ -245,7 +245,7 @@ const Chatting = () => {
               )}
               {!isMobile && showChatWindow && (
                 <Grid item="true" xs={12} sm={8}>
-                  <GroupChatBox
+                  <ChatWindow
                     myId={myId}
                     messages={messages}
                     setMessages={setMessages}

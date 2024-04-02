@@ -40,7 +40,7 @@ export const ChatTextInput = ({
   const handleMessageInputChange = (e) => {
     setMessageInput(e.target.value);
     const socket = io("http://localhost:4000");
-    socket.emit("typeing", myId);
+    socket.emit("typing", myId, selectedChat._id);
   };
 
   const handleReactionClick = (event) => {

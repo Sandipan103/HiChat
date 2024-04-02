@@ -1,8 +1,6 @@
 import React from 'react'
 import { useState, useRef, useEffect } from 'react';
 import CallIcon from "@mui/icons-material/Call";
-import Button from "@mui/material/Button";
-import VideoCall from "../../pages/Home";
 import { ZIM } from "zego-zim-web";
 import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 import VideocamIcon from '@mui/icons-material/Videocam';

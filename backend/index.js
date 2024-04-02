@@ -72,10 +72,12 @@ dbConnect()
         socket.emit("connected");
         console.log("connected");
       });
-
-      socket.on("typeing", (myId) => {
-        console.log('typing...',myId);
+      
+      socket.on("typing", (myId, selectedId) => {
+        console.log('typing...',myId,selectedId);
+        socket.in(selectedId).emit('isTyping', selectedId);        
       });
+
       // socket.on("disconnect", () => {
       //   console.log("User disconnected");
       //   const disconnectedUserId = Object.keys(userSocketMap).find(

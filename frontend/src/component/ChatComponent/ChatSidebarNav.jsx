@@ -15,9 +15,9 @@ import {
 } from "@mui/icons-material";
 import { TextField, InputAdornment } from "@mui/material";
 import { Search as SearchIcon } from "@mui/icons-material";
-import NewContact from "./User/NewContact";
-import NewGroup from "./Group/NewGroup";
-import { UpdateProfile } from "./User/UpdateProfile";
+import NewContact from "./UserComponent/NewContact";
+import NewGroup from "./GroupComponent/NewGroup";
+import { UpdateProfile } from "../UserComponent/UpdateProfile";
 import { server,AuthContext } from "../../context/UserContext";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";

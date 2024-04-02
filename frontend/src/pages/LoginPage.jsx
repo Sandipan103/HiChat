@@ -12,13 +12,16 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
 import toast from "react-hot-toast";
+import NavBar from "../component/Navbar";
 
-import {server, AuthContext} from '../context/UserContext';
+import { server, AuthContext } from "../context/UserContext";
+import { Container } from "@mui/material";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const {isAuthenticated,setIsAuthenticated} = useContext(AuthContext);
+  const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
 
   const [userDetail, setUserDetail] = useState({
     email: "",
@@ -43,109 +46,142 @@ const LoginPage = () => {
     event.preventDefault();
     try {
       setLoading(true);
-      const response = await axios.post(`${server}/login`,
+      const response = await axios.post(
+        `${server}/login`,
         { email: userDetail.email, password: userDetail.password },
         { withCredentials: true }
       );
       setIsAuthenticated(true);
-      
+
       Cookies.set("tokenf", response.data.token, {
         expires: 1,
       });
-      // console.log(`isAuthenticated : `, isAuthenticated);
       navigate(`/chatting`);
-      toast.success(`logged in`)
+      toast.success(`Logged in`);
     } catch (error) {
-      if(error.response.data.message) {
+      if (error.response.data.message) {
         toast.error(error.response.data.message);
+      } else {
+        toast.error(`Login Failed`);
       }
-      else  {
-        toast.error(`Login Faild`);
-      }
-      console.error("lgoin error", error);
+      console.error("Login error", error);
     } finally {
       setLoading(false);
     }
   };
 
   if (isAuthenticated) {
-    navigate('/profile');
+    navigate("/chatting");
   }
-  
+
   return (
-    <Grid container justifyContent="center" alignItems="center">
-      <Grid item xs={12} sm={8} md={6} lg={4}>
-        <Paper
-          elevation={3}
-          style={{ padding: "20px", borderRadius: "10px", textAlign: "center" }}
-        >
-          <h1>Login Page</h1>
-          {!loading && (
-            <form onSubmit={handleSubmit}>
-              <TextField
-                label="Email"
-                variant="outlined"
-                type="email"
-                name="email"
-                value={userDetail.email}
-                onChange={handleChange}
-                fullWidth
-                margin="normal"
+    <>
+      <NavBar />
+      <Container maxWidth="lg">
+        <Grid container justifyContent="center" alignItems="center" spacing={2}>
+          {/* Left side image section */}
+          <Grid item xs={12} sm={6}>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+              }}
+            >
+              <img
+                src="your-image-url.jpg"
+                alt="login"
+                style={{ maxWidth: "100%", height: "auto" }}
               />
-              <TextField
-                label="Password"
-                variant="outlined"
-                type={showPassword ? "text" : "password"}
-                name="password"
-                value={userDetail.password}
-                onChange={handleChange}
-                fullWidth
-                margin="normal"
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        edge="end"
-                        onClick={handleTogglePasswordVisibility}
-                      >
-                        {showPassword ? (
-                          <VisibilityIcon />
-                        ) : (
-                          <VisibilityOffIcon />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
+            </Box>
+          </Grid>
+
+          {/* Right side login form section */}
+          <Grid item xs={12} sm={6}>
+            <Paper
+              elevation={3}
+              style={{
+                padding: "20px",
+                borderRadius: "10px",
+                textAlign: "center",
+              }}
+            >
+              <h1>Login Page</h1>
+              {!loading && (
+                <form onSubmit={handleSubmit}>
+                  <TextField
+                    label="Email"
+                    variant="outlined"
+                    type="email"
+                    name="email"
+                    value={userDetail.email}
+                    onChange={handleChange}
+                    fullWidth
+                    margin="normal"
+                    size="small"
+                    autoFocus
+                    required
+                  />
+                  <TextField
+                    label="Password"
+                    variant="outlined"
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={userDetail.password}
+                    onChange={handleChange}
+                    fullWidth
+                    margin="normal"
+                    size="small"
+                    required
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            edge="end"
+                            onClick={handleTogglePasswordVisibility}
+                          >
+                            {showPassword ? (
+                              <VisibilityIcon />
+                            ) : (
+                              <VisibilityOffIcon />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    style={{ marginTop: "10px" }}
+                    size="large"
+                  >
+                    Login
+                  </Button>
+                </form>
+              )}
+
+              {loading && <CircularProgress size={100} />}
+
+              {/* Signup button */}
               <Button
-                type="submit"
-                variant="contained"
+                variant="outlined"
                 color="primary"
                 fullWidth
                 style={{ marginTop: "10px" }}
+                component={Link}
+                to="/signup"
               >
-                Login
+                Sign Up
               </Button>
-            </form>
-          )}
-
-          {loading && <CircularProgress size={100} />}
-
-          {/* Signup button */}
-          <Button
-            variant="outlined"
-            color="primary"
-            fullWidth
-            style={{ marginTop: "10px" }}
-            component={Link}
-            to="/signup"
-          >
-            Sign Up
-          </Button>
-        </Paper>
-      </Grid>
-    </Grid>
+            </Paper>
+          </Grid>
+        </Grid>
+      </Container>
+    </>
   );
 };
 

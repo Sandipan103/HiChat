@@ -1,9 +1,9 @@
 import React, { useContext, useState, useEffect } from "react";
-import { server, AuthContext } from "../../context/UserContext";
+import {AuthContext } from "../../context/UserContext";
 import { Box } from "@mui/material";
-import { ChattingList } from "./ChattingList";
+import { ChatList } from "./ChatList";
 import ChatSidebarNav from "./ChatSidebarNav";
-import { MyContactList } from "./User/MyContactList";
+import { MyContactList } from "./UserComponent/MyContactList";
 
 const GroupList = ({
   chats,
@@ -14,7 +14,6 @@ const GroupList = ({
   myId,
 }) => {
   const [currentUser, setCurrentUser] = useState(null);
-  const { isAuthenticated } = useContext(AuthContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchFriends, setSearchFriends] = useState([]);
   const [showMyContacts, setShowMyContacts] = useState(false);
@@ -45,7 +44,7 @@ const GroupList = ({
             myId={myId}
           />
         ) : (
-          <ChattingList
+          <ChatList
             chats={chats}
             searchQuery={searchQuery}
             handleChatClick={handleChatClick}
