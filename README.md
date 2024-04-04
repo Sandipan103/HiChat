@@ -1,4 +1,4 @@
-\# WhatsApp Clone
+\# HiChat
 
 This repository contains a clone of the WhatsApp messaging application developed using \[React\]\(https://reactjs.org/\) for the frontend and \[Firebase\]\(https://firebase.google.com/\) for the backend.
 
