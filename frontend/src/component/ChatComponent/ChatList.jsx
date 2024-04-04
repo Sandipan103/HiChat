@@ -31,6 +31,7 @@ export const ChatList = ({
         chats.map((chat, index) => (
           <ListItem
             key={index}
+            button
             alignItems="flex-start"
             className={`user ${
               selectedChat &&
@@ -104,6 +105,7 @@ export const ChatList = ({
         searchQuery &&
         searchFriends.map((chat, index) => (
           <ListItem
+          button
             key={index}
             alignItems="flex-start"
             className={`user ${selectedChat === chat ? "selected-chat" : ""}`}

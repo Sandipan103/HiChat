@@ -38,6 +38,7 @@ export const MyContactList = ({
   return (
     <Box>
       <List
+      button
         dividers
         sx={{
           width: "100%",
@@ -57,6 +58,7 @@ export const MyContactList = ({
         {searchQuery === "" &&
           myContacts.map((contact, index) => (
             <ListItem
+            button
               key={index}
               alignItems="flex-start"
               onClick={() => {
@@ -90,6 +92,7 @@ export const MyContactList = ({
           searchQuery &&
           searchContact.map((contact, index) => (
             <ListItem
+            button
               key={index}
               alignItems="flex-start"
               onClick={() => {

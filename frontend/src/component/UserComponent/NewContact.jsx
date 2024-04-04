@@ -84,6 +84,7 @@ const NewContact = () => {
       console.log(success);
       if (success) {
         toast.success(message);
+        navigate("/chatting");
       } else {
         toast.error(message);
       }

@@ -53,7 +53,6 @@ const Chatting = () => {
 
     if (myId) {
       establishSocketConnection();
-
       return cleanUpSocketConnection;
     }
   }, [myId, navigate]);
@@ -84,7 +83,7 @@ const Chatting = () => {
         const decodedToken = jwtDecode(token);
         const { id: userId } = decodedToken;
 
-        const response = await axios.get(`${server}/findAllChats/${userId}`);
+        const response = await axios.get(`${server}/findAllChats/${userId}`, { withCredentials: true });
         const myContacts = await axios.get(`${server}/contacts/${userId}`);
 
         const userChats = response.data.chats;

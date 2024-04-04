@@ -1,4 +1,4 @@
-import React,{useContext} from "react";
+import React, { useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Navbar from "../component/Navbar";
 import {
@@ -12,22 +12,22 @@ import {
   Toolbar,
   Avatar,
   IconButton,
-  Tooltip
+  Tooltip,
 } from "@material-ui/core";
-import { LinkedIn, GitHub, Instagram } from '@mui/icons-material';
-import  '../styles/homePage.css'
+import { LinkedIn, GitHub, Instagram } from "@mui/icons-material";
+import "../styles/homePage.css";
 
 import { useNavigate } from "react-router-dom";
 
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { Link } from 'react-router-dom'; 
+import { Link } from "react-router-dom";
 import Atmajit from "../assets/atmajit-sahoo.jpg";
 import Sandipan from "../assets/sandipan-sarkar.jpg";
 import W3yogesh from "../assets/w3yogesh.jpg";
 
-import {AuthContext } from "../context/UserContext";
+import { AuthContext } from "../context/UserContext";
 import {
   HomeHeroImage,
   RealtimeMsg,
@@ -79,10 +79,10 @@ const useStyles = makeStyles((theme) => ({
   about: {
     padding: theme.spacing(0, 0),
     background: "#eee",
-    height: '100vh',
-    display: 'flex',
-    alignContent: 'center',
-    alignItems: 'center'
+    height: "100vh",
+    display: "flex",
+    alignContent: "center",
+    alignItems: "center",
   },
   feature: {
     padding: theme.spacing(6, 0),
@@ -139,7 +139,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#ffffff",
     textAlign: "center",
   },
-  team:{
+  team: {
     height: "100vh",
     display: "flex",
     justifyContent: "center",
@@ -147,22 +147,21 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
     backgroundColor: "#eee",
     backgroundImage: `radial-gradient(at 47% 33%, hsl(182.19, 63%, 43%) 0, transparent 59%), 
-                   radial-gradient(at 82% 65%, hsl(205.66, 92%, 35%) 0, transparent 55%)`
-
+                   radial-gradient(at 82% 65%, hsl(205.66, 92%, 35%) 0, transparent 55%)`,
   },
   teamMember: {
-    textAlign: 'center',
-    padding: '20px 10px',
+    textAlign: "center",
+    padding: "20px 10px",
     // margin: '0 10px',
-    backgroundColor: 'rgba(179, 226, 255, 0.1)',
-    borderRadius: '5px',
-    boxShadow: 'rgba(17, 17, 26, 0.1) 0px 0px 16px',
-    backdropFilter: 'blur(0px) saturate(100%)',
+    backgroundColor: "rgba(179, 226, 255, 0.1)",
+    borderRadius: "5px",
+    boxShadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px",
+    backdropFilter: "blur(0px) saturate(100%)",
   },
   avatar: {
     width: theme.spacing(15),
     height: theme.spacing(15),
-    margin: '10px auto',
+    margin: "10px auto",
   },
   socialIcon: {
     marginRight: theme.spacing(1),
@@ -176,7 +175,6 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
     width: "100%",
   },
-
 }));
 
 const HomePage = () => {
@@ -231,30 +229,30 @@ const HomePage = () => {
   const teamMembers = [
     {
       id: 1,
-      name: 'Atmajit Sahoo',
-      role: 'Backend',
+      name: "Atmajit Sahoo",
+      role: "Backend",
       image: Atmajit,
-      linkedin: 'https://www.linkedin.com/in/atmajit-sahoo-9459ab190/',
-      github: 'https://github.com/atmajitsahu100',
-      instagram: 'https://www.instagram.com/atmajitsahoo/',
+      linkedin: "https://www.linkedin.com/in/atmajit-sahoo-9459ab190/",
+      github: "https://github.com/atmajitsahu100",
+      instagram: "https://www.instagram.com/atmajitsahoo/",
     },
     {
       id: 2,
-      name: 'Sandipan Sarkar',
-      role: 'Backend',
+      name: "Sandipan Sarkar",
+      role: "Backend",
       image: Sandipan,
-      linkedin: 'https://www.linkedin.com/in/sandipan-sarkar-9203a8247',
-      github: 'https://github.com/Sandipan103',
-      instagram: 'https://www.instagram.com/sandipansarkar40',
+      linkedin: "https://www.linkedin.com/in/sandipan-sarkar-9203a8247",
+      github: "https://github.com/Sandipan103",
+      instagram: "https://www.instagram.com/sandipansarkar40",
     },
     {
       id: 3,
-      name: 'Yogesh Kumar Sai',
-      role: 'Frontend and Backend',
+      name: "Yogesh Kumar Sai",
+      role: "Frontend and Backend",
       image: W3yogesh,
-      linkedin: 'https://www.linkedin.com/in/w3yogesh',
-      github: 'https://github.com/w3yogesh',
-      instagram: 'https://www.instagram.com/w3yogesh',
+      linkedin: "https://www.linkedin.com/in/w3yogesh",
+      github: "https://github.com/w3yogesh",
+      instagram: "https://www.instagram.com/w3yogesh",
     },
   ];
 
@@ -282,7 +280,7 @@ const HomePage = () => {
 
   return (
     <div>
-       <Navbar />
+      <Navbar />
       <div className={classes.hero}>
         <Container maxWidth="lg">
           <Grid container alignItems="center">
@@ -311,14 +309,16 @@ const HomePage = () => {
                   paragraph
                   style={{ margin: "0px 0 30px 0", textAlign: "left" }}
                 >
-                  Say goodbye to long waits for messages and hello to real-time communication. Hichat makes it easy to stay connected from anywhere, at any time.
+                  Say goodbye to long waits for messages and hello to real-time
+                  communication. Hichat makes it easy to stay connected from
+                  anywhere, at any time.
                 </Typography>
                 <div className={classes.ctaButtonContainer}>
                   <Button
                     variant="contained"
                     color="primary"
                     className={classes.ctaButton}
-                    component={Link} 
+                    component={Link}
                     to="/signup"
                   >
                     Sign Up
@@ -327,7 +327,7 @@ const HomePage = () => {
                     variant="outlined"
                     color="primary"
                     className={classes.ctaButton}
-                    component={Link} 
+                    component={Link}
                     to="/login"
                   >
                     Log In
@@ -343,43 +343,45 @@ const HomePage = () => {
       </div>
 
       <div className={classes.about}>
-      <Container maxWidth="lg">
-        <Grid container spacing={3} alignItems="center">
-          {/* Left side - Image */}
-          <Grid item xs={12} sm={6}>
-          <AboutImage/>
-          </Grid>
-          {/* Right side - About Section */}
-          <Grid item xs={12} sm={6}>
-            <div>
-              <Typography variant="h4" component="h2" gutterBottom>
-                About HiChat
-              </Typography>
-              <Typography variant="body1" paragraph>
-                HiChat is a user-friendly chat application that allows you to stay
-                connected with your loved ones.
-              </Typography>
-              <Typography variant="body1" paragraph>
-                Whether it's chatting one-on-one or creating group conversations,
-                HiChat makes communication seamless.
-              </Typography>
-              <Typography variant="body1" paragraph>
-              Whether you're engaged in one-on-one conversations or coordinating group discussions, HiChat ensures seamless communication.
-              </Typography>
-              <Typography variant="body1" paragraph>
-              From intimate one-on-one chats to bustling group conversations, HiChat excels in making communication effortless.
-              </Typography>
-              
-              {/* <Button component={Link} to="/login" variant="contained" color="primary">
+        <Container maxWidth="lg">
+          <Grid container spacing={3} alignItems="center">
+            {/* Left side - Image */}
+            <Grid item xs={12} sm={6}>
+              <AboutImage />
+            </Grid>
+            {/* Right side - About Section */}
+            <Grid item xs={12} sm={6}>
+              <div>
+                <Typography variant="h4" component="h2" gutterBottom>
+                  About HiChat
+                </Typography>
+                <Typography variant="body1" paragraph>
+                  HiChat is a user-friendly chat application that allows you to
+                  stay connected with your loved ones.
+                </Typography>
+                <Typography variant="body1" paragraph>
+                  Whether it's chatting one-on-one or creating group
+                  conversations, HiChat makes communication seamless.
+                </Typography>
+                <Typography variant="body1" paragraph>
+                  Whether you're engaged in one-on-one conversations or
+                  coordinating group discussions, HiChat ensures seamless
+                  communication.
+                </Typography>
+                <Typography variant="body1" paragraph>
+                  From intimate one-on-one chats to bustling group
+                  conversations, HiChat excels in making communication
+                  effortless.
+                </Typography>
+
+                {/* <Button component={Link} to="/login" variant="contained" color="primary">
                 Login
               </Button> */}
-            </div>
+              </div>
+            </Grid>
           </Grid>
-        </Grid>
-      </Container>
-    </div>
-
-
+        </Container>
+      </div>
 
       {/* Feature Section */}
       <div className={classes.feature}>
@@ -486,7 +488,7 @@ const HomePage = () => {
           <Typography variant="h4" component="h2" gutterBottom>
             What Our Users Say
           </Typography>
-          <Container style={{margin: '30px 0 30px 0'}}>
+          <Container style={{ margin: "30px 0 30px 0" }}>
             <Slider {...settings}>
               {testimonials.map((testimonial) => (
                 <div key={testimonial.id}>
@@ -506,65 +508,89 @@ const HomePage = () => {
           </Container>
         </Container>
       </div>
-      
+
       <div className={classes.team}>
-      <Container maxWidth="lg">
-        <Typography variant="h4" component="h2" align="center" style={{marginBottom:'20px'}}>
-          Our Team
-        </Typography>
-        <Grid container justifyContent="center" spacing={3}>
-          {teamMembers.map((member) => (
-            <Grid item xs={12} sm={3} key={member.id}>
-              <div className={classes.teamMember}>
-                <Avatar alt={member.name} src={member.image} className={classes.avatar} />
-                <Typography variant="h6" gutterBottom>
-                  {member.name}
-                </Typography>
-                <Typography variant="subtitle1" gutterBottom>
-                  {member.role}
-                </Typography>
-                <div>
-                  <Tooltip title="LinkedIn">
-                    <IconButton
-                      aria-label="LinkedIn"
-                      href={member.linkedin}
-                      target="_blank"
-                      rel="noopener"
-                      className={classes.socialIcon}
-                    >
-                      <LinkedIn />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="GitHub">
-                    <IconButton
-                      aria-label="GitHub"
-                      href={member.github}
-                      target="_blank"
-                      rel="noopener"
-                      className={classes.socialIcon}
-                    >
-                      <GitHub />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Instagram">
-                    <IconButton
-                      aria-label="Instagram"
-                      href={member.instagram}
-                      target="_blank"
-                      rel="noopener"
-                      className={classes.socialIcon}
-                    >
-                      <Instagram />
-                    </IconButton>
-                  </Tooltip>
+      <div class="area">
+          <ul class="circles">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+          </ul>
+        </div>
+        <Container maxWidth="lg" style={{position:'absolute'}}>
+          <Typography
+            variant="h4"
+            component="h2"
+            align="center"
+            style={{ marginBottom: "20px" }}
+          >
+            Our Team
+          </Typography>
+          <Grid container justifyContent="center" spacing={3}>
+            {teamMembers.map((member) => (
+              <Grid item xs={12} sm={3} key={member.id}>
+                <div className={classes.teamMember}>
+                  <Avatar
+                    alt={member.name}
+                    src={member.image}
+                    className={classes.avatar}
+                  />
+                  <Typography variant="h6" gutterBottom>
+                    {member.name}
+                  </Typography>
+                  <Typography variant="subtitle2"  gutterBottom>
+                    {member.role}
+                  </Typography>
+                  <div>
+                    <Tooltip title="LinkedIn">
+                      <IconButton
+                        aria-label="LinkedIn"
+                        href={member.linkedin}
+                        target="_blank"
+                        rel="noopener"
+                        className={classes.socialIcon}
+                      >
+                        <LinkedIn />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="GitHub">
+                      <IconButton
+                        aria-label="GitHub"
+                        href={member.github}
+                        target="_blank"
+                        rel="noopener"
+                        className={classes.socialIcon}
+                      >
+                        <GitHub />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Instagram">
+                      <IconButton
+                        aria-label="Instagram"
+                        href={member.instagram}
+                        target="_blank"
+                        rel="noopener"
+                        className={classes.socialIcon}
+                      >
+                        <Instagram />
+                      </IconButton>
+                    </Tooltip>
+                  </div>
                 </div>
-              </div>
-            </Grid>
-          ))}
-        </Grid>
-      </Container>
-    </div>
-     
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+
+      
+      </div>
 
       {/* Footer Section */}
       <AppBar position="relative" className={classes.footer}>

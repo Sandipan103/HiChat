@@ -79,11 +79,13 @@ const ChatSidebarNav = ({ userData, setSearchQuery, setShowMyContacts }) => {
     <Box >
       <AppBar position="static" color="default" sx={{backgroundImage: 'linear-gradient(45deg, #84fab0 0%, #8fd3f4 100%)'}} elevation={0}>
         <Toolbar>
+          <IconButton>
           <Avatar
             alt="User Avatar"
             src={profileUrl}
             onClick={() => handleOpen()}
           />
+          </IconButton>
           <Typography
             variant="span"
             sx={{ flexGrow: 1, ml: 2, fontWeight: 500 }}

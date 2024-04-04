@@ -56,10 +56,20 @@ export const GroupInfo = ({ selectedChat }) => {
       >
         <DialogTitle>Group Information</DialogTitle>
         <DialogContent>
-          <Typography variant="h5">{groupName}</Typography>
-          <Typography variant="body1">{groupDescription}</Typography>
+          <Typography variant="h5" sx={{ fontWeight: 600, marginBottom: 1 }}>
+            Name: {selectedChat.groupName}
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{ fontSize: "1.1rem", marginBottom: 2 }}
+          >
+            Description: {selectedChat.about}
+          </Typography>
 
-          <Typography variant="h6">Group Members</Typography>
+          <Typography variant="h6" sx={{ fontWeight: 600, marginBottom: 1 }}>
+            Group Members
+          </Typography>
+
           <List>
             {groupMembers.map((member, index) => (
               <ListItem key={index}>
