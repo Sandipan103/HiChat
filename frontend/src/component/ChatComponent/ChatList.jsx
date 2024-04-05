@@ -28,6 +28,7 @@ export const ChatList = ({
       }}
     >
       {searchQuery === "" &&
+      chats.length ?
         chats.map((chat, index) => (
           <ListItem
             key={index}
@@ -100,7 +101,11 @@ export const ChatList = ({
               }
             />
           </ListItem>
-        ))}
+        ))
+        :
+        <ListItem>start a conversation whenever you're ready.</ListItem>
+        
+      }
       {searchQuery !== "" &&
         searchQuery &&
         searchFriends.map((chat, index) => (
