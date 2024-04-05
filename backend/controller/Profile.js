@@ -62,7 +62,7 @@ exports.updateUserProfileById = async (req, res, next) => {
     console.error(error);
     res.status(500).json({ 
       success: false, 
-      message: "something went wrong whileupdating user profile detail"
+      message: "something went wrong while updating user profile detail"
     });
   }
 };

@@ -107,6 +107,7 @@ const NewContact = () => {
           onChange={handleChange}
           fullWidth
           margin="normal"
+          size="small"
         />
         <TextField
           label="Mobile number"
@@ -116,6 +117,7 @@ const NewContact = () => {
           onChange={handleChange}
           fullWidth
           margin="normal"
+          size="small"
         />
         <Button
           type="submit"
@@ -123,6 +125,7 @@ const NewContact = () => {
           color="primary"
           fullWidth
           style={{ marginTop: "10px" }}
+          size="small"
         >
           Save Contact
         </Button>

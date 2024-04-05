@@ -15,7 +15,8 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
 import toast from "react-hot-toast";
-import { Link, useNavigate } from "react-router-dom";
+import Link from '@mui/material/Link';
+import { useNavigate } from "react-router-dom";
 import "../styles/signup.css";
 
 import NavBar from "../component/Navbar";
