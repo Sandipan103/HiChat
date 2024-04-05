@@ -1,11 +1,11 @@
 const User = require("../models/UserModel");
 const Message = require("../models/MessageModel");
 const Msg=require("../models/MsgModel");
+const Chat=require("../models/chatModel");
 
 exports.createdMessage = async (req, res, next) => {
   try {
-    const { myId, requestId, messageInput } = req.body;
-
+    const { myId, requestId, messageInput} = req.body;
     const response = await Message.create({
       sender: myId,
       recipient: requestId,
@@ -37,12 +37,49 @@ exports.fetchMessages = async (req, res, next) => {
 exports.myContacts = async (req, res, next) => {
   try {
     const {userId} = req.params;
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).populate({
+      path: "contacts.contactId",
+      select: "about profile",
+    });
     return res.json({contacts : user.contacts});
   } catch (error) {
     return res.json(error);
   }
 };
+
+exports.fetchChats = async (req, res, next) => {
+  try {
+    const {chatId} = req.params;
+    const chat = await Chat.findById(chatId)
+                           .populate({
+                             path: 'users',
+                             select: 'firstName contactNo' 
+                           });
+    return res.json({isTimerEnabled : chat.isTimerEnabled, timer:chat.timer, chatUsers :chat.users,isGroup: chat.isGroupChat});
+  } catch (error) {
+    return res.json(error);
+  }
+};
+
+exports.setTimer= async (req, res) => {
+  const { chatId } = req.params;
+  const { isTimerEnabled,timer } = req.body;
+  // console.log("chatId: ", chatId);
+  // console.log("isTimerEnabled and timer: ", isTimerEnabled ,timer);
+  try {
+    const chat = await Chat.findByIdAndUpdate(chatId, { isTimerEnabled,timer }, { new: true });
+
+    if (!chat) {
+      return res.status(404).json({ error: 'Chat not found' });
+    }
+
+    return res.status(200).json(chat);
+  } catch (error) {
+    console.error('Error updating chat:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 
 exports.messageDelete=async (req, res,next) => {
   try {
@@ -66,6 +103,7 @@ exports.messageDelete=async (req, res,next) => {
     }
 
     message.content = "message deleted";
+    message.isDeleted=true;
     await message.save();
 
     res.status(200).json({ message: 'Message deleted successfully.' });

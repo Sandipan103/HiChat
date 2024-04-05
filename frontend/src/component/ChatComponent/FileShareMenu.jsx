@@ -47,7 +47,6 @@ export const FileShareMenu = ({
     setAnchorEl(null);
     setSelectedFile(event.target.files[0]);
     setSelectedType(event.target.name)
-    console.log("Selected type:");
     setPopOpen(true);
   };
 
@@ -58,7 +57,6 @@ export const FileShareMenu = ({
           <IconButton
             onClick={handleClick}
             size="small"
-            sx={{ ml: 2 }}
             aria-controls={open ? "account-menu" : undefined}
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
@@ -183,25 +181,6 @@ export const FileShareMenu = ({
           />
         </MenuItem>
       </Menu>
-
-      {/* {selectedImage && (
-        <>
-      
-        <Modal
-          open={popOpen} 
-          onClose={handleCloseModal}
-         
-        >
-          <div>
-            <img
-              src={URL.createObjectURL(selectedImage)}
-              alt="Selected Image"
-            />
-          </div>
-        </Modal>
-        </>
-        
-      )} */}
     </React.Fragment>
   );
 };

@@ -1,12 +1,12 @@
 import React from 'react'
 import { useState, useRef, useEffect } from 'react';
 import CallIcon from "@mui/icons-material/Call";
-import Button from "@mui/material/Button";
-import VideoCall from "../../pages/Home";
 import { ZIM } from "zego-zim-web";
 import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
+import VideocamIcon from '@mui/icons-material/Videocam';
+import {IconButton} from '@mui/material';
 
-const ZegoCloud = ({myId, calleeId}) => {
+const ZegoCloud = ({myId, calleeId,user1,user2}) => {
     const [userInfo, setUserInfo] = useState({
         userName: "",
         userId: "",
@@ -16,7 +16,7 @@ const ZegoCloud = ({myId, calleeId}) => {
     async function init() {
         const userId = myId;
     
-        const userName = "user_" + userId;
+        const userName = "Calling" + user1;
         setUserInfo({
           userName,
           userId,
@@ -39,9 +39,11 @@ const ZegoCloud = ({myId, calleeId}) => {
       }
     
       function handleSend(callType) {
-        const callee = calleeId;
+        const callee = calleeId._id;
+
         console.log("call id", callee);
-        console.log(myId);
+        console.log("myid",myId);
+
         if (!callee) {
           alert("userID cannot be empty!!");
           return;
@@ -50,7 +52,7 @@ const ZegoCloud = ({myId, calleeId}) => {
         // send call invitation
         zeroCloudInstance.current
           .sendCallInvitation({
-            callees: [{ userID: callee, userName: "user_" + callee }],
+            callees: [{ userID: callee, userName: "Calling " + user1 }],
             callType: callType,
             timeout: 60,
           })
@@ -73,28 +75,21 @@ const ZegoCloud = ({myId, calleeId}) => {
     
 
   return (
-    <div>
-         <Button
-            variant="contained"
-            onClick={() => {
-              handleSend(ZegoUIKitPrebuilt.InvitationTypeVideoCall);
-            }}
-            startIcon={<CallIcon />}
-            color="primary"
-          >
-            Video Call
-          </Button>
-          <Button
-            variant="contained"
-            onClick={() => {
+    <>
+    <IconButton onClick={() => {
+      handleSend(ZegoUIKitPrebuilt.InvitationTypeVideoCall);
+    }}>
+    <VideocamIcon />
+  </IconButton>
+
+  <IconButton onClick={() => {
               handleSend(ZegoUIKitPrebuilt.InvitationTypeVoiceCall);
-            }}
-            startIcon={<CallIcon />}
-            color="primary"
-          >
-            Voice Call
-          </Button>
-    </div>
+            }}>
+    <CallIcon />
+  </IconButton>
+          
+  
+    </>
   )
 }
 export default ZegoCloud;
