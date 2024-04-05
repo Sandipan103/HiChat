@@ -59,15 +59,26 @@ exports.sendOtp = async (req, res) => {
 exports.signup = async (req, res) => {
   try {
     // step-1 : fetch data
-    const { firstName, lastName, email, password, otp } = req.body;
-
+    const { firstName, lastName, email , phoneNumber , password, otp } = req.body;
+    
     // step-2 : email already present or not
     const emailAlreadyPresent = await User.findOne({ email });
-    // if user present then he can't register twice
+    
     if (emailAlreadyPresent) {
       return res.status(401).json({
         success: false,
         message: `email already registered`,
+      });
+    }
+    // if user present then he can't register twice
+    
+
+   const phoneNumberAlreadypresent=await User.findOne({contactNo: phoneNumber});
+   
+    if (phoneNumberAlreadypresent) {
+      return res.status(401).json({
+        success: false,
+        message: `phoneNo already registered`,
       });
     }
 
@@ -99,6 +110,7 @@ exports.signup = async (req, res) => {
       firstName: firstName,
       lastName: lastName,
       email: email,
+      contactNo: phoneNumber,
       password: hashedPassword,
     });
 

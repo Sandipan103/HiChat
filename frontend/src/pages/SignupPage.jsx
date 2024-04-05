@@ -30,6 +30,7 @@ const SignupPage = () => {
     lastName: "",
     email: "",
     password: "",
+    phoneNumber:"",
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -154,6 +155,16 @@ const SignupPage = () => {
                   onChange={handleChange}
                   fullWidth
                   margin="normal"
+                />
+              <TextField
+                label="Phone Number"
+                variant="outlined"
+                type="tel" 
+                name="phoneNumber" 
+                value={signupData.phoneNumber}
+                onChange={handleChange} 
+                fullWidth
+                margin="normal"
                 />
                 <TextField
                   label="Password"
