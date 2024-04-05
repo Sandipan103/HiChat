@@ -4,6 +4,9 @@ import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import Avatar from "@mui/material/Avatar";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -24,13 +27,13 @@ const SignupPage = () => {
   if (isAuthenticated) {
     navigate("/chatting");
   }
-  
+
   const [signupData, setSignupData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     password: "",
-    phoneNumber:"",
+    phoneNumber: "",
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -112,95 +115,108 @@ const SignupPage = () => {
   return (
     <>
       <NavBar />
-      <Grid container justifyContent="center" alignItems="center">
+      <Grid container justifyContent="center" alignItems="center" className="signupform">
         <Grid item xs={12} sm={8} md={6} lg={4} sx={{ position: "relative" }}>
           <div class="background">
             <div class="shape"></div>
             <div class="shape"></div>
           </div>
-          <Box
-          class={'signup'}
-            elevation={3}
-          >
-            <Typography variant="h4" component="h1" gutterBottom>
-              Signup
+          <Box class={"signup"}>
+            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Sign up
             </Typography>
             {loading && <CircularProgress size={100} />}
             {!loading && !progress && (
-              <form onSubmit={handleSubmit}>
-                <TextField
-                  label="First Name"
-                  variant="outlined"
-                  name="firstName"
-                  value={signupData.firstName}
-                  onChange={handleChange}
-                  fullWidth
-                  margin="normal"
-                />
-                <TextField
-                  label="Last Name"
-                  variant="outlined"
-                  name="lastName"
-                  value={signupData.lastName}
-                  onChange={handleChange}
-                  fullWidth
-                  margin="normal"
-                />
-                <TextField
-                  label="Email"
-                  variant="outlined"
-                  type="email"
-                  name="email"
-                  value={signupData.email}
-                  onChange={handleChange}
-                  fullWidth
-                  margin="normal"
-                />
-              <TextField
-                label="Phone Number"
-                variant="outlined"
-                type="tel" 
-                name="phoneNumber" 
-                value={signupData.phoneNumber}
-                onChange={handleChange} 
-                fullWidth
-                margin="normal"
-                />
-                <TextField
-                  label="Password"
-                  variant="outlined"
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={signupData.password}
-                  onChange={handleChange}
-                  fullWidth
-                  margin="normal"
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          edge="end"
-                          onClick={handleTogglePasswordVisibility}
-                        >
-                          {showPassword ? (
-                            <VisibilityIcon />
-                          ) : (
-                            <VisibilityOffIcon />
-                          )}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  style={{ marginTop: "10px" }}
-                >
-                  Sign Up
-                </Button>
+              <form onSubmit={handleSubmit} sx={{ mt: 3 }}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      label="First Name"
+                      variant="outlined"
+                      name="firstName"
+                      value={signupData.firstName}
+                      onChange={handleChange}
+                      fullWidth
+                      margin="normal"
+                      size="small"
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      label="Last Name"
+                      variant="outlined"
+                      name="lastName"
+                      value={signupData.lastName}
+                      onChange={handleChange}
+                      fullWidth
+                      margin="normal"
+                      size="small"
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      label="Email"
+                      variant="outlined"
+                      type="email"
+                      name="email"
+                      value={signupData.email}
+                      onChange={handleChange}
+                      fullWidth
+                      margin="normal"
+                      size="small"
+                    />
+                    <TextField
+                      label="Phone Number"
+                      variant="outlined"
+                      type="tel"
+                      name="phoneNumber"
+                      value={signupData.phoneNumber}
+                      onChange={handleChange}
+                      fullWidth
+                      margin="normal"
+                      size="small"
+                    />
+                    <TextField
+                      label="Password"
+                      variant="outlined"
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      value={signupData.password}
+                      onChange={handleChange}
+                      fullWidth
+                      margin="normal"
+                      size="small"
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              edge="end"
+                              onClick={handleTogglePasswordVisibility}
+                            >
+                              {showPassword ? (
+                                <VisibilityIcon />
+                              ) : (
+                                <VisibilityOffIcon />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                      sx={{ mt: 3, mb: 2 }}
+                    >
+                      Sign Up
+                    </Button>
+                  </Grid>
+                </Grid>
               </form>
             )}
             {!loading && progress && (
@@ -230,18 +246,13 @@ const SignupPage = () => {
                 </Button>
               </form>
             )}
-
-            {/* Login button */}
-            <Button
-              variant="outlined"
-              color="primary"
-              fullWidth
-              style={{ marginTop: "10px" }}
-              component={Link}
-              to="/login"
-            >
-              Log in here
-            </Button>
+            <Grid container justifyContent="flex-end">
+              <Grid item>
+                <Link href="/login" variant="body2">
+                  Already have an account? Sign in
+                </Link>
+              </Grid>
+            </Grid>
           </Box>
         </Grid>
       </Grid>

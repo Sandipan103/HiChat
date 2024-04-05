@@ -10,6 +10,8 @@ import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Avatar from "@mui/material/Avatar";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
@@ -19,7 +21,7 @@ import LoginSvg from "../component/SVG/LoginSvg";
 
 import { server, AuthContext } from "../context/UserContext";
 import { Container, Typography } from "@mui/material";
-import '../styles/login.css'
+import "../styles/login.css";
 const LoginPage = () => {
   const navigate = useNavigate();
   const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
@@ -85,92 +87,93 @@ const LoginPage = () => {
           justifyContent: "center",
           alignItems: "center",
           overflow: "auto",
-          background: "#eee"
+          background: "#eee",
         }}
       >
         <Container maxWidth="lg">
-          <Grid container spacing={3} flexDirection={"row-reverse"}>
-            <Grid item xs={12} sm={6}  sx={{position:'relative'}} >
-            <div class="background">
+          <Grid
+            container
+            spacing={3}
+            flexDirection={"row-reverse"}
+            justifyContent={"space-between"}
+          >
+            <Grid item xs={12} sm={5} sx={{ position: "relative" }}>
+              <Box>
+                <div class="background">
                   <div class="shape"></div>
                   <div class="shape"></div>
                 </div>
-              <Box
-              class={'loginForm'}
-     
-              >
-                
-                <Typography variant="h4" component="h1" gutterBottom>
-                  Login
-                </Typography>
-                {!loading && (
-                  <form onSubmit={handleSubmit}>
-                    <TextField
-                      label="Email"
-                      variant="outlined"
-                      type="email"
-                      name="email"
-                      value={userDetail.email}
-                      onChange={handleChange}
-                      fullWidth
-                      margin="normal"
-                      size="small"
-                      autoFocus
-                      required
-                    />
-                    <TextField
-                      label="Password"
-                      variant="outlined"
-                      type={showPassword ? "text" : "password"}
-                      name="password"
-                      value={userDetail.password}
-                      onChange={handleChange}
-                      fullWidth
-                      margin="normal"
-                      size="small"
-                      required
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              edge="end"
-                              onClick={handleTogglePasswordVisibility}
-                            >
-                              {showPassword ? (
-                                <VisibilityIcon />
-                              ) : (
-                                <VisibilityOffIcon />
-                              )}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      color="primary"
-                      fullWidth
-                      style={{ marginTop: "10px" }}
-                      size="large"
-                    >
-                      Login
-                    </Button>
-                  </form>
-                )}
-                
-                {loading && <CircularProgress size={100} />}
-                {/* Signup button */}
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  fullWidth
-                  style={{ marginTop: "10px" }}
-                  component={Link}
-                  to="/signup"
-                >
-                  Sign Up
-                </Button>
+                <Box class={"loginForm"}>
+                  <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+                    <LockOutlinedIcon />
+                  </Avatar>
+                  <Typography component="h1" variant="h5">
+                    Sign in
+                  </Typography>
+                  {!loading && (
+                    <form onSubmit={handleSubmit}>
+                      <TextField
+                        label="Email"
+                        variant="outlined"
+                        type="email"
+                        name="email"
+                        value={userDetail.email}
+                        onChange={handleChange}
+                        fullWidth
+                        margin="normal"
+                        size="small"
+                        autoFocus
+                        required
+                      />
+                      <TextField
+                        label="Password"
+                        variant="outlined"
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        value={userDetail.password}
+                        onChange={handleChange}
+                        fullWidth
+                        margin="normal"
+                        size="small"
+                        required
+                        InputProps={{
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              <IconButton
+                                edge="end"
+                                onClick={handleTogglePasswordVisibility}
+                              >
+                                {showPassword ? (
+                                  <VisibilityIcon />
+                                ) : (
+                                  <VisibilityOffIcon />
+                                )}
+                              </IconButton>
+                            </InputAdornment>
+                          ),
+                        }}
+                      />
+                      <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        size="large"
+                        fullWidth
+                        sx={{ mt: 3, mb: 2 }}
+                      >
+                        Login
+                      </Button>
+                    </form>
+                  )}
+
+                  {loading && <CircularProgress size={100} />}
+                  {/* Signup button */}
+                  <Grid justifyContent="flex-end">
+                    <Link href="/signup" variant="body2">
+                      {"Don't have an account? Sign Up"}
+                    </Link>
+                  </Grid>
+                </Box>
               </Box>
             </Grid>
             <Grid item xs={12} sm={6}>
