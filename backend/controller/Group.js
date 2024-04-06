@@ -14,7 +14,7 @@ exports.addContact = async (req, res) => {
     if (!friend) {
       return res.json({
         success: false,
-        message: `contact no is not registered`,
+        message: `User not found!`,
       });
     }
 

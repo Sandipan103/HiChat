@@ -94,7 +94,7 @@ const Chatting = () => {
         // Update contactlist as a chat list for direct msg from mycontactlist
         const updateContacts = contacts.map((contact) => {
           const contactId = contact.contactId._id;
-          // const userIdToSearch = "65f74373993a252804cd515e";
+
           const chatWithUser = userChats.find((chat) => {
             if (!chat.isGroupChat) {
               return chat.users.some((user) => user._id === contactId)}
@@ -103,8 +103,6 @@ const Chatting = () => {
 
         });
         setMycontacts(updateContactList);
-        console.log("mycont",updateContactList)
-
 
         const modifiedChats = userChats.map((chat) => {
           let unreadMsgCount = 0;

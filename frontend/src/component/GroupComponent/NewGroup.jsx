@@ -114,6 +114,9 @@ const NewGroup = () => {
       );
       console.log(response);
       toast.success("Group created successfully");
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
       setOpen(false);
     } catch (error) {
       toast.error("Something went wrong. Group creation failed");
@@ -122,6 +125,11 @@ const NewGroup = () => {
       setLoading(false);
     }
   };
+
+  const handleGroupName = (e) =>{
+    e.preventDefault(); 
+    setGroupName(e.target.value)
+  }
 
   const renderForm = () => {
     return (
@@ -132,7 +140,7 @@ const NewGroup = () => {
             variant="outlined"
             name="groupName"
             value={groupName}
-            onChange={(e) => setGroupName(e.target.value)}
+            onChange={handleGroupName}
             fullWidth
             margin="normal"
             size="small"

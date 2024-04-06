@@ -1,4 +1,3 @@
-// required dependency
 const express = require("express");
 
 const app = express();
@@ -51,10 +50,9 @@ dbConnect()
       socket.on("online", (userId) => {
         userSocketMap[userId] = socket.id;
         socket.join(userId);
-        console.log("User Online:", userId);
         io.emit("onlineUsers", userSocketMap);
       });
-    
+
       socket.on("disconnect", () => {
         // Remove the disconnected user from the userSocketMap
         const disconnectedUserId = Object.keys(userSocketMap).find(
@@ -62,7 +60,6 @@ dbConnect()
         );
         if (disconnectedUserId) {
           delete userSocketMap[disconnectedUserId];
-          console.log("User Disconnected:", disconnectedUserId);
           io.emit("onlineUsers", userSocketMap);
         }
       });
@@ -72,10 +69,9 @@ dbConnect()
         socket.emit("connected");
         console.log("connected");
       });
-      
+
       socket.on("typing", (myId, selectedId) => {
-        console.log('typing...',myId,selectedId);
-        socket.in(selectedId).emit('isTyping', selectedId);        
+        socket.in(selectedId).emit("isTyping", selectedId);
       });
 
       // socket.on("disconnect", () => {
@@ -96,7 +92,6 @@ dbConnect()
 
       socket.on("join chat", (room) => {
         socket.join(room);
-        console.log("User Joined Room: " + room);
       });
 
       socket.on("new message", ({ newMessage, chatUsers }) => {

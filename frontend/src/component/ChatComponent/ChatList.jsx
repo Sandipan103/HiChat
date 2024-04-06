@@ -30,13 +30,14 @@ export const ChatList = ({
       {searchQuery === "" &&
       chats.length ?
         chats.map((chat, index) => (
+
           <ListItem
             key={index}
             button
             alignItems="flex-start"
             className={`user ${
               selectedChat &&
-              (selectedChat._id === chat._id ? "selected-chat" : "")
+              ((selectedChat._id === chat._id) ? "selected-chat" : "")
             }`}
             onClick={() => {
               handleChatClick(chat);
