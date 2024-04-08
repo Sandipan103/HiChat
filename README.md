@@ -79,9 +79,12 @@ Check out the live version of HiChat [HERE🔗](https://hichat.w3yogesh.com/).
 # Team
 [Atmajit Sahoo](https://github.com/atmajitsahu100/)
 
+[Rohan Rao](https://github.com/rohan-algorithm)
+
 [Sandipan sarkar](https://github.com/Sandipan103/)
 
 [Yogesh Kumar Sai](https://github.com/w3yogesh/)
+https://github.com/rohan-algorithm
 
 
 # Installation
