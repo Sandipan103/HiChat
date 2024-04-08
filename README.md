@@ -8,6 +8,21 @@ HiChat is your ultimate destination for hassle-free communication. Say hello to 
 
 Check out the live version of HiChat [HERE🔗](https://hichat.w3yogesh.com/).
 
+### ***Demo accounts***
+
+**user 1**
+
+- email: demo1@gmail.com
+
+- pass: 1234
+
+**user 2**
+
+- email: demo2@gmail.com
+
+- pass: 1234
+
+
 ![chatwindow](https://github.com/Sandipan103/HiChat/assets/27480542/e9c3e05a-ed16-4dfa-9e4d-cfa676907f79)
 
 
