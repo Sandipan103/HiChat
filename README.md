@@ -84,7 +84,6 @@ Check out the live version of HiChat [HERE🔗](https://hichat.w3yogesh.com/).
 [Sandipan sarkar](https://github.com/Sandipan103/)
 
 [Yogesh Kumar Sai](https://github.com/w3yogesh/)
-https://github.com/rohan-algorithm
 
 
 # Installation
