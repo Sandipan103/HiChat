@@ -1,5 +1,5 @@
 
-# hiChat
+# HiChat
  Say Hello to Seamless Communication! 🚀
 
 HiChat is your ultimate destination for hassle-free communication. Say hello to friends, family, and colleagues with ease using our intuitive platform.
@@ -15,17 +15,17 @@ the project has two components
 - backend in express and nodejs
 
 ```bash
- git clone https://github.com/Sandipan103/hiChat.git
+ git clone https://github.com/Sandipan103/HiChat.git
 ```
 
 ```bash
-cd hiChat
+cd HiChat
 ```
 
 ## setting up frontend
 
 ```bash
-#currently inside the hiChat folder
+#currently inside the HiChat folder
 cd frontend
 npm i
 ```
@@ -35,7 +35,7 @@ run `npm start` and frontend will start
 ## setting up backend
 
 ```bash
-#currently inside the hiChat folder
+#currently inside the HiChat folder
 cd backend
 npm i
 touch .env
@@ -94,7 +94,7 @@ backend setup done, now hit the most favourite command `npm start`
 ## Contributing
 
 
-Contributions are welcome! Feel free to fork the repository and submit pull requests to contribute to the development of hiChat.
+Contributions are welcome! Feel free to fork the repository and submit pull requests to contribute to the development of HiChat.
 
 
 ## License
