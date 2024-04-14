@@ -83,7 +83,7 @@ const Chatting = () => {
         const decodedToken = jwtDecode(token);
         const { id: userId } = decodedToken;
 
-        const response = await axios.get(`${server}/findAllChats/${userId}`, { withCredentials: true });
+        const response = await axios.get(`${server}/findAllChats/${userId}`);
         const myContacts = await axios.get(`${server}/contacts/${userId}`);
 
         const userChats = response.data.chats;
@@ -94,23 +94,23 @@ const Chatting = () => {
         // Update contactlist as a chat list for direct msg from mycontactlist
         const updateContacts = contacts.map((contact) => {
           const contactId = contact.contactId._id;
-          // const userIdToSearch = "65f74373993a252804cd515e";
+
           const chatWithUser = userChats.find((chat) => {
             if (!chat.isGroupChat) {
-              return chat.users.some((user) => user._id === contactId);            }
+              return chat.users.some((user) => user._id === contactId)}
           });
           updateContactList.push(chatWithUser);
 
         });
         setMycontacts(updateContactList);
 
-
-
         const modifiedChats = userChats.map((chat) => {
           let unreadMsgCount = 0;
+        
 
           if (!chat.isGroupChat) {
-            const otherUserId = chat.users.find((id) => id !== userId);
+            const otherUserId = chat.users.find((user) => user._id !== userId);
+
             const contact = contacts.find(
               (contact) => contact.contactId._id === otherUserId._id
             );

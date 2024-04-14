@@ -5,7 +5,7 @@ const chatModel = mongoose.Schema({
   groupName: { type: String, trim: true },
   isGroupChat: { type: Boolean, default: false },
   profile: { type: String },
-  about: { type: String, trim: true },
+  about: { type: String, trim: true , default: 'This is hichat group'},
   users: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   latestMessage: {
     type: mongoose.Schema.Types.ObjectId,

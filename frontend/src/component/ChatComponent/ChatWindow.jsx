@@ -31,7 +31,7 @@ import { GroupManage } from "../GroupComponent/AddGroupMember";
 import toast from "react-hot-toast";
 import { GroupInfo } from "../GroupComponent/GroupInfo";
 import { UpdateGroup } from "../GroupComponent/UpdateGroup";
-
+import sound from '../../assets/sounds/notification_sound.mp3'
 let socket;
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -87,8 +87,9 @@ const GroupChatBox = ({
   const [page, setPage] = useState(2);
   const [reachedEnd, setReachedEnd] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const [audio] = useState(new Audio(sound));
   const messagesEndRef = useRef(null);
+
 
   const [calleeId, setCalleeId] = useState();
 
@@ -164,7 +165,7 @@ const GroupChatBox = ({
     // console.log(socketConnected)
     socket = io("https://hichat.w3yogesh.com");
     socket.emit("setup", myId);
-    // socket.on("connected", () => console.log("connected"));
+    socket.on("connected", () => console.log("connected"));
     socket.emit("join chat", selectedChat._id);
 
     // socket.on("onlineUsers", () => {
@@ -179,6 +180,7 @@ const GroupChatBox = ({
     socket.on("message recieved", (newMessage) => {
       if (!selectedChat || selectedChat._id !== newMessage.chat) {
         const updatedChats = chats.map((chat) => {
+          audio.play();
           if (chat._id === newMessage.chat) {
             const cnt = chat.unreadMsgCount + 1;
             return {
@@ -199,6 +201,7 @@ const GroupChatBox = ({
         }
         setChats(updatedChats);
       } else {
+        audio.play();
         setMessages([...messages, newMessage]);
       }
     });
@@ -236,6 +239,7 @@ const GroupChatBox = ({
     });
 
     socket.on("file recieved", ({ fileData, newMessage }) => {
+      audio.play();
       const type = fileData;
       // console.log(fileData)
       if (type === "image") {

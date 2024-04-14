@@ -22,9 +22,11 @@ const userSchema = new mongoose.Schema({
   },
   about:{
     type: String,
+    default: "Hey there, I'm using hiChat"
   },
   contactNo: {
     type: String,
+    required: true,
   },
   email: {
     type: String,

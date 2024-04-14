@@ -112,6 +112,9 @@ const NewGroup = () => {
         { withCredentials: true }
       );
       toast.success("Group created successfully");
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
       setOpen(false);
     } catch (error) {
       toast.error("Something went wrong. Group creation failed");
@@ -120,6 +123,11 @@ const NewGroup = () => {
       setLoading(false);
     }
   };
+
+  const handleGroupName = (e) =>{
+    e.preventDefault(); 
+    setGroupName(e.target.value)
+  }
 
   const renderForm = () => {
     return (
@@ -130,14 +138,15 @@ const NewGroup = () => {
             variant="outlined"
             name="groupName"
             value={groupName}
-            onChange={(e) => setGroupName(e.target.value)}
+            onChange={handleGroupName}
             fullWidth
             margin="normal"
+            size="small"
           />
           <div
             style={{
              
-              marginBottom: "10px",
+              marginBottom: "1px",
             }}
           >
             {selectedFriends.map((friendId, index) => {
@@ -194,9 +203,10 @@ const NewGroup = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             fullWidth
             margin="normal"
+            size="small"
           />
           {searchQuery === "" && (
-            <div style={{ marginTop: "10px", textAlign: "left" }}>
+            <div style={{ textAlign: "left" }}>
               {friends.map((friend) => (
                 <>
                   <ListItem
@@ -229,7 +239,7 @@ const NewGroup = () => {
             </div>
           )}
           {searchQuery !== "" && searchQuery && (
-            <div style={{ marginTop: "10px", textAlign: "left" }}>
+            <div style={{textAlign: "left" }}>
               {suggestedFriends.map((friend) => (
 
                 <>
@@ -289,7 +299,7 @@ const NewGroup = () => {
   return (
     <>
       <Dialog open={open} fullWidth maxWidth="xs">
-        <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+        <DialogTitle sx={{ m: 0, px: 2, pt: 2, pb:0 }} id="customized-dialog-title">
           New Group
         </DialogTitle>
         <IconButton
