@@ -163,7 +163,7 @@ const GroupChatBox = ({
 
   useEffect(() => {
     // console.log(socketConnected)
-    socket = io("https://hichat.w3yogesh.com");
+    socket = io("https://api.w3yogesh.com");
     socket.emit("setup", myId);
     socket.on("connected", () => console.log("connected"));
     socket.emit("join chat", selectedChat._id);

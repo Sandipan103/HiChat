@@ -29,5 +29,5 @@ const AuthProvider = ({ children }) => {
   );
 };
 
-const server =  "https://hichat.w3yogesh.com/api/v1";
+const server =  "https://api.w3yogesh.com/api/v1";
 export { AuthContext, AuthProvider, server };
