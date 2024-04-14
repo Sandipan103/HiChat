@@ -98,7 +98,6 @@ const SignupPage = () => {
         { ...signupData, otp },
         { withCredentials: true }
       );
-      console.log(response.data);
       toast.success(``);
       navigate("/login");
     } catch (error) {

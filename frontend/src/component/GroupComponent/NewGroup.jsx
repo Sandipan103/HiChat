@@ -102,7 +102,6 @@ const NewGroup = () => {
     }
     try {
       setLoading(true);
-      console.log(selectedFriends);
       const response = await axios.post(
         `${server}/createGroup`,
         {
@@ -112,7 +111,6 @@ const NewGroup = () => {
         },
         { withCredentials: true }
       );
-      console.log(response);
       toast.success("Group created successfully");
       setOpen(false);
     } catch (error) {

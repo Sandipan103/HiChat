@@ -39,7 +39,7 @@ export const ChatTextInput = ({
 
   const handleMessageInputChange = (e) => {
     setMessageInput(e.target.value);
-    const socket = io("http://localhost:4000");
+    const socket = io("https://hichat.w3yogesh.com");
     socket.emit("typing", myId, selectedChat._id);
   };
 
@@ -94,7 +94,6 @@ export const ChatTextInput = ({
         }
         return chat;
       });
-      console.log(response.data.newMessage);
       setChats(updatedChats);
       setMessageInput("");
       setMessages([...messages, response.data.newMessage]);

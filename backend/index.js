@@ -37,7 +37,7 @@ dbConnect()
     // Attach Socket.io to the HTTP server
     const io = require("socket.io")(server, {
       cors: {
-        origin: ["http://localhost:3000"],
+        origin: ["http://hichat.w3yogesh.com"],
         methods: ["GET", "POST"],
         credentials: true,
       },
@@ -143,7 +143,7 @@ dbConnect()
 
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: ["http://hichat.w3yogesh.com"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })

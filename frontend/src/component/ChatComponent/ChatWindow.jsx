@@ -162,9 +162,9 @@ const GroupChatBox = ({
 
   useEffect(() => {
     // console.log(socketConnected)
-    socket = io("http://localhost:4000");
+    socket = io("https://hichat.w3yogesh.com");
     socket.emit("setup", myId);
-    socket.on("connected", () => console.log("connected"));
+    // socket.on("connected", () => console.log("connected"));
     socket.emit("join chat", selectedChat._id);
 
     // socket.on("onlineUsers", () => {
@@ -285,7 +285,7 @@ const GroupChatBox = ({
 
       const updatedMessages = messages;
       setMessages(updatedMessages);
-      console.log(messages);
+      // console.log(messages);
 
       handleMsgMenuClose();
       socket.emit("message deleted", msgId);
@@ -345,8 +345,8 @@ const GroupChatBox = ({
 
           setChats(updatedChats);
           setMessageInput("");
-          console.log(response.data.newMessage);
-          console.log(messages);
+          // console.log(response.data.newMessage);
+          // console.log(messages);
           setMessages([...messages, response.data.newMessage]);
 
           setPopOpen(false);

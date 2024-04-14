@@ -43,7 +43,6 @@ export const GroupInfo = ({ selectedChat }) => {
   const handleCloseDialog = () => {
     setOpenDialog(false);
   };
-  console.log(groupMembers);
   return (
     <>
       <Typography onClick={handleOpenDialog}>Group info</Typography>

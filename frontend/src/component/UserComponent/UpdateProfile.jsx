@@ -68,7 +68,6 @@ export const UpdateProfile = ({ userData, setOpen }) => {
         data.append("firstName", name);
         data.append("about", about);
         data.append("profile", profile);
-        console.log(data.get("userId"));
         setLoading(true);
         const response = await axios.put(
           `${server}/updateUserProfileById`,
@@ -95,7 +94,6 @@ export const UpdateProfile = ({ userData, setOpen }) => {
       data.append("profile", profile);
       data.append("userId", userData._id);
       setProfileUrl(profile);
-      console.log(profileUrl);
     }
     reader.onloadend = () => {
       setProfile(file);

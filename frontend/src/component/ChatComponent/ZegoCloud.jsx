@@ -22,8 +22,8 @@ const ZegoCloud = ({myId, calleeId,user1,user2}) => {
           userId,
         });
     
-        const appID = 488373535;
-        const serverSecret = "f3b1043cfb6175db07ba795897c22b4d";
+        const appID = 549678481;
+        const serverSecret = "8f597bb421444306b525fcb441c2908d";
     
         const KitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
           appID,
@@ -41,8 +41,8 @@ const ZegoCloud = ({myId, calleeId,user1,user2}) => {
       function handleSend(callType) {
         const callee = calleeId._id;
 
-        console.log("call id", callee);
-        console.log("myid",myId);
+        // console.log("call id", callee);
+        // console.log("myid",myId);
 
         if (!callee) {
           alert("userID cannot be empty!!");

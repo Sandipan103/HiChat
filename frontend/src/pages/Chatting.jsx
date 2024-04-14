@@ -37,7 +37,7 @@ const Chatting = () => {
     let socketInstance;
 
     const establishSocketConnection = () => {
-      socketInstance = io("http://localhost:4000");
+      socketInstance = io("https://hichat.w3yogesh.com");
       socketInstance.emit("online", myId);
       socketInstance.on("onlineUsers", (map) => {
         setSocketConnected(true);
@@ -58,7 +58,7 @@ const Chatting = () => {
   }, [myId, navigate]);
 
   useEffect(() => {
-    socket = io("http://localhost:4000");
+    socket = io("https://hichat.w3yogesh.com");
     socket.on("onlineUsers", (map) => {
       setOnlineUsers(map);
     });

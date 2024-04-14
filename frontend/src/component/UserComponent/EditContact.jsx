@@ -27,9 +27,7 @@ export const EditContact = ({ selectedChat, myId }) => {
         ? selectedChat.users[1].contactNo
         : selectedChat.users[0].contactNo;
     setContactNo(mNum);
-    console.log("user", selectedChat);
   }, []);
-  console.log("chat", selectedChat);
 
   const handleSubmit = async () => {
     try {
@@ -38,7 +36,6 @@ export const EditContact = ({ selectedChat, myId }) => {
         contactName: contactName,
         contactNo: contactNo,
       };
-      console.log(data);
       setLoading(true);
       const response = await axios.put(`${server}/editContact`, data);
       toast.success("Contact updated");
