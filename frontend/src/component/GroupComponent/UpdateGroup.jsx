@@ -12,7 +12,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
-import {Typography} from "@mui/material";
+import { Typography } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -30,7 +30,6 @@ export const UpdateGroup = ({ selectedChat, myId }) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
-
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -43,7 +42,7 @@ export const UpdateGroup = ({ selectedChat, myId }) => {
   }, []);
   const modifyGroup = async () => {
     setOpen(true);
-}
+  };
   const handleClose = () => {
     setOpen(false);
   };
@@ -61,10 +60,7 @@ export const UpdateGroup = ({ selectedChat, myId }) => {
         data.append("about", about);
         data.append("profile", profile);
         setLoading(true);
-        const response = await axios.put(
-          `${server}/updateGroup`,
-          data
-        );
+        const response = await axios.put(`${server}/updateGroup`, data);
         toast.success("profile updated");
         window.location.reload();
       } catch (error) {
@@ -72,7 +68,6 @@ export const UpdateGroup = ({ selectedChat, myId }) => {
         console.error("Error updating profile:", error);
       } finally {
         setLoading(false);
-       
       }
     }
   };
@@ -86,7 +81,6 @@ export const UpdateGroup = ({ selectedChat, myId }) => {
       data.append("profile", profile);
       data.append("userId", selectedChat._id);
       setProfileUrl(profile);
-      console.log(profileUrl);
     }
     reader.onloadend = () => {
       setProfile(file);
@@ -100,7 +94,7 @@ export const UpdateGroup = ({ selectedChat, myId }) => {
 
   return (
     <div>
-        <Typography onClick={modifyGroup}>Update Group</Typography>
+      <Typography onClick={modifyGroup}>Update Group</Typography>
       <React.Fragment>
         <Dialog
           fullScreen={fullScreen}

@@ -56,7 +56,7 @@ export const MyContactList = ({
         </DialogTitle>
         <Divider />
         {searchQuery === "" &&
-          myContacts.map((contact, index) => (
+         myContacts.length ? myContacts.map((contact, index) => (
             <ListItem
             button
               key={index}
@@ -87,7 +87,8 @@ export const MyContactList = ({
                 }
               />
             </ListItem>
-          ))}
+          )) : <ListItem>Add Contact</ListItem>
+        }
         {searchQuery !== "" &&
           searchQuery &&
           searchContact.map((contact, index) => (

@@ -92,7 +92,6 @@ export const GroupManage = ({ selectedChat, myId }) => {
         selectedContacts: selectedContactIds,
         myId: myId,
       });
-      console.log(response);
       toast.success("Group updated successfully");
       setOpen(false);
     } catch (error) {

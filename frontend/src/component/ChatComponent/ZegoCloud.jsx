@@ -5,25 +5,31 @@ import { ZIM } from "zego-zim-web";
 import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 import VideocamIcon from '@mui/icons-material/Videocam';
 import {IconButton} from '@mui/material';
+import incoming from '../../assets/sounds/incoming_call.mp3'
+import outgoing from '../../assets/sounds/outgoing_call.mp3'
+
+
 
 const ZegoCloud = ({myId, calleeId,user1,user2}) => {
+  const [incomingSound] = useState(new Audio(incoming));
+  const [outgoingSound] = useState(new Audio(outgoing));
+
     const [userInfo, setUserInfo] = useState({
         userName: "",
         userId: "",
       });
       const zeroCloudInstance = useRef(null);
-
-    async function init() {
+      
+      async function init() {
         const userId = myId;
-    
-        const userName = "Calling" + user1;
+        const userName = "Calling" + user2;
         setUserInfo({
           userName,
           userId,
         });
     
-        const appID = 488373535;
-        const serverSecret = "f3b1043cfb6175db07ba795897c22b4d";
+        const appID = 549678481;
+        const serverSecret = "8f597bb421444306b525fcb441c2908d";
     
         const KitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
           appID,
@@ -35,14 +41,16 @@ const ZegoCloud = ({myId, calleeId,user1,user2}) => {
     
         zeroCloudInstance.current = ZegoUIKitPrebuilt.create(KitToken);
         // add plugin
-        zeroCloudInstance.current.addPlugins({ ZIM });
+        const c = zeroCloudInstance.current.addPlugins({ ZIM });
+        // outgoingSound.play();
       }
     
       function handleSend(callType) {
+        incomingSound.play();
         const callee = calleeId._id;
 
-        console.log("call id", callee);
-        console.log("myid",myId);
+        // console.log("call id", callee);
+        // console.log("myid",myId);
 
         if (!callee) {
           alert("userID cannot be empty!!");
