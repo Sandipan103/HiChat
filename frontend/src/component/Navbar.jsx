@@ -12,7 +12,7 @@ import {
   ListItem,
   ListItemText,
   Container,
-} from '@material-ui/core';
+} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link } from 'react-router-dom'; 
