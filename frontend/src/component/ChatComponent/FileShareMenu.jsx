@@ -10,7 +10,6 @@ import Tooltip from "@mui/material/Tooltip";
 import DescriptionIcon from "@mui/icons-material/Description";
 import PermMediaIcon from "@mui/icons-material/PermMedia";
 import VideoLibraryIcon from "@mui/icons-material/VideoLibrary";
-import Modal from "@material-ui/core/Modal";
 
 import { styled } from "@mui/material/styles";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";

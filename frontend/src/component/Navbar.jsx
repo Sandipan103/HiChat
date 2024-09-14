@@ -1,42 +1,13 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import {
-  AppBar,
-  Toolbar,
-  IconButton,
-  Typography,
-  Button,
-  Hidden,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
-  Container,
-} from '@mui/material';
+import { AppBar, Toolbar, IconButton, Typography, Button, Hidden, Drawer, List, ListItem, ListItemText, Container } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link } from 'react-router-dom'; 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
-  title: {
-    flexGrow: 1,
-    textAlign: 'left',
-  },
-  loginButton: {
-    marginLeft: 'auto',
-  },
-  drawerPaper: {
-    width: 250,
-  },
-}));
+import { useTheme } from '@mui/material/styles';
+import { Box } from '@mui/system';
 
 const NavBar = () => {
-  const classes = useStyles();
+  const theme = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
   const handleDrawerToggle = () => {
@@ -44,9 +15,9 @@ const NavBar = () => {
   };
 
   const drawer = (
-    <div>
+    <Box sx={{ width: 250 }}>
       <List>
-        <ListItem button>
+        <ListItem button component={Link} to="/">
           <ListItemText primary="Home" />
         </ListItem>
         <ListItem button>
@@ -57,18 +28,18 @@ const NavBar = () => {
         </ListItem>
         {/* Add more items as needed */}
       </List>
-    </div>
+    </Box>
   );
 
   return (
-    <div className={classes.root}>
+    <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Container maxWidth="lg">
           <Toolbar disableGutters>
             <Hidden smUp>
               <IconButton
                 edge="start"
-                className={classes.menuButton}
+                sx={{ marginRight: theme.spacing(2) }}
                 color="inherit"
                 aria-label="menu"
                 onClick={handleDrawerToggle}
@@ -76,7 +47,7 @@ const NavBar = () => {
                 <MenuIcon />
               </IconButton>
             </Hidden>
-            <Typography variant="h6" className={classes.title}>
+            <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'left' }}>
               HIChat
             </Typography>
             <Hidden xsDown>
@@ -90,7 +61,7 @@ const NavBar = () => {
               <IconButton
                 color="inherit"
                 aria-label="login"
-                className={classes.loginButton}
+                sx={{ marginLeft: 'auto' }}
                 component={Link} 
                 to="/login"
               >
@@ -100,25 +71,25 @@ const NavBar = () => {
           </Toolbar>
         </Container>
       </AppBar>
-      <nav className={classes.drawer}>
+      <nav>
         <Hidden smUp implementation="css">
           <Drawer
             variant="temporary"
             anchor="left"
             open={mobileOpen}
             onClose={handleDrawerToggle}
-            classes={{
-              paper: classes.drawerPaper,
-            }}
             ModalProps={{
               keepMounted: true, // Better open performance on mobile.
+            }}
+            sx={{
+              '& .MuiDrawer-paper': { width: 250 },
             }}
           >
             {drawer}
           </Drawer>
         </Hidden>
       </nav>
-    </div>
+    </Box>
   );
 };
 
