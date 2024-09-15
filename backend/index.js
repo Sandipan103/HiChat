@@ -7,6 +7,8 @@ require("dotenv").config();
 const http = require("http");
 // required env string
 const PORT = process.env.PORT;
+const allowedOrigins = process.env.CLIENTS.split(',');
+
 const path = require("path");
 
 const cron = require("node-cron");
@@ -36,7 +38,7 @@ dbConnect()
     // Attach Socket.io to the HTTP server
     const io = require("socket.io")(server, {
       cors: {
-        origin: ["https://hichat.w3yogesh.com"],
+        origin: allowedOrigins,
         methods: ["GET", "POST"],
         credentials: true,
       },
@@ -138,7 +140,7 @@ dbConnect()
 
 app.use(
   cors({
-    origin: ["https://hichat.w3yogesh.com"],
+    origin: allowedOrigins,
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
