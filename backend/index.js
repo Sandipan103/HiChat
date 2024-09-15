@@ -137,14 +137,25 @@ dbConnect()
   .catch((error) => {
     console.error("Failed to start the server:", error);
   });
-
-app.use(
-  cors({
-    origin: allowedOrigins,
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
+  app.use(
+    cors({
+      origin: function (origin, callback) {
+        // Check if the origin is in the allowed list or it's undefined (for non-browser tools like Postman)
+        if (!origin || allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error("Not allowed by CORS"));
+        }
+      },
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Ensure OPTIONS is included
+      credentials: true, // Allow cookies or authentication headers
+      allowedHeaders: ["Content-Type", "Authorization"], // Specify allowed headers if necessary
+      optionsSuccessStatus: 200, // Some browsers choke on 204
+    })
+  );
+  
+  // Preflight request handling (for complex requests)
+  app.options("*", cors());
 
 // // Schedule a task to run every minute
 // cron.schedule('* * * * *', async () => {
