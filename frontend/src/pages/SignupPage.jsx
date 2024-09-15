@@ -15,7 +15,7 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
 import toast from "react-hot-toast";
-import Link from '@mui/material/Link';
+import Link from "@mui/material/Link";
 import { useNavigate } from "react-router-dom";
 import "../styles/signup.css";
 
@@ -114,22 +114,31 @@ const SignupPage = () => {
   return (
     <>
       <NavBar />
-      <Grid container justifyContent="center" alignItems="center" className="signupform">
+      <Grid
+        container
+        justifyContent="center"
+        alignItems="center"
+        className="signupform"
+      >
         <Grid item xs={12} sm={8} md={6} lg={4} sx={{ position: "relative" }}>
-          <div class="background">
-            <div class="shape"></div>
-            <div class="shape"></div>
-          </div>
-          <Box class={"signup"}>
+          <Box
+            className="signup"
+            sx={{
+              padding: 3,
+              backgroundColor: "#fff",
+              borderRadius: 2,
+              boxShadow: 3,
+            }}
+          >
             <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
               <LockOutlinedIcon />
             </Avatar>
-            <Typography component="h1" variant="h5">
+            <Typography component="h1" variant="h5" sx={{ mb: 2 }}>
               Sign up
             </Typography>
-            {loading && <CircularProgress size={100} />}
+            {loading && <CircularProgress size={60} />}
             {!loading && !progress && (
-              <form onSubmit={handleSubmit} sx={{ mt: 3 }}>
+              <form onSubmit={handleSubmit}>
                 <Grid container spacing={2}>
                   <Grid item xs={12} sm={6}>
                     <TextField
@@ -139,8 +148,8 @@ const SignupPage = () => {
                       value={signupData.firstName}
                       onChange={handleChange}
                       fullWidth
-                      margin="normal"
                       size="small"
+                      required
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
@@ -151,11 +160,11 @@ const SignupPage = () => {
                       value={signupData.lastName}
                       onChange={handleChange}
                       fullWidth
-                      margin="normal"
                       size="small"
+                      required
                     />
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid item xs={12} >
                     <TextField
                       label="Email"
                       variant="outlined"
@@ -164,8 +173,9 @@ const SignupPage = () => {
                       value={signupData.email}
                       onChange={handleChange}
                       fullWidth
-                      margin="normal"
                       size="small"
+                      required
+                      sx={{ mb: 1 }}
                     />
                     <TextField
                       label="Phone Number"
@@ -175,8 +185,9 @@ const SignupPage = () => {
                       value={signupData.phoneNumber}
                       onChange={handleChange}
                       fullWidth
-                      margin="normal"
                       size="small"
+                      required
+                      sx={{ mb: 1 }}
                     />
                     <TextField
                       label="Password"
@@ -186,8 +197,8 @@ const SignupPage = () => {
                       value={signupData.password}
                       onChange={handleChange}
                       fullWidth
-                      margin="normal"
                       size="small"
+                      required
                       InputProps={{
                         endAdornment: (
                           <InputAdornment position="end">
@@ -210,7 +221,7 @@ const SignupPage = () => {
                       variant="contained"
                       color="primary"
                       fullWidth
-                      sx={{ mt: 3, mb: 2 }}
+                      sx={{ mt: 2, mb: 1 }}
                     >
                       Sign Up
                     </Button>
@@ -228,7 +239,8 @@ const SignupPage = () => {
                   value={otp}
                   onChange={handleOtpChange}
                   fullWidth
-                  margin="normal"
+                  size="small"
+                  required
                   inputProps={{
                     inputMode: "numeric",
                     pattern: "[0-9]{6}",
@@ -239,7 +251,7 @@ const SignupPage = () => {
                   variant="contained"
                   color="primary"
                   fullWidth
-                  style={{ marginTop: "10px" }}
+                  sx={{ mt: 2 }}
                 >
                   Verify OTP
                 </Button>

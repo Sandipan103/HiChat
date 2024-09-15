@@ -34,7 +34,7 @@ dbConnect()
 
     // Create the HTTP server
     const server = http.createServer(app);
-    console.log("connected");
+
     // Attach Socket.io to the HTTP server
     const io = require("socket.io")(server, {
       cors: {
@@ -69,7 +69,6 @@ dbConnect()
       socket.on("setup", (userId) => {
         socket.join(userId);
         socket.emit("connected");
-        console.log("connected");
       });
 
       socket.on("typing", (myId, selectedId) => {
@@ -111,7 +110,7 @@ dbConnect()
         chatUsers.forEach((user) => {
           if (user == newMessage.sender) return;
           socket.in(user).emit("file recieved", { fileData, newMessage });
-          console.log("File Sent");
+          // console.log("File Sent");
         });
 
         // const toSocket = userConnections.get(to);
@@ -125,7 +124,7 @@ dbConnect()
       });
 
       socket.off("setup", () => {
-        console.log("USER DISCONNECTED");
+        // console.log("USER DISCONNECTED");
         socket.leave(userData._id);
       });
     });

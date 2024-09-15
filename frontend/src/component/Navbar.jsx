@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppBar, Toolbar, IconButton, Typography, Button, Hidden, Drawer, List, ListItem, ListItemText, Container } from '@mui/material';
+import { AppBar, Toolbar, IconButton, Typography, Button, Hidden, Drawer, List, ListItem, ListItemText, Container, Divider } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link } from 'react-router-dom'; 
@@ -26,51 +26,99 @@ const NavBar = () => {
         <ListItem button>
           <ListItemText primary="Team" />
         </ListItem>
-        {/* Add more items as needed */}
+        <ListItem button component={Link} to="/signup">
+          <ListItemText primary="Signup" />
+        </ListItem>
+        <ListItem button component={Link} to="/login">
+          <ListItemText primary="Login" />
+        </ListItem>
       </List>
     </Box>
   );
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar position="static" sx={{ backgroundColor: '#2E3B55', boxShadow: 'none', borderBottom: '1px solid #ddd' }}>
         <Container maxWidth="lg">
-          <Toolbar disableGutters>
+          <Toolbar disableGutters sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            {/* Logo */}
+            <Typography
+              variant="h6"
+              component={Link}
+              to="/"
+              sx={{
+                flexGrow: 1,
+                textAlign: 'left',
+                textDecoration: 'none',
+                color: 'inherit',
+                fontWeight: 'bold',
+                fontSize: '1.5rem',
+                '&:hover': {
+                  color: '#FF6F61',
+                }
+              }}
+            >
+              HIChat
+            </Typography>
+
+            {/* Links for larger screens */}
+            <Hidden smDown>
+              <Box sx={{ display: 'flex', gap: theme.spacing(3) }}>
+                <Button
+                  color="inherit"
+                  component={Link}
+                  to="/"
+                  sx={{ textTransform: 'none', fontWeight: 'bold', '&:hover': { color: '#FF6F61' } }}
+                >
+                  Home
+                </Button>
+                <Button
+                  color="inherit"
+                  sx={{ textTransform: 'none', fontWeight: 'bold', '&:hover': { color: '#FF6F61' } }}
+                >
+                  About
+                </Button>
+                <Button
+                  color="inherit"
+                  sx={{ textTransform: 'none', fontWeight: 'bold', '&:hover': { color: '#FF6F61' } }}
+                >
+                  Team
+                </Button>
+                <Button
+                  color="inherit"
+                  component={Link}
+                  to="/signup"
+                  sx={{ textTransform: 'none', fontWeight: 'bold', '&:hover': { color: '#FF6F61' } }}
+                >
+                  Signup
+                </Button>
+                <Button
+                  color="inherit"
+                  component={Link}
+                  to="/login"
+                  sx={{ textTransform: 'none', fontWeight: 'bold', '&:hover': { color: '#FF6F61' } }}
+                >
+                  Login
+                </Button>
+              </Box>
+            </Hidden>
+
+            {/* Mobile hamburger menu */}
             <Hidden smUp>
               <IconButton
                 edge="start"
-                sx={{ marginRight: theme.spacing(2) }}
-                color="inherit"
+                sx={{ color: 'white' }}
                 aria-label="menu"
                 onClick={handleDrawerToggle}
               >
                 <MenuIcon />
               </IconButton>
             </Hidden>
-            <Typography variant="h6" sx={{ flexGrow: 1, textAlign: 'left' }}>
-              HIChat
-            </Typography>
-            <Hidden xsDown>
-              <Button color="inherit" component={Link} to="/">Home</Button>
-              <Button color="inherit">About</Button>
-              <Button color="inherit">Team</Button>
-              <Button color="inherit" component={Link} to="/signup">Signup</Button>
-              <Button color="inherit" component={Link} to="/login">Login</Button>
-            </Hidden>
-            <Hidden smUp>
-              <IconButton
-                color="inherit"
-                aria-label="login"
-                sx={{ marginLeft: 'auto' }}
-                component={Link} 
-                to="/login"
-              >
-                <AccountCircleIcon />
-              </IconButton>
-            </Hidden>
           </Toolbar>
         </Container>
       </AppBar>
+
+      {/* Mobile Drawer */}
       <nav>
         <Hidden smUp implementation="css">
           <Drawer
@@ -82,9 +130,17 @@ const NavBar = () => {
               keepMounted: true, // Better open performance on mobile.
             }}
             sx={{
-              '& .MuiDrawer-paper': { width: 250 },
+              '& .MuiDrawer-paper': {
+                width: 250,
+                backgroundColor: '#2E3B55',
+                color: 'white',
+              },
             }}
           >
+            <Box sx={{ width: 250, p: 2 }}>
+              <Typography variant="h6" sx={{ textAlign: 'center', color: '#FF6F61', fontWeight: 'bold' }}>HIChat</Typography>
+            </Box>
+            <Divider sx={{ backgroundColor: '#fff' }} />
             {drawer}
           </Drawer>
         </Hidden>

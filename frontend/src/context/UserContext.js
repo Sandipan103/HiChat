@@ -30,5 +30,4 @@ const AuthProvider = ({ children }) => {
 };
 
 const server =  process.env.REACT_APP_SERVER;
-console.log(server);
 export { AuthContext, AuthProvider, server };
