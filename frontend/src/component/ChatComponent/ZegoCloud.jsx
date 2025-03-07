@@ -29,8 +29,8 @@ const ZegoCloud = ({myId, calleeId,user1,user2}) => {
           userId,
         });
     
-        const appID = zego_id;
-        const serverSecret = zego_secret;
+        const appID = 149945082;
+        const serverSecret = "b1743149a05650f7a8ac484f664932fb";
     
         const KitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
           appID,
