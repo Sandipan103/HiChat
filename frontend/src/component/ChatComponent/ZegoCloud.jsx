@@ -7,7 +7,8 @@ import VideocamIcon from '@mui/icons-material/Videocam';
 import {IconButton} from '@mui/material';
 import incoming from '../../assets/sounds/incoming_call.mp3'
 import outgoing from '../../assets/sounds/outgoing_call.mp3'
-
+const zego_id =  process.env.ZEGO_APP_ID;
+const zego_secret =  process.env.ZEGO_APP_SECRET;
 
 
 const ZegoCloud = ({myId, calleeId,user1,user2}) => {
@@ -28,8 +29,8 @@ const ZegoCloud = ({myId, calleeId,user1,user2}) => {
           userId,
         });
     
-        const appID = 549678481;
-        const serverSecret = "8f597bb421444306b525fcb441c2908d";
+        const appID = zego_id;
+        const serverSecret = zego_secret;
     
         const KitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
           appID,
